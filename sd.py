@@ -21,10 +21,9 @@ class Node:
             hg.add_node(self)
 
     def __repr__(self):
-        value = "None"
-        if self.val is not None:
-                value = "{0.val:.03f} ".format(self)
-        return "{0.name:<8} {3} ({0.t:<10}) IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value)
+        print("test=",self.val, self.name)
+        value = "None" if self.val is None else "{:.03f}".format(self.val)
+        return "{0.name:<8} {3} IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value)
 
     def set_cons(self, f, pred):
         self.cons = f
@@ -45,12 +44,12 @@ class NodeStock(Node):
         self.hist = [val]
 
     def eval(self, save):
-        # text = "{}:{}->".format(self.name, self.val)
+        text = "{}:{}->".format(self.name, self.val)
         self.val = self.cons(*[p.val for p in self.pred])
         if save:
             self.hist.append(self.val)
-        #text += "{}".format(self.val)
-        #print(text)
+        text += "{}".format(self.val)
+        print(text)
 
 
 class NodeFlow(NodeStock):
@@ -129,8 +128,9 @@ class NodeConstant(Node):
                 l1 = ",".join([str(x) for x in self.val[0]])
                 l2 = ",".join([str(x) for x in self.val[1]])
                 value = "[{}]:[{}]".format(l1, l2)
-            value = "{0.val:.03f} ".format(self)
-        return "{0.name:<8} {3} ({0.t:<10}) IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value)
+            else:
+                value = "{0.val:.03f} ".format(self)
+        return "{0.name:<8} {3} IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value)
 
 
 class Hypergraph():
@@ -138,7 +138,7 @@ class Hypergraph():
         self.nodes = {n.name: n for n in nodes}
         self.nbrank = None
         self.nodesrank = None
-        self.terminaux = [n for n in nodes if type(n) == NodeStock]
+        self.stocks = [n for n in nodes if type(n) == NodeStock]
 
     def __repr__(self):
         return "\n".join([str(v) for c,v in self.nodes.items()])
@@ -149,7 +149,7 @@ class Hypergraph():
             print(self.nodes[node.name])
             raise ErrorNodeAlreadyExists()
         self.nodes[node.name] = node
-        if type(node) == NodeStock: self.terminaux.append(node)
+        if type(node) == NodeStock: self.stocks.append(node)
 
     def add_nodes(self, nodes):
         for n in nodes:
@@ -164,10 +164,11 @@ class Hypergraph():
                 n.eval(save)
 
     def eval2(self, t, y, save=False):
-        for i, n in enumerate(self.terminaux):
+        for i, n in enumerate(self.stocks):
+            print(i, n)
             n.val = y[i]
         self.eval(save)
-        return np.array([n.val for n in self.terminaux])
+        return np.array([n.val for n in self.stocks])
 
     def cond(n): return type(n) == NodeFlow or type(n) == NodeSmooth
      
@@ -209,8 +210,8 @@ class Hypergraph():
         self.nodesrank = [j for _,j in sorted([(ri, i) for i, ri in enumerate(r)])]
         #for i,ri in enumerate(r):
         #    self.nodesrank[ri].append(self.nodes[d2[i]])
-        #self.nodesrank.append(self.terminaux)
-        self.nodesrank += self.terminaux
+        #self.nodesrank.append(self.stocks)
+        self.nodesrank += self.stocks
 
         
     def set_rank2(self):
@@ -243,8 +244,8 @@ class Hypergraph():
         self.nodesrank = [j for _, j in sorted([(ri, i) for i, ri in enumerate(r)])]
         # for i,ri in enumerate(r):
         #    self.nodesrank[ri].append(self.nodes[d2[i]])
-        # self.nodesrank.append(self.terminaux)
-        self.nodesrank += self.terminaux
+        # self.nodesrank.append(self.stocks)
+        self.nodesrank += self.stocks
 
 
 def traj_rungeKutta(x0, f, nbIter, pas):
@@ -252,9 +253,9 @@ def traj_rungeKutta(x0, f, nbIter, pas):
     x = np.zeros((nbVar, nbIter), float)
     x[:, 0] = x0
     for k in range(nbIter - 1):
-        k1 = f(k, x[:, k], k)
+        k1 = f(k, x[:, k])
         k2 = f(k, x[:, k] + pas / 2 * k1)
         k3 = f(k, x[:, k] + pas / 2 * k2)
         k4 = f(k, x[:, k] + pas * k3)
-        x[:, k + 1] = x[:, k] + pas / 6. * (k1 + 2 * k2 + 2 * k3 + k4)
+        x[:, k + 1] = x[:, k] + pas / 16. * (k1 + 2 * k2 + 2 * k3 + k4)
     return x

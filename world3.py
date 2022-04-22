@@ -83,14 +83,14 @@ FIFTEEN = NodeConstant("FIFTEEN", C, val=15, hg=h)
 TWENTY = NodeConstant("TWENTY", C, val=20, hg=h)
 THIRTY = NodeConstant("THIRTY", C, val=30, hg=h)
 
-d1 = NodeStock("d1", hg=h)
-d2 = NodeStock("d2", hg=h)
-d3 = NodeStock("d3", hg=h)
-d4 = NodeStock("d4", hg=h)
+d1 = NodeFlow("d1", hg=h)
+d2 = NodeFlow("d2", hg=h)
+d3 = NodeFlow("d3", hg=h)
+d4 = NodeFlow("d4", hg=h)
 
-mat1 = NodeStock("mat1", hg=h)
-mat2 = NodeStock("mat2", hg=h)
-mat3 = NodeStock("mat3", hg=h)
+mat1 = NodeFlow("mat1", hg=h)
+mat2 = NodeFlow("mat2", hg=h)
+mat3 = NodeFlow("mat3", hg=h)
 
 #Related to death
 d = NodeFlow("d", hg=h)
@@ -115,10 +115,10 @@ lmp = NodeFlow("lmp", val=LMP.val, hg=h)
 cmi = NodeFlow("cmi", val=CMI.val, hg=h)
 fpu = NodeFlow("fpu", val=FPU.val, hg=h)
 lmc = NodeFlow("lmc", hg=h)
-le = NodeStock("le", val=0, hg=h)
+le = NodeFlow("le", hg=h)
 
 #Related to birth
-b = NodeStock("b", hg=h)
+b = NodeFlow("b", hg=h)
 cbr = NodeFlow("cbr", hg=h)
 
 RLT = NodeConstant("RLT", C, val=30, hg=h)
@@ -146,7 +146,7 @@ cmple = NodeFlow("cmple", val=CMPLE.val, hg=h)
 fsafc = NodeFlow("fsafc", val=FSAFC.val, hg=h)
 
 tf = NodeFlow("tf", hg=h)
-mtf = NodeFlow("MTF", hg=h)
+mtf = NodeFlow("mtf", hg=h)
 dtf = NodeFlow("dtf", hg=h)
 dcfs = NodeFlow("dcfs", hg=h)
 fie = NodeFlow("fie", hg=h)
@@ -176,9 +176,9 @@ iopc = NodeFlow("iopc", hg=h)
 io = NodeFlow("io", hg=h)
 icor = NodeFlow("icor", hg=h)
 icor2 = NodeFlow("icor2", hg=h)
-ic = NodeStock("ic", hg=h)
-icdr = NodeStock("icdr", hg=h)
-icir = NodeStock("icir", hg=h)
+ic = NodeStock("ic", val=ICI.val, hg=h)
+icdr = NodeFlow("icdr", hg=h)
+icir = NodeFlow("icir", hg=h)
 fioai = NodeFlow("fioai", hg=h)
 fioac = NodeFlow("fioac", hg=h)
 
@@ -202,9 +202,9 @@ fioas2 = NodeFlow("fioas2", val=FIOAS2.val, hg=h)
 
 isopc = NodeFlow("ispoc", hg=h)
 fioas = NodeFlow("fioas", hg=h)
-scir = NodeStock("scir", hg=h)
-sc = NodeStock("sc", hg=h)
-scdr = NodeStock("scdr", hg=h)
+scir = NodeFlow("scir", hg=h)
+sc = NodeStock("sc", val=SCI.val, hg=h)
+scdr = NodeFlow("scdr", hg=h)
 so = NodeFlow("so", hg=h)
 sopc = NodeFlow("sopc", hg=h)
 
@@ -251,14 +251,14 @@ fioaa2 = NodeFlow("fioaa2", val=FIOAA2.val, hg=h)
 dcph = NodeFlow("dcph", val=DCPH.val, hg=h)
 
 lfc = NodeFlow("lfc", hg=h)
-al = NodeStock("al", hg=h)
-pal = NodeStock("pal", hg=h)
+al = NodeStock("al", val=ALI.val, hg=h)
+pal = NodeStock("pal", val=PALI.val, hg=h)
 f = NodeFlow("f", hg=h)
 fpc = NodeFlow("fpc", hg=h)
 ifpc = NodeFlow("ifpc", hg=h)
 tai = NodeFlow("tai", hg=h)
 fioaa = NodeFlow("fioaa", hg=h)
-ldr = NodeStock("ldr", hg=h)
+ldr = NodeFlow("ldr", hg=h)
 
 #Loop 2
 #AII = NodeConstant("AII", C, val=5e9, hg=h)
@@ -304,10 +304,10 @@ llmy2 = NodeFlow("llmy2", val=LLMY2.val, hg=h)
 uilpc = NodeFlow("uilpc", val=UILPC.val, hg=h)
 
 all = NodeFlow("all", hg=h)
-ler = NodeStock("ler", hg=h)
+ler = NodeFlow("ler", hg=h)
 uilr = NodeFlow("uilr", hg=h)
-lrui = NodeStock("lrui", hg=h)
-uil = NodeStock("uil", hg=h)
+lrui = NodeFlow("lrui", hg=h)
+uil = NodeStock("uil", val=UILI.val, hg=h)
 
 #Loop 4
 LFERTI = NodeConstant("LFERTI", C, val=600, hg=h)
@@ -315,8 +315,8 @@ LFERTI = NodeConstant("LFERTI", C, val=600, hg=h)
 LFDR = NodeConstant("LFDR", CT, val=([0, 0], [10, 0.1], [20, 0.3], [30, 0.5]), hg=h)
 lfdr = NodeFlow("lfdr", hg=h)
 
-lfert = NodeStock("lfert", hg=h)
-lfd = NodeStock("lfd", hg=h)
+lfert = NodeStock("lfert", val=LFERTI.val, hg=h)
+lfd = NodeFlow("lfd", hg=h)
 
 #Loop 5
 ILF = NodeConstant("ILF", C, val=600, hg=h)
@@ -334,10 +334,10 @@ falm = NodeFlow("falm", val=FALM.val, hg=h)
 lycm = NodeFlow("lycm", val=LYCM.val, hg=h)
 coym = NodeFlow("coym", val=COYM.val, hg=h)
 
-lfr = NodeStock("lfr", hg=h)
+lfr = NodeFlow("lfr", hg=h)
 fr = NodeFlow("fr", hg=h)
-lytd = NodeStock("lytd", hg=h)
-lytdr = NodeStock("lytdr", hg=h)
+lytd = NodeStock("lytd", val=LYF1.val, hg=h)
+lytdr = NodeFlow("lytdr", hg=h)
 
 ################################
 # Variables close to resources #
@@ -359,12 +359,12 @@ fcaor2 = NodeFlow("fcaor2", val=FCAOR2.val, hg=h)
 nrcm = NodeFlow("nrcm", val=NRCM.val, hg=h)
 icor2t = NodeFlow("icor2t", val=ICOR2T.val, hg=h)
 
-nr = NodeStock("nr", hg=h)
-nrur = NodeStock("nrur", hg=h)
+nr = NodeStock("nr", val=NRI.val, hg=h)
+nrur = NodeFlow("nrur", hg=h)
 nruf = NodeFlow("nruf", hg=h)
 nrfr = NodeFlow("nrfr", hg=h)
-nrtd = NodeStock("nrtd", hg=h)
-nrate = NodeStock("nrate", hg=h)
+nrtd = NodeStock("nrtd", val=NRUF1.val, hg=h)
+nrate = NodeFlow("nrate", hg=h)
 
 ################################
 # Variables close to pollution #
@@ -389,16 +389,16 @@ ahlm = NodeFlow("ahlm", val=AHLM.val, hg=h)
 polgfm = NodeFlow("polgfm", val=POLGFM.val, hg=h)
 copm = NodeFlow("copm", val=COPM.val, hg=h)
 
-ppgr = NodeStock("ppgr", hg=h)
+ppgr = NodeFlow("ppgr", hg=h)
 ppgf = NodeFlow("ppgf", hg=h)
 ppgio = NodeFlow("ppgio", hg=h)
 ppgao = NodeFlow("ppgao", hg=h)
-ppol = NodeStock("ppol", hg=h)
+ppol = NodeStock("ppol", val=PPOLI.val, hg=h)
 ppolx = NodeFlow("ppolx", hg=h)
-ppasr = NodeStock("ppasr", hg=h)
+ppasr = NodeFlow("ppasr", hg=h)
 ahl = NodeFlow("ahl", hg=h)
-ptd = NodeStock("ptd", hg=h)
-ptdr = NodeStock("ptdr", hg=h)
+ptd = NodeStock("ptd", val=PPGF1.val, hg=h)
+ptdr = NodeFlow("ptdr", hg=h)
 
 ################
 # Update Index #
@@ -778,6 +778,8 @@ h.add_edge(f_algha, algha, [ppgr, HUP, HGHA])
 h.add_edge(div, alggha, [al, HGHA])
 h.add_edge(div, ulgha, [uil, HGHA])
 
+#print(h)
+h.set_rank()
 #########
 # Solve #
 #########
@@ -787,7 +789,7 @@ time = [TI.val, tf]
 
 label1 = ['année', 'population', 'capital', 'capital agriculture', 'ressources', 'polution']
 #print(TI.val, PI.val, CII.val, CIAFI.val, NRI.val, POLI.val, flush=True)
-y0 = np.array([TI.val, pop.val, IO70.val, scir.val, NRI.val, PPOLI.val])
+y0 = np.array([TI.val, P1I.val, P2I.val, P3I.val, P4I.val, ICI.val, SCI.val, ALI.val, PALI.val, UILI.val, LFERTI.val, LYF1.val, NRI.val, NRUF1.val, PPOLI.val, PPGF1.val])
 nbVar = len(y0)
 
 sol = traj_rungeKutta(y0, h.eval2, nbpas, DT.val)
