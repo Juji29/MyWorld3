@@ -21,8 +21,9 @@ class Node:
             hg.add_node(self)
 
     def __repr__(self):
-        print("test=",self.val, self.name)
-        value = "None" if self.val is None else "{:.03f}".format(self.val)
+        value = "None"
+        if self.val != None:
+            value = "{:.03f}".format(self.val)
         return "{0.name:<8} {3} IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value)
 
     def set_cons(self, f, pred):
@@ -58,19 +59,22 @@ class NodeFlow(NodeStock):
 
 
 class NodeSmooth(Node):
-    def __init__(self, name, t, size, val=None, initial=None, hg=None):
-        super().__init__(name, val, hg)
+    def __init__(self, name, t, size, val, initial=None, hg=None):
+        super().__init__(name, val[0], hg)
         self.type = t
         self.hist = [None] * size
-        self.hist[0] = val
+        self.hist[0] = val[0]
         self.initial = initial
+        self.dt = val[1]
+        self.ts = None
+        self.k = 1
         if t == "SMOOTH3":
-            self.I1 = val
+            self.I1 = val[0]
             self.histI1 = [None] * size
-            self.histI1[0] = val
-            self.I2 = val
+            self.histI1[0] = val[0]
+            self.I2 = val[0]
             self.histI2 = [None] * size
-            self.histI2[0] = val
+            self.histI2[0] = val[0]
         if t == "DELAY3":
             self.I1 = None
             self.histI1 = [None] * size
@@ -79,32 +83,33 @@ class NodeSmooth(Node):
             self.I3 = None
             self.histI3 = [None] * size
 
-    def eval(self, node, ts, dt, k, save):
+    def eval(self, node, save):
         text = "{}:{}->".format(self.name, self.val)
         if self.type == "SMOOTH":
-            self.val += (node.val-self.val) * ts / dt
+            self.val += (node.val-self.val[0]) * self.ts / self.dt
         if self.type == "SMOOTHI":
             if len(self.hist) == 1:
-                self.val += (node.val - self.initial) * ts / dt
+                self.val += (node.val - self.initial) * self.ts / self.dt
             else:
-                self.val += (node.val - self.val) * ts / dt
+                self.val += (node.val - self.val[0]) * self.ts / self.dt
         if self.type == "SMOOTH3":
-            dl = dt/3
-            self.val += (self.I1 - self.val) * ts / dl
-            self.I1 += (self.I2 - self.I1) * ts / dl
-            self.I2 += (node.val - self.I2) * ts / dl
+            dl = self.dt/3
+            self.val[0] += (self.I1 - self.val[0]) * self.ts / dl
+            self.I1 += (self.I2 - self.I1) * self.ts / dl
+            self.I2 += (node.val - self.I2) * self.ts / dl
         if self.type == "DELAY3":
-            dl = dt / 3
+            dl = self.dt / 3
             if self.I1 is None:
                 self.I1 = dl * node.val
                 self.I2 = self.I1
                 self.I3 = self.I1
-            self.val = self.I1 / dl
-            self.I1 += (self.I2 / dl - self.I1) * ts
-            self.I2 += (self.I3 / dl - self.I2) * ts
-            self.I3 += (node.val - self.I3) * ts
+            self.val[0] = self.I1 / dl
+            self.I1 += (self.I2 / dl - self.I1) * self.ts
+            self.I2 += (self.I3 / dl - self.I2) * self.ts
+            self.I3 += (node.val - self.I3) * self.ts
         if save:
-            self.hist[k] = self.val
+            k = self.k
+            self.hist[k] = self.val[0]
             if self.type == "SMOOTH3":
                 self.histI1[k] = self.I1
                 self.histI2[k] = self.I2
@@ -112,8 +117,15 @@ class NodeSmooth(Node):
                 self.histI1[k] = self.I1
                 self.histI2[k] = self.I2
                 self.histI3[k] = self.I3
-        text += "{}".format(self.val)
-        print(text)
+            self.k += 1
+        #text += "{}".format(self.val)
+        #print(text)
+
+    def f_smooth(self, flow, constant, ts):
+        self.val = flow.val
+        self.dt = constant.val
+        self.ts = ts.val
+        print(self.val)
 
 
 class NodeConstant(Node):
@@ -160,12 +172,14 @@ class Hypergraph():
 
     def eval(self, save):
         for ns in self.nodesrank:
-            for n in ns:
-                n.eval(save)
+            if type(ns) == NodeSmooth:
+                ns.eval(ns.val[0], save)
+            else:
+                ns.eval(save)
 
     def eval2(self, t, y, save=False):
         for i, n in enumerate(self.stocks):
-            print(i, n)
+            #print(i, n)
             n.val = y[i]
         self.eval(save)
         return np.array([n.val for n in self.stocks])
@@ -203,11 +217,12 @@ class Hypergraph():
             if len(Sk1) > 0 :
                 return rang_rec(Sk1, k+1)
         rang_rec(S0, 0)
-        print(d2)
-        print(r)
+        for i in range(len(d2)):
+            print(str(d2[i]+"="+str(r[i])))
         self.nbrank = max(r) + 1
         #self.nodesrank = [[] for _ in range(self.nbrank)]
-        self.nodesrank = [j for _,j in sorted([(ri, i) for i, ri in enumerate(r)])]
+        #self.nodesrank = [j for _,j in sorted([(ri, i) for i, ri in enumerate(r)])]
+        self.nodesrank = [self.nodes[d2[j]] for _,j in sorted([(ri, i) for i, ri in enumerate(r)])]
         #for i,ri in enumerate(r):
         #    self.nodesrank[ri].append(self.nodes[d2[i]])
         #self.nodesrank.append(self.stocks)
