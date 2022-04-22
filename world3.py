@@ -193,12 +193,12 @@ ISOPC1 = NodeConstant("ISOPC1", CT, val=([0, 40], [200, 300], [400, 640], [600, 
 ISOPC2 = NodeConstant("ISOPC2", CT, val=([0, 40], [200, 300], [400, 640], [600, 1000], [800, 1220], [1000, 1450], [1200, 1650], [1400, 1800], [1600, 2000]), hg=h)
 FIOAS1 = NodeConstant("FIOAS1", CT, val=([0, 0.3], [0.5, 0.2], [1, 0.1], [1.5, 0.05], [2, 0]), hg=h)
 FIOAS2 = NodeConstant("FIOAS2", CT, val=([0, 0.3], [0.5, 0.2], [1, 0.1], [1.5, 0.05], [2, 0]), hg=h)
-isopc1 = NodeFlow("ispoc1", hg=h)
-isopc2 = NodeFlow("ispoc2", hg=h)
+isopc1 = NodeFlow("isopc1", hg=h)
+isopc2 = NodeFlow("isopc2", hg=h)
 fioas1 = NodeFlow("fioas1", hg=h)
 fioas2 = NodeFlow("fioas2", hg=h)
 
-isopc = NodeFlow("ispoc", hg=h)
+isopc = NodeFlow("isopc", hg=h)
 fioas = NodeFlow("fioas", hg=h)
 scir = NodeFlow("scir", hg=h)
 sc = NodeStock("sc", val=SCI.val, hg=h)
@@ -260,9 +260,7 @@ ldr = NodeFlow("ldr", hg=h)
 
 #Loop 2
 #AII = NodeConstant("AII", C, val=5e9, hg=h)
-ALAI = NodeConstant("ALAI", C, hg=h)
-ALAI1 = NodeConstant("ALAI1", C, val=2, hg=h)
-ALAI2 = NodeConstant("ALAI2", C, val=2, hg=h)
+ALAI = NodeConstant("ALAI", C, val=2, hg=h)
 LYF1 = NodeConstant("LYF1", C, val=1, hg=h)
 IO70 = NodeConstant("IO70", C, val=790e9, hg=h)
 #SD = NodeConstant("SD", C, val=0.07, hg=h)
@@ -420,18 +418,18 @@ ulgha = NodeFlow("ulgha", hg=h)
 ####################
 # Smooth functions #
 ####################
-ehspc = NodeSmooth("ehspc", "SMOOTH", 201, val=(hsapc.val, HSID.val), hg=h) # tf - ti +1
-ple = NodeSmooth("ple", "SMOOTH3", 201, val=(le.val, LPD.val), hg=h)
-diopc = NodeSmooth("diopc", "SMOOTH3", 201, val=(iopc.val, SAD.val), hg=h)
-aiopc = NodeSmooth("aiopc", "SMOOTH", 201, val=(iopc.val, IEAT.val), hg=h)
-fcfpc = NodeSmooth("fcfpc", "SMOOTH3", 201, val=(fcapc.val, HSID.val), hg=h)
-lufd = NodeSmooth("lufd", "SMOOTHI", 201, val=(1, LUFDT.val), initial=1, hg=h)
-ai = NodeSmooth("ai", "SMOOTH", 201, val=(cai.val, ALAI.val), hg=h)
-lyf2 = NodeSmooth("lyf2", "SMOOTH3", 201, val=(lytd.val, TDD.val), hg=h)
-pfr = NodeSmooth("pfr", "SMOOTHI", 201, val=(PFRI.val, FSDP.val), initial=PFRI.val, hg=h)
-nruf2 = NodeSmooth("nruf2", "SMOOTH3", 201, val=(nrtd.val, TDD.val), hg=h)
-ppgf2 = NodeSmooth("ppgf2", "SMOOTH3", 201, val=(ptd.val, TDD.val), hg=h)
-ppapr = NodeSmooth("ppapr", "DELAY3", 201, val=(ppgr.val, PPTD.val), hg=h)
+ehspc = NodeSmooth("ehspc", "SMOOTH", 201, hg=h) # tf - ti +1
+ple = NodeSmooth("ple", "SMOOTH3", 201, hg=h)
+diopc = NodeSmooth("diopc", "SMOOTH3", 201, hg=h)
+aiopc = NodeSmooth("aiopc", "SMOOTH", 201, hg=h)
+fcfpc = NodeSmooth("fcfpc", "SMOOTH3", 201, hg=h)
+lufd = NodeSmooth("lufd", "SMOOTHI", 201, initial=1, hg=h)
+ai = NodeSmooth("ai", "SMOOTH", 201, hg=h)
+lyf2 = NodeSmooth("lyf2", "SMOOTH3", 201, hg=h)
+pfr = NodeSmooth("pfr", "SMOOTHI", 201, initial=PFRI.val, hg=h)
+nruf2 = NodeSmooth("nruf2", "SMOOTH3", 201, hg=h)
+ppgf2 = NodeSmooth("ppgf2", "SMOOTH3", 201, hg=h)
+ppapr = NodeSmooth("ppapr", "DELAY3", 201, hg=h)
 
 #######################
 # Edges on population #
@@ -625,8 +623,6 @@ h.add_edge(f_tab1, dcph, [DCPH, pal, PALT])
 def f_cai(tai, fiald): return tai * (1 - fiald)
 h.add_edge(f_cai, cai, [tai, fiald])
 
-h.add_edge(clip, ALAI, [ALAI2, ALAI1, t, PYEAR])
-
 def f_aiph(ai, falm, al): return ai * (1 - falm) / al
 h.add_edge(f_aiph, aiph, [ai, falm, al])
 
@@ -789,10 +785,8 @@ h.add_edge(nruf2.f_smooth, nruf2, [nrtd, TDD, TS])
 h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD, TS])
 h.add_edge(ppapr.f_smooth, ppapr, [ppgr, PPTD, TS])
 
-
 print(h)
 h.set_rank()
-
 #########
 # Solve #
 #########
