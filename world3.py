@@ -669,7 +669,7 @@ h.add_edge(f_tab, lfdr, [LFDR, ppolx])
 h.add_edge(prod, lfd, [lfert, lfdr])
 
 #Loop 5
-def f_lfr(ilf, lfert, lfrt): return (ilf -lfert) / lfrt
+def f_lfr(ilf, lfert, lfrt): return (ilf - lfert) / lfrt
 h.add_edge(f_lfr, lfr, [ILF, lfert, lfrt])
 
 h.add_edge(f_tab, lfrt, [LFRT, falm])
@@ -788,7 +788,7 @@ h.add_edge(f_init, pfr, [PFRI])
 h.add_edge(f_init, lufd, [CUFI])"""
 
 
-print(h)
+#print(h)
 h.set_rank()
 #########
 # Solve #
