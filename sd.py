@@ -67,6 +67,7 @@ class NodeSmooth(NodeFlow):
         self.initial = initial
         self.dt = None
         self.ts = None
+        self.node = None
         self.k = 1
         if t == "SMOOTH3":
             self.I1 = val
@@ -83,15 +84,15 @@ class NodeSmooth(NodeFlow):
             self.I3 = None
             self.histI3 = [None] * size
 
-    def eval(self, node, save):
+    def eval(self, save):
         text = "{}:{}->".format(self.name, self.val)
         if self.type == "SMOOTH":
-            self.val += (node.val-self.val) * self.ts / self.dt
+            self.val += (self.node.val-self.val) * self.ts / self.dt
         if self.type == "SMOOTHI":
             if len(self.hist) == 1:
-                self.val += (node.val - self.initial) * self.ts / self.dt
+                self.val += (self.node.val - self.initial) * self.ts / self.dt
             else:
-                self.val += (node.val - self.val) * self.ts / self.dt
+                self.val += (self.node.val - self.val) * self.ts / self.dt
         if self.type == "SMOOTH3":
             dl = self.dt/3
             self.val += (self.I1 - self.val) * self.ts / dl
@@ -100,13 +101,13 @@ class NodeSmooth(NodeFlow):
         if self.type == "DELAY3":
             dl = self.dt / 3
             if self.I1 is None:
-                self.I1 = dl * node.val
+                self.I1 = dl * self.node.val
                 self.I2 = self.I1
                 self.I3 = self.I1
             self.val = self.I1 / dl
             self.I1 += (self.I2 / dl - self.I1) * self.ts
             self.I2 += (self.I3 / dl - self.I2) * self.ts
-            self.I3 += (node.val - self.I3) * self.ts
+            self.I3 += (self.node.val - self.I3) * self.ts
         if save:
             k = self.k
             self.hist[k] = self.val
@@ -121,11 +122,17 @@ class NodeSmooth(NodeFlow):
         #text += "{}".format(self.val)
         #print(text)
 
+    def __repr__(self):
+        value = "None"
+        if self.val != None:
+            value = "{:.03f}".format(self.val)
+        return "{0.name:<8} {3} IN: {1:<20} OUT: {2} NODE: {4}".format(self, ",".join(self.get_pred_name()),
+                                                             ",".join(self.get_succ_name()), value, self.node)
+
     def f_smooth(self, flow, constant, ts):
-        self.val = flow.val
-        self.dt = constant.val
-        self.ts = ts.val
-        print(self.val)
+        self.node = flow
+        self.dt = constant
+        self.ts = ts
 
 
 class NodeConstant(Node):
@@ -173,7 +180,7 @@ class Hypergraph():
     def eval(self, save):
         for ns in self.nodesrank:
             if type(ns) == NodeSmooth:
-                ns.eval(ns.val, save)
+                ns.eval(ns.node.val, save)
             else:
                 ns.eval(save)
 
