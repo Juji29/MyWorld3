@@ -213,6 +213,7 @@ JPICU = NodeConstant("JPICU", CT, val=([50, 0.37], [200, 0.18], [350, 0.12], [50
 JPSCU = NodeConstant("JPSCU", CT, val=([50, 1.1], [200, 0.6], [350, 0.35], [500, 0.2], [650, 0.15], [800, 0.15]), hg=h)
 JPH = NodeConstant("JPH", CT, val=([2, 2], [6, 0.5], [10, 0.4], [14, 0.3], [18, 0.27], [22, 0.24], [26, 0.2], [30, 0.2]), hg=h)
 CUF = NodeConstant("CUF", CT, val=([1, 1], [3, 0.9], [5, 0.7], [7, 0.3], [9, 0.1], [11, 0.1]), hg=h)
+CUFI = NodeConstant("CUFI", C, val=1, hg=h)
 jpicu = NodeFlow("jpicu", hg=h)
 jpscu = NodeFlow("jpscu", hg=h)
 jph = NodeFlow("jph", hg=h)
@@ -278,7 +279,7 @@ mlymc = NodeFlow("mlymc", hg=h)
 
 cai = NodeFlow("cai", hg=h)
 aiph = NodeFlow("aiph", hg=h)
-ly = NodeFlow("ny", hg=h)
+ly = NodeFlow("ly", hg=h)
 lyf = NodeFlow("lyf", hg=h)
 mpld = NodeFlow("mpld", hg=h)
 mpai = NodeFlow("mpai", hg=h)
@@ -421,10 +422,10 @@ ple = NodeSmooth("ple", "SMOOTH3", 201, hg=h)
 diopc = NodeSmooth("diopc", "SMOOTH3", 201, hg=h)
 aiopc = NodeSmooth("aiopc", "SMOOTH", 201, hg=h)
 fcfpc = NodeSmooth("fcfpc", "SMOOTH3", 201, hg=h)
-lufd = NodeSmooth("lufd", "SMOOTHI", 201, initial=1, hg=h)
-ai = NodeSmooth("ai", "SMOOTH", 201, hg=h)
+lufd = NodeSmooth("lufd", "SMOOTHI", 201, val=1, initial=1, hg=h)
+ai = NodeSmooth("ai", "SMOOTHI", 201, val=1, initial=1, hg=h)
 lyf2 = NodeSmooth("lyf2", "SMOOTH3", 201, hg=h)
-pfr = NodeSmooth("pfr", "SMOOTHI", 201, initial=PFRI.val, hg=h)
+pfr = NodeSmooth("pfr", "SMOOTHI", 201, val=1, initial=PFRI.val, hg=h)
 nruf2 = NodeSmooth("nruf2", "SMOOTH3", 201, hg=h)
 ppgf2 = NodeSmooth("ppgf2", "SMOOTH3", 201, hg=h)
 ppapr = NodeSmooth("ppapr", "DELAY3", 201, hg=h)
@@ -511,8 +512,8 @@ h.add_edge(f_fie, fie, [iopc, aiopc])
 def f_nfc(mtf, dtf): return mtf / dtf - 1
 h.add_edge(f_nfc, nfc, [mtf, dtf])
 
-def f_fce(fcfpc, gdpu, t, fcest): return clip(1, fcfpc / gdpu, t.val, fcest.val)
-h.add_edge(f_fce, fce, [fcfpc, GDPU, t, FCEST])
+def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab1(fce, fcfpc, gdpu), t.val, fcest.val)
+h.add_edge(f_fce, fce, [FCE, fcfpc, GDPU, t, FCEST])
 
 h.add_edge(prod, fcapc, [fsafc, sopc])
 
@@ -678,7 +679,7 @@ h.add_edge(div, fr, [fpc, SFPC])
 def f_lytd(lytdr): return - lytdr
 h.add_edge(f_lytd, lytd, [lytdr])
 
-def f_lytdr(lytd, lycm, t, pyear): return clip(lytd * lycm, 0, t.val, pyear.val)
+def f_lytdr(lytd, lycm, t, pyear): return clip(lytd * lycm, 0, t.val, pyear)
 h.add_edge(f_lytdr, lytdr, [lytd, lycm, t, PYEAR])
 
 h.add_edge(f_tab2, lycm, [LYCM, DFR, fr])
@@ -780,6 +781,12 @@ h.add_edge(pfr.f_smooth, pfr, [fr, FSDP, TS])
 h.add_edge(nruf2.f_smooth, nruf2, [nrtd, TDD, TS])
 h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD, TS])
 h.add_edge(ppapr.f_smooth, ppapr, [ppgr, PPTD, TS])
+
+"""
+def f_init(initial): return initial
+h.add_edge(f_init, pfr, [PFRI])
+h.add_edge(f_init, lufd, [CUFI])"""
+
 
 print(h)
 h.set_rank()

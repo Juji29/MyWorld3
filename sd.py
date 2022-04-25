@@ -120,8 +120,8 @@ class NodeSmooth(NodeFlow):
                 self.histI2[k] = self.I2
                 self.histI3[k] = self.I3
             self.k += 1
-        #text += "{}".format(self.val)
-        #print(text)
+        text += "{}".format(self.val)
+        print(text)
 
     def __repr__(self):
         value = "None"
@@ -206,7 +206,7 @@ class Hypergraph():
         return d2, gM, gP
         
     def set_rank(self):
-        d2, gM, gP = self.sub_graph_vertex(lambda x : type(x) == NodeFlow or type(x) == NodeSmooth)
+        d2, gM, gP = self.sub_graph_vertex(lambda x : type(x) == NodeFlow or (type(x) == NodeSmooth and x.type != "SMOOTHI"))
         size = len(d2)
         dM = [len(gi) for gi in gM]
         S0 = [i for i,di in enumerate(dM) if di == 0]
@@ -222,8 +222,15 @@ class Hypergraph():
             if len(Sk1) > 0 :
                 return rang_rec(Sk1, k+1)
         rang_rec(S0, 0)
-        for i in range(len(d2)):
-            print(str(d2[i]+"="+str(r[i])))
+        #for i in range(len(d2)):
+        #    if d2[i] == "falm":
+        print(r)
+        #        print(str(d2[i]))
+        #        print([d2[j] for j in gP[i]],[d2[j] for j in gM[i]])
+        #        print([r[j] for j in gP[i]],[r[j] for j in gM[i]])
+                #print(r[23],str(d2[23]))
+                #print(gP[i] )
+                #exit(0)
         self.nbrank = max(r) + 1
         #self.nodesrank = [[] for _ in range(self.nbrank)]
         #self.nodesrank = [j for _,j in sorted([(ri, i) for i, ri in enumerate(r)])]
@@ -231,6 +238,7 @@ class Hypergraph():
         #for i,ri in enumerate(r):
         #    self.nodesrank[ri].append(self.nodes[d2[i]])
         #self.nodesrank.append(self.stocks)
+        self.nodesrank += [self.nodes[name] for name, x in self.nodes.items() if type(x) == NodeSmooth and x.type == "SMOOTHI"]
         self.nodesrank += self.stocks
 
         
