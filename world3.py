@@ -165,9 +165,7 @@ ICOR1 = NodeConstant("ICOR1", C, val=3, hg=h)
 ICI = NodeConstant("ICI", C, val=210e9, hg=h)
 ALIC = NodeConstant("ALIC", C, val=14, hg=h)
 IET = NodeConstant("IET", C, val=4000, hg=h)
-FIOACC = NodeConstant("FIOACC", C, hg=h)
-FIOAC1 = NodeConstant("FIOAC1", C, val=0.43, hg=h)
-FIOAC2 = NodeConstant("FIOAC2", C, val=0.43, hg=h)
+FIOACC = NodeConstant("FIOACC", C, val=0.43, hg=h)
 IOPCD = NodeConstant("IOPCD", C, val=400, hg=h)
 PYEAR = NodeConstant("PYEAR", C, val=1995, hg=h)
 
@@ -541,8 +539,6 @@ def f_fioai(fioaa, fioas, fioac): return 1 - fioaa - fioas - fioac
 h.add_edge(f_fioai, fioai, [fioaa, fioas, fioac])
 
 h.add_edge(clip, fioac, [fioacv, FIOACC, t, IET])
-
-h.add_edge(clip, FIOACC, [FIOAC2, FIOAC1, t, PYEAR])
 
 h.add_edge(f_tab1, fioacv, [FIOACV, iopc, IOPCD])
 
