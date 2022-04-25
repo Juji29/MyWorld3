@@ -4,9 +4,9 @@ from math import log
 
 h = Hypergraph()
 
-TI = NodeConstant("TI", C, val=1900, hg=h)
+IT = NodeConstant("IT", C, val=1900, hg=h)
 DT = NodeConstant("DT", C, val=1, hg=h)
-t = NodeStock("time", val=TI.val, hg=h)
+t = NodeStock("time", val=IT.val, hg=h)
 h.add_edge(lambda x: x, t, [DT])
 
 ######################
@@ -418,7 +418,7 @@ ulgha = NodeFlow("ulgha", hg=h)
 ####################
 # Smooth functions #
 ####################
-ehspc = NodeSmooth("ehspc", "SMOOTH", 201, hg=h) # tf - ti +1
+ehspc = NodeSmooth("ehspc", "SMOOTH", 201, hg=h) # ft - it +1
 ple = NodeSmooth("ple", "SMOOTH3", 201, hg=h)
 diopc = NodeSmooth("diopc", "SMOOTH3", 201, hg=h)
 aiopc = NodeSmooth("aiopc", "SMOOTH", 201, hg=h)
@@ -491,13 +491,13 @@ def f_cbr(b, pop): return 1000 * b / pop
 h.add_edge(f_cbr, cbr, [b, pop])
 
 def f_tf(mtf, fce, dtf): return min(mtf, mtf * (1 - fce) + dtf * fce)
-h.add_edge(f_tf, tf, [mtf, FCE, dtf])
+h.add_edge(f_tf, tf, [mtf, fce, dtf])
 
 h.add_edge(prod, mtf, [MTFN, fm])
 
 h.add_edge(f_tab1, fm, [FM, le, OY])
 
-h.add_edge(prod, dtf, [dcfs, CMPLE])
+h.add_edge(prod, dtf, [dcfs, cmple])
 
 h.add_edge(f_tab1, cmple, [CMPLE, ple, OY])
 
@@ -557,7 +557,7 @@ h.add_edge(f_tab1, fioas1, [FIOAS1, sopc, isopc])
 h.add_edge(f_tab1, fioas2, [FIOAS2, sopc, isopc])
 
 h.add_edge(prod, scir, [io, fioas])
-h.add_edge(prod, sc, [scir, scdr])
+h.add_edge(moins, sc, [scir, scdr])
 h.add_edge(div, scdr, [sc, ALSC])
 
 def f_so(sc, cuf, scor): return sc *cuf / scor
@@ -648,13 +648,13 @@ h.add_edge(f_tab1, mlymc, [MLYMC, aiph, UAGI])
 #Loop 3
 h.add_edge(prod, all, [ALLN, llmy])
 
-def f_llmy(llmy2, llmy1, llmytm, oy, t): return clip(0.95 ** ((t - llmytm) / oy) * llmy1 + (1 - 0.95 ** ((t - llmytm) / oy)) * llmy2, llmy1, t.val, llmytm.val)
+def f_llmy(llmy2, llmy1, llmytm, oy, t): return clip(0.95 ** ((t - llmytm) / oy) * llmy1 + (1 - 0.95 ** ((t - llmytm) / oy)) * llmy2, llmy1, t.val, llmytm)
 h.add_edge(f_llmy, llmy, [llmy2, llmy1, LLMYTM, OY, t])
 
 h.add_edge(f_tab1, llmy1, [LLMY1, ly, ILF])
 h.add_edge(f_tab1, llmy2, [LLMY2, ly, ILF])
 
-h.add_edge(prod, ler, [al, all])
+h.add_edge(div, ler, [al, all])
 
 h.add_edge(f_tab1, uilpc, [UILPC, iopc, GDPU])
 
@@ -790,23 +790,23 @@ h.set_rank()
 #########
 # Solve #
 #########
-tf = 2100
-nbpas = 201
-time = [TI.val, tf]
+FT = NodeConstant("FT", C, val=2100, hg=h) #Final time
+nbpas = FT.val - IT.val
+time = [IT.val, FT.val]
 
 label1 = ['année', 'population', 'capital', 'capital agriculture', 'ressources', 'polution']
-#print(TI.val, PI.val, CII.val, CIAFI.val, NRI.val, POLI.val, flush=True)
-y0 = np.array([TI.val, P1I.val, P2I.val, P3I.val, P4I.val, ICI.val, SCI.val, ALI.val, PALI.val, UILI.val, LFERTI.val, LYF1.val, NRI.val, NRUF1.val, PPOLI.val, PPGF1.val])
+#print(IT.val, PI.val, CII.val, CIAFI.val, NRI.val, POLI.val, flush=True)
+y0 = np.array([IT.val, P1I.val, P2I.val, P3I.val, P4I.val, ICI.val, SCI.val, ALI.val, PALI.val, UILI.val, LFERTI.val, LYF1.val, NRI.val, NRUF1.val, PPOLI.val, PPGF1.val])
 nbVar = len(y0)
 
 sol = traj_rungeKutta(y0, h.eval2, nbpas, DT.val)
 n = nbVar - 1
-x = [range(TI.val, tf+1) for _ in range(n)]
+x = [range(IT.val, FT.val+1) for _ in range(n)]
 y = [sol[i,:] for i in range(1, n+1)]
 ymax = [max(sol[i,:])*1.1 for i in range(1, n+1)]
 ymin = [0] * n
 #ymax = [PI.val*5, CII.val*30, CIAFI.val*2, NRI.val, POLI.val*150]
-xmin, xmax = TI.val, tf
+xmin, xmax = IT.val, FT.val
 labelX = "time"
 labelY = label1[1:]
 tx = 0.7

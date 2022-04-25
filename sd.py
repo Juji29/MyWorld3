@@ -86,6 +86,7 @@ class NodeSmooth(NodeFlow):
 
     def eval(self, save):
         text = "{}:{}->".format(self.name, self.val)
+        self.cons(*[p.val for p in self.pred])
         if self.type == "SMOOTH":
             self.val += (self.node.val-self.val) * self.ts / self.dt
         if self.type == "SMOOTHI":
@@ -127,7 +128,7 @@ class NodeSmooth(NodeFlow):
         if self.val != None:
             value = "{:.03f}".format(self.val)
         return "{0.name:<8} {3} IN: {1:<20} OUT: {2} NODE: {4}".format(self, ",".join(self.get_pred_name()),
-                                                             ",".join(self.get_succ_name()), value, self.node)
+                                                             ",".join(self.get_succ_name()), value, self.node.name if self.node else self.node)
 
     def f_smooth(self, flow, constant, ts):
         self.node = flow
@@ -179,10 +180,7 @@ class Hypergraph():
 
     def eval(self, save):
         for ns in self.nodesrank:
-            if type(ns) == NodeSmooth:
-                ns.eval(ns.node.val, save)
-            else:
-                ns.eval(save)
+            ns.eval(save)
 
     def eval2(self, t, y, save=False):
         for i, n in enumerate(self.stocks):
