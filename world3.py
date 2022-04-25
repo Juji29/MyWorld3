@@ -794,8 +794,8 @@ FT = NodeConstant("FT", C, val=2100, hg=h) #Final time
 nbpas = FT.val - IT.val
 time = [IT.val, FT.val]
 
-label1 = ['année', 'population', 'capital', 'capital agriculture', 'ressources', 'polution']
-#print(IT.val, PI.val, CII.val, CIAFI.val, NRI.val, POLI.val, flush=True)
+label1 = ['Year', 'Population ages 0-14', 'Population ages 15-44', 'Population ages 45-64', 'Population ages 65+', 'Industrial Capital', 'Service Capital', 'Arable Land', 'Potentially Arable Land', 'Urban-Industrial Land', 'Land Fertility', 'Land Yield Related Technology Development', 'Non Renewable Ressources', 'Non Renewable Ressources Related Technology Development', 'Persistent Polution', 'Production Related Technology Development']
+
 y0 = np.array([IT.val, P1I.val, P2I.val, P3I.val, P4I.val, ICI.val, SCI.val, ALI.val, PALI.val, UILI.val, LFERTI.val, LYF1.val, NRI.val, NRUF1.val, PPOLI.val, PPGF1.val])
 nbVar = len(y0)
 
@@ -805,7 +805,7 @@ x = [range(IT.val, FT.val+1) for _ in range(n)]
 y = [sol[i,:] for i in range(1, n+1)]
 ymax = [max(sol[i,:])*1.1 for i in range(1, n+1)]
 ymin = [0] * n
-#ymax = [PI.val*5, CII.val*30, CIAFI.val*2, NRI.val, POLI.val*150]
+
 xmin, xmax = IT.val, FT.val
 labelX = "time"
 labelY = label1[1:]
