@@ -42,20 +42,25 @@ def clip(c1, c2, ts, t):
     else : return c2
 
 def f_tab(tab, x):
-    for i in range(len(tab)-1):
-        if x < tab[i][0]:
-            return tab[0][1]
-            # raise ExceptionLowerLimit()
-        if x > tab[i][0]:
-            return tab[-1][1]
-            # raise ExceptionUpperLimit()
-        if x == tab[i][0]:
-            return tab[i][1]
-        if tab[i][0] < x < tab[i+1][0]:
-            coeff = (tab[i+1][1]-tab[i][1]) / (tab[i+1][0]-tab[i][0])
-            return tab[i][1] + coeff * (x-tab[i][0])
+    if tab[0][0] > x:
+        if  abs(tab[0][0] - x) > 15:
+            print(tab, x, h)
+            exit(0)
+        return tab[0][1]
+    if tab[-1][0] < x:
+        if abs(x - tab[-1][0]) > 15:
+            print(tab, x, h)
+            exit(0)
+        return tab[-1][1]
+    else:
+        i = 0
+        while i < len(tab):
+            if tab[i][0] <= x <= tab[i+1][0]:
+                coeff = (tab[i+1][1]-tab[i][1]) / (tab[i+1][0]-tab[i][0])
+                return tab[i][1] + coeff * (x-tab[i][0])
+            i += 1
 
-def f_tab1(x,y, z): return f_tab(x, y/z)
+def f_tab1(x, y, z): return f_tab(x, y/z)
 
 def f_tab2(x, y, z): return f_tab(x, y - z)
 
@@ -206,7 +211,6 @@ sopc = NodeFlow("sopc", hg=h)
 
 #Related to jobs
 LFPF = NodeConstant("LFPF", C, val=0.75, hg=h)
-LUFDT = NodeConstant("LUFDT", C, val=2, hg=h)
 #CUFI = NodeConstant("CUFI", C, val=1, hg=h)
 
 JPICU = NodeConstant("JPICU", CT, val=([50, 0.37], [200, 0.18], [350, 0.12], [500, 0.09], [650, 0.07], [800, 0.06]), hg=h)
@@ -316,7 +320,6 @@ lfd = NodeFlow("lfd", hg=h)
 #Loop 5
 ILF = NodeConstant("ILF", C, val=600, hg=h)
 SFPC = NodeConstant("SFPC", C, val=230, hg=h)
-PFRI = NodeConstant("PFRI", C, val=1, hg=h) #TODO Utilisé comme initialisation de SMOOTH
 FSDP = NodeConstant("FSDP", C, val=2, hg=h)
 DFR = NodeConstant("DFR", C, val=2, hg=h)
 
@@ -417,13 +420,16 @@ ulgha = NodeFlow("ulgha", hg=h)
 ####################
 # Smooth functions #
 ####################
+LUFDT = NodeConstant("LUFDT", C, val=2, hg=h)
+AII = NodeConstant("AII", C, val=5e9, hg=h)
+PFRI = NodeConstant("PFRI", C, val=1, hg=h)
 ehspc = NodeSmooth("ehspc", "SMOOTH", 201, hg=h) # ft - it +1
 ple = NodeSmooth("ple", "SMOOTH3", 201, hg=h)
 diopc = NodeSmooth("diopc", "SMOOTH3", 201, hg=h)
 aiopc = NodeSmooth("aiopc", "SMOOTH", 201, hg=h)
 fcfpc = NodeSmooth("fcfpc", "SMOOTH3", 201, hg=h)
-lufd = NodeSmooth("lufd", "SMOOTHI", 201, val=1.0, initial=1.0, hg=h)
-ai = NodeSmooth("ai", "SMOOTHI", 201, val=1.0, initial=1.0, hg=h)
+lufd = NodeSmooth("lufd", "SMOOTHI", 201, val=LUFDT.val, initial=LUFDT.val, hg=h)
+ai = NodeSmooth("ai", "SMOOTHI", 201, val=AII.val, initial=AII.val, hg=h)
 lyf2 = NodeSmooth("lyf2", "SMOOTH3", 201, hg=h)
 pfr = NodeSmooth("pfr", "SMOOTHI", 201, val=PFRI.val, initial=PFRI.val, hg=h)
 nruf2 = NodeSmooth("nruf2", "SMOOTH3", 201, hg=h)
@@ -781,11 +787,6 @@ h.add_edge(pfr.f_smooth, pfr, [fr, FSDP, TS])
 h.add_edge(nruf2.f_smooth, nruf2, [nrtd, TDD, TS])
 h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD, TS])
 h.add_edge(ppapr.f_smooth, ppapr, [ppgr, PPTD, TS])
-
-"""
-def f_init(initial): return initial
-h.add_edge(f_init, pfr, [PFRI])
-h.add_edge(f_init, lufd, [CUFI])"""
 
 
 #print(h)
