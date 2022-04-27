@@ -36,8 +36,8 @@ def affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY,tx):
     plt.show()
 
 
-def affiche2(time, y, ymin, ymax, labelX, labelY, n, figure=None, window_title="World3 Results"):
-    fig=plt.figure(figsize=(20.48, 10.24))
+def affiche2(time, y, ymin, ymax, labelX, labelY, n, window_title="World3 Results"):
+    fig = plt.figure(figsize=(20.48, 10.24))
     plots = [(time[i], labelY[i], y[i], ymin[i], ymax[i]) for i in range(n)]
     ax = fig.add_subplot(4, 3, 1, xlabel=labelX[0], ylabel='Population')
     for i, (time, title, data, ymin, ymax) in enumerate(plots):
@@ -50,7 +50,6 @@ def affiche2(time, y, ymin, ymax, labelX, labelY, n, figure=None, window_title="
             ax.plot(time, data)
     fig.suptitle(window_title)
     plt.show()
-    return figure
 
 
 if __name__ == "__main__":
