@@ -1,5 +1,5 @@
 from sd import *
-from multiaxes import affiche
+from multiaxes import affiche, affiche2
 from math import log
 
 h = Hypergraph()
@@ -813,4 +813,8 @@ xmin, xmax = IT.val, FT.val
 labelX = label1[0]
 labelY = label1[1:]
 tx = 0.7
-affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY, tx)
+
+print(h)
+
+#affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY, tx)
+affiche2(x, y, ymin, ymax, labelX, labelY, n)

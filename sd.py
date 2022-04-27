@@ -123,8 +123,8 @@ class NodeSmooth(NodeFlow):
         value = "None"
         if self.val != None:
             value = "{:.03f}".format(self.val)
-        return "{0.name:<8} {3} IN: {1:<20} OUT: {2} NODE: {4}".format(self, ",".join(self.get_pred_name()),
-                                                             ",".join(self.get_succ_name()), value, self.node.name if self.node else self.node)
+        return "{0.name:<8} {3} IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()),
+                                                             ",".join(self.get_succ_name()), value)
 
     def f_smooth(self, flow, constant, ts):
         self.node = flow

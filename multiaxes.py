@@ -8,9 +8,9 @@ def affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY,tx):
 
     n = len(y)
     par = [host.twinx() for _ in range(n-1)]
-    par.insert(0,host)
+    par.insert(0, host)
 
-    for i in range(1,n):
+    for i in range(1, n):
         par[i].axis["right"] = par[i].new_fixed_axis(loc="right", offset=(40*i, 0))
         par[i].axis["right"].toggle(all=True)
 
@@ -34,6 +34,24 @@ def affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY,tx):
         par[i].axis["right"].label.set_color(p[i].get_color())
 
     plt.show()
+
+
+def affiche2(time, y, ymin, ymax, labelX, labelY, n, figure=None, window_title="World3 Results"):
+    fig=plt.figure(figsize=(20.48, 10.24))
+    plots = [(time[i], labelY[i], y[i], ymin[i], ymax[i]) for i in range(n)]
+    ax = fig.add_subplot(4, 3, 1, xlabel=labelX[0], ylabel='Population')
+    for i, (time, title, data, ymin, ymax) in enumerate(plots):
+        if i in range(0, 4):
+            ax.plot(time, data, label=title)
+            ax.legend()
+        else:
+            ax = fig.add_subplot(4, 3, i-2, xlabel=labelX, ylabel=title)
+            ax.set_ylim(ymin, ymax)
+            ax.plot(time, data)
+    fig.suptitle(window_title)
+    plt.show()
+    return figure
+
 
 if __name__ == "__main__":
     n = 4
