@@ -45,12 +45,12 @@ class NodeStock(Node):
         self.hist = [val]
 
     def eval(self, save):
-        text = "{}:{}->".format(self.name, self.val)
+        #text = "{}:{}->".format(self.name, self.val)
         self.val = self.cons(*[p.val for p in self.pred])
         if save:
             self.hist.append(self.val)
-        text += "{}".format(self.val)
-        print(text)
+        #text += "{}".format(self.val)
+        #print(text)
 
 
 class NodeFlow(NodeStock):
@@ -85,15 +85,15 @@ class NodeSmooth(NodeFlow):
             self.histI3 = [None] * size
 
     def eval(self, save):
-        text = "{}:{}->".format(self.name, self.val)
+        #text = "{}:{}->".format(self.name, self.val)
         self.cons(*[p.val for p in self.pred])
         if self.type == "SMOOTH":
             self.val += (self.node - self.val) * self.ts / self.dt
         if self.type == "SMOOTHI":
             if len(self.hist) == 1:
-                self.val += (self.node.val - self.initial) * self.ts / self.dt
+                self.val += (self.node - self.initial) * self.ts / self.dt
             else:
-                self.val += (self.node.val - self.val) * self.ts / self.dt
+                self.val += (self.node - self.val) * self.ts / self.dt
         if self.type == "SMOOTH3":
             dl = self.dt/3
             self.I2 += (self.node - self.I2) * self.ts / dl
@@ -116,8 +116,8 @@ class NodeSmooth(NodeFlow):
                 self.histI2[k] = self.I2
                 self.histI3[k] = self.I3
             self.k += 1
-        text += "{}".format(self.val)
-        print(text)
+        #text += "{}".format(self.val)
+        #print(text)
 
     def __repr__(self):
         value = "None"
@@ -225,8 +225,8 @@ class Hypergraph():
         rang_rec(S0, 0)
         #for i in range(len(d2)):
         #    if d2[i] == "falm":
-        print(r)
-        #        print(str(d2[i]))
+        #print(r)
+        #        print(str(d2[i])+"="+str(r[i]))
         #        print([d2[j] for j in gP[i]],[d2[j] for j in gM[i]])
         #        print([r[j] for j in gP[i]],[r[j] for j in gM[i]])
                 #print(r[23],str(d2[23]))

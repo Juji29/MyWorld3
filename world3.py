@@ -12,14 +12,14 @@ h.add_edge(lambda x: x, t, [DT])
 ######################
 # Constantes d'unité #
 ######################
-RHGDP = NodeConstant("RHGDP", C, val=9508, hg=h)
-RLGDP = NodeConstant("RLGDP", C, val=24, hg=h)
+RHGDP = NodeConstant("RHGDP", C, val=9508., hg=h)
+RLGDP = NodeConstant("RLGDP", C, val=24., hg=h)
 TL = NodeConstant("TL", C, val=1.91, hg=h)
 HGHA = NodeConstant("HGHA", C, val=1e9, hg=h)
-OY = NodeConstant("OY", C, val=1, hg=h)
-UAGI = NodeConstant("UAGI", C, val=1, hg=h)
-UP = NodeConstant("UP", C, val=1, hg=h)
-GDPU = NodeConstant("GDPU", C, val=1, hg=h)
+OY = NodeConstant("OY", C, val=1., hg=h)
+UAGI = NodeConstant("UAGI", C, val=1., hg=h)
+UP = NodeConstant("UP", C, val=1., hg=h)
+GDPU = NodeConstant("GDPU", C, val=1., hg=h)
 TS = NodeConstant("TS", C, val=0.5, hg=h)
 
 ###################
@@ -43,14 +43,14 @@ def clip(c1, c2, ts, t):
 
 def f_tab(tab, x):
     for i in range(len(tab)-1):
-        if tab[i][0] == tab[0][0] and x < tab[i][0]:
+        if x < tab[i][0]:
             return tab[0][1]
             # raise ExceptionLowerLimit()
-        if tab[i][0] == tab[-1][0] and x > tab[i][0]:
+        if x > tab[i][0]:
             return tab[-1][1]
             # raise ExceptionUpperLimit()
         if x == tab[i][0]:
-            return x
+            return tab[i][1]
         if tab[i][0] < x < tab[i+1][0]:
             coeff = (tab[i+1][1]-tab[i][1]) / (tab[i+1][0]-tab[i][0])
             return tab[i][1] + coeff * (x-tab[i][0])
@@ -422,10 +422,10 @@ ple = NodeSmooth("ple", "SMOOTH3", 201, hg=h)
 diopc = NodeSmooth("diopc", "SMOOTH3", 201, hg=h)
 aiopc = NodeSmooth("aiopc", "SMOOTH", 201, hg=h)
 fcfpc = NodeSmooth("fcfpc", "SMOOTH3", 201, hg=h)
-lufd = NodeSmooth("lufd", "SMOOTHI", 201, val=1, initial=1, hg=h)
-ai = NodeSmooth("ai", "SMOOTHI", 201, val=1, initial=1, hg=h)
+lufd = NodeSmooth("lufd", "SMOOTHI", 201, val=1.0, initial=1.0, hg=h)
+ai = NodeSmooth("ai", "SMOOTHI", 201, val=1.0, initial=1.0, hg=h)
 lyf2 = NodeSmooth("lyf2", "SMOOTH3", 201, hg=h)
-pfr = NodeSmooth("pfr", "SMOOTHI", 201, val=1, initial=PFRI.val, hg=h)
+pfr = NodeSmooth("pfr", "SMOOTHI", 201, val=PFRI.val, initial=PFRI.val, hg=h)
 nruf2 = NodeSmooth("nruf2", "SMOOTH3", 201, hg=h)
 ppgf2 = NodeSmooth("ppgf2", "SMOOTH3", 201, hg=h)
 ppapr = NodeSmooth("ppapr", "DELAY3", 201, hg=h)
@@ -470,7 +470,7 @@ h.add_edge(prod, le, [LEN, lmf, lmhs, lmp, lmc])
 h.add_edge(f_tab1, lmf, [LMF, fpc, SFPC])
 h.add_edge(f_tab1, hsapc, [HSAPC, sopc, GDPU])
 
-def f_lmhs(lmhs1, lmhs2, t): return clip(lmhs1, lmhs2, 1940, t.val)
+def f_lmhs(lmhs1, lmhs2, t): return clip(lmhs1, lmhs2, 1940, t)
 h.add_edge(f_lmhs, lmhs, [lmhs1, lmhs2, t])
 
 h.add_edge(f_tab1, lmhs1, [LMHS1, ehspc, GDPU])
@@ -483,7 +483,7 @@ h.add_edge(f_lmc, lmc, [cmi, fpu])
 
 h.add_edge(f_tab, lmp, [LMP, ppolx])
 
-def f_b(d, pet, tf, p2, rlt, t): return clip(d, 0.5 * tf * p2 / rlt, t.val, pet)
+def f_b(d, pet, tf, p2, rlt, t): return clip(d, 0.5 * tf * p2 / rlt, t, pet)
 h.add_edge(f_b, b, [d, PET, tf, p2, RLT, t])
 
 def f_cbr(b, pop): return 1000 * b / pop
@@ -500,7 +500,7 @@ h.add_edge(prod, dtf, [dcfs, cmple])
 
 h.add_edge(f_tab1, cmple, [CMPLE, ple, OY])
 
-def f_dcfs(dcfsn, frsn, sfsn, t, zpgt): return clip(2, dcfsn * frsn * sfsn, t.val, zpgt)
+def f_dcfs(dcfsn, frsn, sfsn, t, zpgt): return clip(2, dcfsn * frsn * sfsn, t, zpgt)
 h.add_edge(f_dcfs, dcfs, [DCFSN, frsn, sfsn, t, ZPGT])
 
 h.add_edge(f_tab1, sfsn, [SFSN, diopc, GDPU])
@@ -512,7 +512,7 @@ h.add_edge(f_fie, fie, [iopc, aiopc])
 def f_nfc(mtf, dtf): return mtf / dtf - 1
 h.add_edge(f_nfc, nfc, [mtf, dtf])
 
-def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab1(fce, fcfpc, gdpu), t.val, fcest.val)
+def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab1(fce, fcfpc, gdpu), t, fcest)
 h.add_edge(f_fce, fce, [FCE, fcfpc, GDPU, t, FCEST])
 
 h.add_edge(prod, fcapc, [fsafc, sopc])
@@ -645,7 +645,7 @@ h.add_edge(f_tab1, mlymc, [MLYMC, aiph, UAGI])
 #Loop 3
 h.add_edge(prod, all, [ALLN, llmy])
 
-def f_llmy(llmy2, llmy1, llmytm, oy, t): return clip(0.95 ** ((t - llmytm) / oy) * llmy1 + (1 - 0.95 ** ((t - llmytm) / oy)) * llmy2, llmy1, t.val, llmytm)
+def f_llmy(llmy2, llmy1, llmytm, oy, t): return clip(0.95 ** ((t - llmytm) / oy) * llmy1 + (1 - 0.95 ** ((t - llmytm) / oy)) * llmy2, llmy1, t, llmytm)
 h.add_edge(f_llmy, llmy, [llmy2, llmy1, LLMYTM, OY, t])
 
 h.add_edge(f_tab1, llmy1, [LLMY1, ly, ILF])
@@ -679,7 +679,7 @@ h.add_edge(div, fr, [fpc, SFPC])
 def f_lytd(lytdr): return - lytdr
 h.add_edge(f_lytd, lytd, [lytdr])
 
-def f_lytdr(lytd, lycm, t, pyear): return clip(lytd * lycm, 0, t.val, pyear)
+def f_lytdr(lytd, lycm, t, pyear): return clip(lytd * lycm, 0, t, pyear)
 h.add_edge(f_lytdr, lytdr, [lytd, lycm, t, PYEAR])
 
 h.add_edge(f_tab2, lycm, [LYCM, DFR, fr])
@@ -705,7 +705,7 @@ h.add_edge(f_tab, fcaor2, [FCAOR2, nrfr])
 def f_nrtd(nrate): return - nrate
 h.add_edge(f_nrtd, nrtd, [nrate])
 
-def f_nrate(nrtd, nrcm, t, pyear): return clip(nrtd * nrcm, 0, t.val, pyear.val)
+def f_nrate(nrtd, nrcm, t, pyear): return clip(nrtd * nrcm, 0, t, pyear)
 h.add_edge(f_nrate, nrate, [nrtd, nrcm, t, PYEAR])
 
 def f_nrcm(nrcm, nrur, dnrur): return f_tab(nrcm, 1 - nrur/dnrur)
@@ -735,7 +735,7 @@ h.add_edge(prod, ahl, [AHL70, ahlm])
 def f_ptd(ptdr): return - ptdr
 h.add_edge(f_ptd, ptd, [ptdr])
 
-def f_ptdr(ptd, polgfm, t, pyear): return clip(ptd * polgfm, 0, t.val, pyear.val)
+def f_ptdr(ptd, polgfm, t, pyear): return clip(ptd * polgfm, 0, t, pyear)
 h.add_edge(f_ptdr, ptdr, [ptd, polgfm, t, PYEAR])
 
 def f_polgfm(polgfm, ppolx, dpolx): return f_tab(polgfm, 1 - ppolx/dpolx)
@@ -794,7 +794,7 @@ h.set_rank()
 # Solve #
 #########
 FT = NodeConstant("FT", C, val=2100, hg=h) #Final time
-nbpas = FT.val - IT.val
+nbpas = FT.val - IT.val + 1
 time = [IT.val, FT.val]
 
 label1 = ['Year', 'Population ages 0-14', 'Population ages 15-44', 'Population ages 45-64', 'Population ages 65+', 'Industrial Capital', 'Service Capital', 'Arable Land', 'Potentially Arable Land', 'Urban-Industrial Land', 'Land Fertility', 'Land Yield Related Technology Development', 'Non Renewable Ressources', 'Non Renewable Ressources Related Technology Development', 'Persistent Polution', 'Production Related Technology Development']
@@ -810,7 +810,7 @@ ymax = [max(sol[i,:])*1.1 for i in range(1, n+1)]
 ymin = [0] * n
 
 xmin, xmax = IT.val, FT.val
-labelX = "time"
+labelX = label1[0]
 labelY = label1[1:]
 tx = 0.7
 affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY, tx)
