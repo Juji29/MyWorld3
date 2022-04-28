@@ -40,6 +40,7 @@ def affiche2(time, y, ymin, ymax, labelX, labelY, n, window_title="World3 Result
     fig = plt.figure(figsize=(20.48, 10.24))
     plots = [(time[i], labelY[i], y[i], ymin[i], ymax[i]) for i in range(n)]
     ax = fig.add_subplot(4, 3, 1, xlabel=labelX[0], ylabel='Population')
+    ax.plot(time[0], sum([i for i in y[:4]]), label='Population totale')
     for i, (time, title, data, ymin, ymax) in enumerate(plots):
         if i in range(0, 4):
             ax.plot(time, data, label=title)

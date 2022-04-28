@@ -284,6 +284,7 @@ def traj_rungeKutta(x0, f, nbIter, pas):
     for k in range(nbIter - 1):
         k1 = f(k, x[:, k])
         k2 = f(k, x[:, k] + pas / 2 * k1)
+        print(k1[0], k2, k, x[:, 0], x[:, 0] + pas / 2 * k1)
         k3 = f(k, x[:, k] + pas / 2 * k2)
         k4 = f(k, x[:, k] + pas * k3)
         x[:, k + 1] = x[:, k] + pas / 16. * (k1 + 2 * k2 + 2 * k3 + k4)

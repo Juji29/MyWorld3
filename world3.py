@@ -5,9 +5,14 @@ from math import log
 h = Hypergraph()
 
 IT = NodeConstant("IT", C, val=1900, hg=h)
-DT = NodeConstant("DT", C, val=1, hg=h)
+DT = NodeConstant("DT", C, val=1., hg=h)
+FT = NodeConstant("FT", C, val=2100, hg=h) #Final time
+nbpas = FT.val - IT.val + 1
 t = NodeStock("time", val=IT.val, hg=h)
-h.add_edge(lambda x: x, t, [DT])
+def f_t(t, dt, ft):
+    if t < ft:
+        return t + dt
+h.add_edge(f_t, t, [t, DT, FT])
 
 ######################
 # Constantes d'unité #
@@ -43,14 +48,14 @@ def clip(c1, c2, ts, t):
 
 def f_tab(tab, x):
     if tab[0][0] > x:
-        if  abs(tab[0][0] - x) > 15:
-            print(tab, x, h)
-            exit(0)
+        if  abs(tab[0][0] - x) > 0.5:
+            print(tab, x)
+            #exit(0)
         return tab[0][1]
     if tab[-1][0] < x:
-        if abs(x - tab[-1][0]) > 15:
-            print(tab, x, h)
-            exit(0)
+        if abs(x - tab[-1][0]) > 0.5:
+            print(tab, x)
+            #exit(0)
         return tab[-1][1]
     else:
         i = 0
@@ -262,7 +267,6 @@ fioaa = NodeFlow("fioaa", hg=h)
 ldr = NodeFlow("ldr", hg=h)
 
 #Loop 2
-#AII = NodeConstant("AII", C, val=5e9, hg=h)
 ALAI = NodeConstant("ALAI", C, val=2, hg=h)
 LYF1 = NodeConstant("LYF1", C, val=1, hg=h)
 IO70 = NodeConstant("IO70", C, val=790e9, hg=h)
@@ -423,18 +427,18 @@ ulgha = NodeFlow("ulgha", hg=h)
 LUFDT = NodeConstant("LUFDT", C, val=2, hg=h)
 AII = NodeConstant("AII", C, val=5e9, hg=h)
 PFRI = NodeConstant("PFRI", C, val=1, hg=h)
-ehspc = NodeSmooth("ehspc", "SMOOTH", 201, hg=h) # ft - it +1
-ple = NodeSmooth("ple", "SMOOTH3", 201, hg=h)
-diopc = NodeSmooth("diopc", "SMOOTH3", 201, hg=h)
-aiopc = NodeSmooth("aiopc", "SMOOTH", 201, hg=h)
-fcfpc = NodeSmooth("fcfpc", "SMOOTH3", 201, hg=h)
-lufd = NodeSmooth("lufd", "SMOOTHI", 201, val=LUFDT.val, initial=LUFDT.val, hg=h)
-ai = NodeSmooth("ai", "SMOOTHI", 201, val=AII.val, initial=AII.val, hg=h)
-lyf2 = NodeSmooth("lyf2", "SMOOTH3", 201, hg=h)
-pfr = NodeSmooth("pfr", "SMOOTHI", 201, val=PFRI.val, initial=PFRI.val, hg=h)
-nruf2 = NodeSmooth("nruf2", "SMOOTH3", 201, hg=h)
-ppgf2 = NodeSmooth("ppgf2", "SMOOTH3", 201, hg=h)
-ppapr = NodeSmooth("ppapr", "DELAY3", 201, hg=h)
+ehspc = NodeSmooth("ehspc", "SMOOTH", nbpas, hg=h) # ft - it +1
+ple = NodeSmooth("ple", "SMOOTH3", nbpas, hg=h)
+diopc = NodeSmooth("diopc", "SMOOTH3", nbpas, hg=h)
+aiopc = NodeSmooth("aiopc", "SMOOTH", nbpas, hg=h)
+fcfpc = NodeSmooth("fcfpc", "SMOOTH3", nbpas, hg=h)
+lufd = NodeSmooth("lufd", "SMOOTHI", nbpas, val=LUFDT.val, initial=LUFDT.val, hg=h)
+ai = NodeSmooth("ai", "SMOOTHI", nbpas, val=AII.val, initial=AII.val, hg=h)
+lyf2 = NodeSmooth("lyf2", "SMOOTH3", nbpas, hg=h)
+pfr = NodeSmooth("pfr", "SMOOTHI", nbpas, val=PFRI.val, initial=PFRI.val, hg=h)
+nruf2 = NodeSmooth("nruf2", "SMOOTH3", nbpas, hg=h)
+ppgf2 = NodeSmooth("ppgf2", "SMOOTH3", nbpas, hg=h)
+ppapr = NodeSmooth("ppapr", "DELAY3", nbpas, hg=h)
 
 #######################
 # Edges on population #
@@ -789,13 +793,11 @@ h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD, TS])
 h.add_edge(ppapr.f_smooth, ppapr, [ppgr, PPTD, TS])
 
 
-#print(h)
+print(h)
 h.set_rank()
 #########
 # Solve #
 #########
-FT = NodeConstant("FT", C, val=2100, hg=h) #Final time
-nbpas = FT.val - IT.val + 1
 time = [IT.val, FT.val]
 
 label1 = ['Year', 'Population ages 0-14', 'Population ages 15-44', 'Population ages 45-64', 'Population ages 65+', 'Industrial Capital', 'Service Capital', 'Arable Land', 'Potentially Arable Land', 'Urban-Industrial Land', 'Land Fertility', 'Land Yield Related Technology Development', 'Non Renewable Ressources', 'Non Renewable Ressources Related Technology Development', 'Persistent Polution', 'Production Related Technology Development']
