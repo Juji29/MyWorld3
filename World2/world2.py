@@ -322,6 +322,7 @@ xmin, xmax = t0, tf
 labelX = "time"
 labelY = label1[1:]
 tx = 0.7
+print(h)
 affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY, tx)
 
 #print(record)

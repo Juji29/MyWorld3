@@ -45,12 +45,12 @@ class NodeStock(Node):
         self.hist = [val]
 
     def eval(self, save):
-        #text = "{}:{}->".format(self.name, self.val)
+        text = "{}:{}->".format(self.name, self.val)
         self.val = self.cons(*[p.val for p in self.pred])
         if save:
             self.hist.append(self.val)
-        #text += "{}".format(self.val)
-        #print(text)
+        text += "{}".format(self.val)
+        print(text)
 
 
 class NodeFlow(NodeStock):
