@@ -36,21 +36,24 @@ def affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY,tx):
     plt.show()
 
 
-def affiche2(time, y, ymin, ymax, labelX, labelY, n, window_title="World3 Results"):
+def affiche2(time, y, labelX, labelY, n, window_title="World3 Results"):
     fig = plt.figure(figsize=(20.48, 10.24))
-    plots = [(time[i], labelY[i], y[i], ymin[i], ymax[i]) for i in range(n)]
-    ax = fig.add_subplot(4, 3, 1, xlabel=labelX[0], ylabel='Population')
-    ax.plot(time[0], sum([i for i in y[:4]]), label='Population totale')
-    for i, (time, title, data, ymin, ymax) in enumerate(plots):
-        if i in range(0, 4):
-            ax.plot(time, data, label=title)
-            ax.legend()
-        else:
-            ax = fig.add_subplot(4, 3, i-2, xlabel=labelX, ylabel=title)
-            ax.set_ylim(ymin, ymax)
-            ax.plot(time, data)
+    plots = [(labelY[i], y[i]) for i in range(n)]
+    for i, (title, data) in enumerate(plots):
+        ax = fig.add_subplot(3, 4, i+1, xlabel=labelX, ylabel=title)
+        ax.plot(time, data)
     fig.suptitle(window_title)
     plt.show()
+
+def affichage_solo(time, y, labelX, labelY, window_title="World3 Results"):
+    plots = [(labelY[i], y[i]) for i in range(len(y))]
+    for i, (title, data) in enumerate(plots):
+        plt.figure(figsize=(20.48, 10.24))
+        plt.plot(time, data, label=title)
+        plt.xlabel(labelX)
+        plt.legend()
+        plt.suptitle(window_title)
+        plt.show()
 
 
 if __name__ == "__main__":

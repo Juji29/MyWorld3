@@ -24,7 +24,7 @@ class Node:
         value = "None"
         if self.val != None:
             value = "{:.03f}".format(self.val)
-        return "{0.name:<8} {3} IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value)
+        return "{0.name:<8} {3} IN: {1:<20} OUT: {2} HIST: {4}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value, self.hist)
 
     def set_cons(self, f, pred):
         self.cons = f
@@ -44,19 +44,26 @@ class NodeStock(Node):
         super().__init__(name, val, hg)
         self.hist = [val]
 
-    def eval(self, save):
-        text = "{}:{}->".format(self.name, self.val)
-        self.val = self.cons(*[p.val for p in self.pred])
+    def eval(self, dt, save=True):
+        #text = "{}:{}->".format(self.name, self.val)
+        self.val = self.val + self.cons(*[p.val for p in self.pred]) * dt
         if save:
             self.hist.append(self.val)
-        text += "{}".format(self.val)
-        print(text)
+        #text += "{}".format(self.val)
+        #print(text)
 
 
 class NodeFlow(NodeStock):
     def __init__(self, name, val=None, hg=None):
         super().__init__(name, val, hg)
 
+    def eval(self, dt, save=True):
+        #text = "{}:{}->".format(self.name, self.val)
+        self.val = self.cons(*[p.val for p in self.pred])
+        if save:
+            self.hist.append(self.val)
+        #text += "{}".format(self.val)
+        #print(text)
 
 class NodeSmooth(NodeFlow):
     def __init__(self, name, t, size, val=None, initial=None, hg=None):
@@ -65,10 +72,10 @@ class NodeSmooth(NodeFlow):
         self.hist = [None] * size
         self.hist[0] = val
         self.initial = initial
-        self.dt = None
+        self.cst = None
         self.ts = None
         self.node = None
-        self.k = 1
+        self.k = 0
         if t == "SMOOTH3":
             self.I1 = val
             self.histI1 = [None] * size
@@ -84,23 +91,23 @@ class NodeSmooth(NodeFlow):
             self.I3 = None
             self.histI3 = [None] * size
 
-    def eval(self, save):
+    def eval(self, dt, save=True):
         #text = "{}:{}->".format(self.name, self.val)
         self.cons(*[p.val for p in self.pred])
         if self.type == "SMOOTH":
-            self.val += (self.node - self.val) * self.ts / self.dt
+            self.val += (self.node - self.val) * self.ts / self.cst
         if self.type == "SMOOTHI":
             if len(self.hist) == 1:
-                self.val += (self.node - self.initial) * self.ts / self.dt
+                self.val += (self.node - self.initial) * self.ts / self.cst
             else:
-                self.val += (self.node - self.val) * self.ts / self.dt
+                self.val += (self.node - self.val) * self.ts / self.cst
         if self.type == "SMOOTH3":
-            dl = self.dt/3
+            dl = self.cst/3
             self.I2 += (self.node - self.I2) * self.ts / dl
             self.I1 += (self.I2 - self.I1) * self.ts / dl
             self.val += (self.I1 - self.val) * self.ts / dl
         if self.type == "DELAY3":
-            dl = self.dt / 3
+            dl = self.cst / 3
             self.val = self.I1 / dl
             self.I1 += (self.I2 / dl - self.I1) * self.ts
             self.I2 += (self.I3 / dl - self.I2) * self.ts
@@ -128,13 +135,13 @@ class NodeSmooth(NodeFlow):
 
     def f_smooth(self, flow, constant, ts):
         self.node = flow
-        self.dt = constant
+        self.cst = constant
         self.ts = ts
         self.val = flow
         if self.type == "SMOOTH3":
             self.I1 = self.I2 = flow
         if self.type == "DELAY3":
-            self.I1 = self.I2 = self.I3 = flow * self.dt / 3
+            self.I1 = self.I2 = self.I3 = flow * self.cst / 3
 
 
 class NodeConstant(Node):
@@ -179,9 +186,13 @@ class Hypergraph():
     def add_edge(self, f, x_target, x_s):
         x_target.set_cons(f, x_s)
 
-    def eval(self, save):
+    def eval(self, dt):
         for ns in self.nodesrank:
-            ns.eval(save)
+            ns.eval(dt)
+
+    def run(self, nbpas, dt):
+        for i in range(nbpas):
+            self.eval(dt)
 
     def eval2(self, t, y, save=False):
         for i, n in enumerate(self.stocks):
@@ -276,7 +287,7 @@ class Hypergraph():
         # self.nodesrank.append(self.stocks)
         self.nodesrank += self.stocks
 
-
+"""
 def traj_rungeKutta(x0, f, nbIter, pas):
     nbVar = len(x0)
     x = np.zeros((nbVar, nbIter), float)
@@ -284,8 +295,19 @@ def traj_rungeKutta(x0, f, nbIter, pas):
     for k in range(nbIter - 1):
         k1 = f(k, x[:, k])
         k2 = f(k, x[:, k] + pas / 2 * k1)
-        print(k1[0], k2, k, x[:, 0], x[:, 0] + pas / 2 * k1)
         k3 = f(k, x[:, k] + pas / 2 * k2)
         k4 = f(k, x[:, k] + pas * k3)
         x[:, k + 1] = x[:, k] + pas / 16. * (k1 + 2 * k2 + 2 * k3 + k4)
+        print(k1[0], k2[0], k3[0], k4[0], x[0])
     return x
+
+def traj_newton(x0, f, nbIter, pas):
+    nbVar = len(x0)
+    x = np.zeros((nbVar, nbIter), float)
+    x[:, 0] = x0
+    for k in range(nbIter - 1):
+        k1 = f(k, x[:, k])
+        x[:, k + 1] = x[:, k] + pas * k1
+        print(k1[0], x[0])
+    return x
+    """
