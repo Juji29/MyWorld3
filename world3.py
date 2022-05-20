@@ -40,7 +40,7 @@ def moins(x, y): return x - y
 def div(x, y): return x / y
 
 def clip(c1, c2, ts, t):
-    if t < ts : return c1
+    if t <= ts : return c1
     else : return c2
 
 def f_tab(tab, x):
@@ -1172,10 +1172,11 @@ h.run(nbpas, TS.val)
 #print(h)
 time = h.nodes["time"].hist
 labelX = "time"
-nodes = [h.nodes["pop"], h.nodes["ic"], h.nodes["sc"], h.nodes["al"], h.nodes["uil"], h.nodes["lfert"], h.nodes["nr"], h.nodes["ppol"]]
+nodes = [h.nodes["pop"], h.nodes["ic"], h.nodes["sc"], h.nodes["al"], h.nodes["uil"], h.nodes["lfert"], h.nodes["nr"], h.nodes["ppol"], h.nodes['hwi']]
 label = [node.name for node in nodes]
 sol = [node.hist for node in nodes]
-print(h.nodes["cuf"].hist)
-#affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY, tx)
-#affiche2(time, sol, labelX, labelY, len(sol))
+sol_min = [min(node.hist[1:]) for node in nodes]
+sol_max = [max(node.hist[1:]) for node in nodes]
+#affiche(time, sol, time[0], time[-1], sol_min, sol_max, labelX, label, 0.7)
+#affiche2(time, sol, labelX, label, len(sol))
 #affichage_solo(time, sol, labelX, label)

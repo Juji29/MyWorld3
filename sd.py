@@ -65,12 +65,12 @@ class NodeFlow(NodeStock):
         #text += "{}".format(self.val)
         #print(text)
 
-class NodeSmooth(NodeFlow):
+class NodeSmooth(Node):
     def __init__(self, name, t, size, val=None, initial=None, hg=None):
         super().__init__(name, val, hg)
         self.type = t
         self.hist = [None] * size
-        self.hist[0] = val
+        #self.hist[0] = val
         self.initial = initial
         self.cst = None
         self.ts = None
@@ -94,6 +94,7 @@ class NodeSmooth(NodeFlow):
     def eval(self, dt, save=True):
         #text = "{}:{}->".format(self.name, self.val)
         self.cons(*[p.val for p in self.pred])
+        print(self.node, self)
         if self.type == "SMOOTH":
             self.val += (self.node - self.val) * self.ts / self.cst
         if self.type == "SMOOTHI":
@@ -112,6 +113,7 @@ class NodeSmooth(NodeFlow):
             self.I1 += (self.I2 / dl - self.I1) * self.ts
             self.I2 += (self.I3 / dl - self.I2) * self.ts
             self.I3 += (self.val - self.I3) * self.ts
+        print(self.val)
         if save:
             k = self.k
             self.hist[k] = self.val
@@ -137,7 +139,8 @@ class NodeSmooth(NodeFlow):
         self.node = flow
         self.cst = constant
         self.ts = ts
-        self.val = flow
+        if not self.hist[0]:
+            self.val = flow
         if self.type == "SMOOTH3":
             self.I1 = self.I2 = flow
         if self.type == "DELAY3":
@@ -194,13 +197,6 @@ class Hypergraph():
         for i in range(nbpas):
             self.eval(dt)
 
-    def eval2(self, t, y, save=False):
-        for i, n in enumerate(self.stocks):
-            #print(i, n)
-            n.val = y[i]
-        self.eval(save)
-        return np.array([n.val for n in self.stocks])
-
     def cond(n): return type(n) == NodeFlow or type(n) == NodeSmooth
      
     def sub_graph_vertex(self, cond):
@@ -251,40 +247,6 @@ class Hypergraph():
         #    self.nodesrank[ri].append(self.nodes[d2[i]])
         #self.nodesrank.append(self.stocks)
         self.nodesrank += [self.nodes[name] for name, x in self.nodes.items() if type(x) == NodeSmooth and x.type == "SMOOTHI"]
-        self.nodesrank += self.stocks
-
-        
-    def set_rank2(self):
-        d2 = [name for name, n in self.nodes.items() if type(n) != NodeConstant]
-        d1 = {name : i for i, name in enumerate(d2)}
-        size = len(d2)
-        gM = [[] for _ in range(size)]
-        gP = [[] for _ in range(size)]
-        for name in d2:
-            n = self.nodes[name]
-            gM[d1[name]] = [d1[u.name] for u in n.pred if type(u) == NodeFlow or type(u) == NodeFlow]
-            if type(n) != NodeStock:
-                gP[d1[name]] = [d1[u.name] for u in n.succ if type(u) != NodeConstant]
-        dM = [len(gi) for gi in gM]
-        S0 = [i for i,di in enumerate(dM) if di == 0]
-        r = [None]*size
-        def rang_rec(Sk, k):
-            Sk1 = []
-            for i in Sk:
-                r[i] = k
-                for j in gP[i]:
-                    dM[j] -= 1
-                    if dM[j] == 0:
-                        Sk1.append(j)
-            if len(Sk1) > 0 :
-                return rang_rec(Sk1, k+1)
-        rang_rec(S0, 0)
-        print(r)
-        self.nbrank = max(r) + 1
-        self.nodesrank = [j for _, j in sorted([(ri, i) for i, ri in enumerate(r)])]
-        # for i,ri in enumerate(r):
-        #    self.nodesrank[ri].append(self.nodes[d2[i]])
-        # self.nodesrank.append(self.stocks)
         self.nodesrank += self.stocks
 
 """

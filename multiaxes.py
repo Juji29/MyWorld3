@@ -2,7 +2,7 @@ from mpl_toolkits.axes_grid1 import host_subplot
 from mpl_toolkits import axisartist
 import matplotlib.pyplot as plt
 
-def affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY,tx):
+def affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY, tx):
     host = host_subplot(111, axes_class=axisartist.Axes)
     plt.subplots_adjust(right=tx)
 
@@ -50,8 +50,8 @@ def affichage_solo(time, y, labelX, labelY, window_title="World3 Results"):
     for i, (title, data) in enumerate(plots):
         plt.figure(figsize=(20.48, 10.24))
         plt.plot(time, data, label=title)
-        plt.xlabel(labelX)
-        plt.legend()
+        plt.xlabel(labelX, fontsize=16)
+        plt.legend(fontsize=16)
         plt.suptitle(window_title)
         plt.show()
 
