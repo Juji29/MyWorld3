@@ -66,23 +66,19 @@ class NodeFlow(NodeStock):
         #print(text)
 
 class NodeSmooth(Node):
-    def __init__(self, name, t, size, val=None, initial=None, hg=None):
+    def __init__(self, name, t, size, val=None, hg=None):
         super().__init__(name, val, hg)
         self.type = t
         self.hist = [None] * size
-        #self.hist[0] = val
-        self.initial = initial
         self.cst = None
         self.ts = None
         self.node = None
         self.k = 0
         if t == "SMOOTH3":
-            self.I1 = val
+            self.I1 = None
             self.histI1 = [None] * size
-            self.histI1[0] = val
-            self.I2 = val
+            self.I2 = None
             self.histI2 = [None] * size
-            self.histI2[0] = val
         if t == "DELAY3":
             self.I1 = None
             self.histI1 = [None] * size
@@ -94,26 +90,21 @@ class NodeSmooth(Node):
     def eval(self, dt, save=True):
         #text = "{}:{}->".format(self.name, self.val)
         self.cons(*[p.val for p in self.pred])
-        print(self.node, self)
-        if self.type == "SMOOTH":
+        if self.type == "SMOOTH" or self.type == "SMOOTHI":
             self.val += (self.node - self.val) * self.ts / self.cst
-        if self.type == "SMOOTHI":
-            if len(self.hist) == 1:
-                self.val += (self.node - self.initial) * self.ts / self.cst
-            else:
-                self.val += (self.node - self.val) * self.ts / self.cst
         if self.type == "SMOOTH3":
-            dl = self.cst/3
-            self.I2 += (self.node - self.I2) * self.ts / dl
-            self.I1 += (self.I2 - self.I1) * self.ts / dl
+            dl = self.cst / 3
             self.val += (self.I1 - self.val) * self.ts / dl
+            self.I1 += (self.I2 - self.I1) * self.ts / dl
+            self.I2 += (self.node - self.I2) * self.ts / dl
         if self.type == "DELAY3":
             dl = self.cst / 3
-            self.val = self.I1 / dl
-            self.I1 += (self.I2 / dl - self.I1) * self.ts
-            self.I2 += (self.I3 / dl - self.I2) * self.ts
-            self.I3 += (self.val - self.I3) * self.ts
-        print(self.val)
+            RT3 = self.I3 / dl
+            RT2 = self.I2 / dl
+            self.I3 += (self.node - self.I3) * self.ts
+            self.I2 += (RT3 - self.I2) * self.ts
+            self.I1 += (RT2 - self.I1) * self.ts
+            self.val = self.I3 / dl
         if save:
             k = self.k
             self.hist[k] = self.val
@@ -140,11 +131,13 @@ class NodeSmooth(Node):
         self.cst = constant
         self.ts = ts
         if not self.hist[0]:
-            self.val = flow
-        if self.type == "SMOOTH3":
-            self.I1 = self.I2 = flow
-        if self.type == "DELAY3":
-            self.I1 = self.I2 = self.I3 = flow * self.cst / 3
+            if self.type == "SMOOTH":
+                self.val = flow
+            if self.type == "SMOOTH3":
+                self.val = self.I1 = self.I2 = flow
+            if self.type == "DELAY3":
+                self.val = flow
+                self.I1 = self.I2 = self.I3 = flow * self.cst / 3
 
 
 class NodeConstant(Node):
