@@ -1,5 +1,5 @@
 from sd import *
-from multiaxes import affiche, affiche2, affichage_solo
+from multiaxes import affiche, affiche2, affiche3, affichage_solo
 from math import log
 
 h = Hypergraph()
@@ -7,7 +7,7 @@ h = Hypergraph()
 IT = NodeConstant("IT", C, val=1900, hg=h)
 FT = NodeConstant("FT", C, val=2100, hg=h) #Final time
 TS = NodeConstant("TS", C, val=0.5, hg=h)
-nbpas = int((FT.val - IT.val) / TS.val)
+nbpas = int((FT.val - IT.val) / TS.val - TS.val)
 t = NodeStock("time", val=IT.val, hg=h)
 h.add_edge(lambda x: 1, t, [TS])
 
@@ -1169,13 +1169,47 @@ h.run(nbpas, TS.val)
 #sol = traj_rungeKutta(y0, h.eval2, nbpas, TS.val)
 
 #print(h)
+
+#affichage
 time = h.nodes["time"].hist
 labelX = "time"
-nodes = [h.nodes["pop"], h.nodes["ic"], h.nodes["sc"], h.nodes["al"], h.nodes["uil"], h.nodes["lfert"], h.nodes["nr"], h.nodes["ppol"], h.nodes['hwi']]
-label = [node.name for node in nodes]
-sol = [node.hist for node in nodes]
-sol_min = [min(node.hist[1:]) for node in nodes]
-sol_max = [max(node.hist[1:]) for node in nodes]
-#affiche(time, sol, time[0], time[-1], sol_min, sol_max, labelX, label, 0.7)
+#population
+populations = [h.nodes["pop"], h.nodes["p1"], h.nodes["p2"], h.nodes["p3"], h.nodes["p4"]]
+label_pop = [node.name for node in populations]
+sol_pop = [node.hist for node in populations]
+sol_min_pop = [min(node.hist[1:]) for node in populations]
+sol_max_pop = [max(node.hist[1:]) for node in populations]
+affiche3(time, sol_pop, labelX, label_pop, 0.7)
+
+#land use
+land_use = [h.nodes["al"], h.nodes["uil"], h.nodes["pal"], h.nodes["lfert"]]
+label_land = [node.name for node in land_use]
+sol_land = [node.hist for node in land_use]
+sol_min_land = [min(node.hist[1:]) for node in land_use]
+sol_max_land = [max(node.hist[1:]) for node in land_use]
+affiche(time, sol_land, time[0], time[-1], sol_min_land, sol_max_land, labelX, label_land, 0.7)
+
+#hwi
+hwi = [h.nodes["hwi"]]
+label_hwi = [node.name for node in hwi]
+sol_hwi = [node.hist for node in hwi]
+sol_min_hwi = [min(node.hist[1:]) for node in hwi]
+sol_max_hwi = [max(node.hist[1:]) for node in hwi]
+affiche(time, sol_hwi, time[0], time[-1], sol_min_hwi, sol_max_hwi, labelX, label_hwi, 0.7)
+
+#overview
+overview = [h.nodes["pop"], h.nodes["ppol"], h.nodes["nr"]]
+label_over = [node.name for node in overview]
+sol_over = [node.hist for node in overview]
+sol_min_over = [min(node.hist[1:]) for node in overview]
+sol_max_over = [max(node.hist[1:]) for node in overview]
+affiche(time, sol_over, time[0], time[-1], sol_min_over, sol_max_over, labelX, label_over, 0.7)
+
+##affichage solo
+#nodes = [h.nodes["pop"], h.nodes["ic"], h.nodes["sc"], h.nodes["al"], h.nodes["uil"], h.nodes["lfert"], h.nodes["nr"], h.nodes["ppol"], h.nodes['hwi']]
+#label= [node.name for node in nodes]
+#sol = [node.hist for node in nodes]
+#sol_min = [min(node.hist[1:]) for node in nodes]
+#sol_max = [max(node.hist[1:]) for node in nodes]
 #affiche2(time, sol, labelX, label, len(sol))
-affichage_solo(time, sol, labelX, label)
+#affichage_solo(time, sol, labelX, label)

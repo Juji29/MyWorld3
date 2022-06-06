@@ -56,7 +56,7 @@ class NodeStock(Node):
 class NodeFlow(Node):
     def __init__(self, name, val=None, hg=None):
         super().__init__(name, val, hg)
-        self.hist = [val]
+        self.hist = [None]
 
     def eval(self, dt, save=True):
         #text = "{}:{}->".format(self.name, self.val)
