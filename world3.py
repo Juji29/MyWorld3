@@ -5,12 +5,11 @@ from math import log
 h = Hypergraph()
 
 IT = NodeConstant("IT", C, val=1900, hg=h)
-DT = NodeConstant("DT", C, val=1, hg=h)
 FT = NodeConstant("FT", C, val=2100, hg=h) #Final time
 TS = NodeConstant("TS", C, val=0.5, hg=h)
 nbpas = int((FT.val - IT.val) / TS.val)
 t = NodeStock("time", val=IT.val, hg=h)
-h.add_edge(lambda x: x, t, [DT])
+h.add_edge(lambda x: 1, t, [TS])
 
 ######################
 # Constantes d'unité #
@@ -1144,18 +1143,18 @@ h.add_edge(div, ulgha, [uil, HGHA])
 ##############################
 # Edges linked to NodeSmooth #
 ##############################
-h.add_edge(ehspc.f_smooth, ehspc, [hsapc, HSID, TS])
-h.add_edge(ple.f_smooth, ple, [le, LPD, TS])
-h.add_edge(diopc.f_smooth, diopc, [iopc, SAD, TS])
-h.add_edge(aiopc.f_smooth, aiopc, [iopc, IEAT, TS])
-h.add_edge(fcfpc.f_smooth, fcfpc, [fcapc, HSID, TS])
-h.add_edge(lufd.f_smooth, lufd, [luf, LUFDT, TS])
-h.add_edge(ai.f_smooth, ai, [cai, ALAI, TS])
-h.add_edge(lyf2.f_smooth, lyf2, [lytd, TDD, TS])
-h.add_edge(pfr.f_smooth, pfr, [fr, FSDP, TS])
-h.add_edge(nruf2.f_smooth, nruf2, [nrtd, TDD, TS])
-h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD, TS])
-h.add_edge(ppapr.f_smooth, ppapr, [ppgr, PPTD, TS])
+h.add_edge(ehspc.f_smooth, ehspc, [hsapc, HSID])
+h.add_edge(ple.f_smooth, ple, [le, LPD])
+h.add_edge(diopc.f_smooth, diopc, [iopc, SAD])
+h.add_edge(aiopc.f_smooth, aiopc, [iopc, IEAT])
+h.add_edge(fcfpc.f_smooth, fcfpc, [fcapc, HSID])
+h.add_edge(lufd.f_smooth, lufd, [luf, LUFDT])
+h.add_edge(ai.f_smooth, ai, [cai, ALAI])
+h.add_edge(lyf2.f_smooth, lyf2, [lytd, TDD])
+h.add_edge(pfr.f_smooth, pfr, [fr, FSDP])
+h.add_edge(nruf2.f_smooth, nruf2, [nrtd, TDD])
+h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD])
+h.add_edge(ppapr.f_smooth, ppapr, [ppgr, PPTD])
 
 #########
 # Solve #
@@ -1166,8 +1165,8 @@ h.set_rank()
 #sol = [h.nodes["pop"].hist, h.nodes["p1"].hist, h.nodes["p2"].hist, h.nodes["p3"].hist, h.nodes["p4"].hist, h.nodes["ic"].hist, h.nodes["sc"].hist, h.nodes["al"].hist, h.nodes["pal"].hist, h.nodes["uil"].hist, h.nodes["lfert"].hist, h.nodes["lytd"].hist, h.nodes["nr"].hist, h.nodes["nrtd"].hist, h.nodes["ppol"].hist, h.nodes["ptd"].hist]
 
 h.run(nbpas, TS.val)
-#sol = traj_newton(y0, h.eval2, nbpas, DT.val)
-#sol = traj_rungeKutta(y0, h.eval2, nbpas, DT.val)
+#sol = traj_newton(y0, h.eval2, nbpas, TS.val)
+#sol = traj_rungeKutta(y0, h.eval2, nbpas, TS.val)
 
 #print(h)
 time = h.nodes["time"].hist
