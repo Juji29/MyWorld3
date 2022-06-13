@@ -25,7 +25,6 @@ def affiche(x, y, xmin, xmax, ymin, ymax, labelX, labelY, tx):
 
     p = [None] * n
     for i in range(n):
-        print(left)
         if i in left:
             p[i], = par[0].plot(x, y[i], label=labelY[i])
         else:

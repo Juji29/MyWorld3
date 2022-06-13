@@ -99,12 +99,12 @@ class NodeSmooth(Node):
             self.I2 += (self.node - self.I2) * ts / dl
         if self.type == "DELAY3":
             dl = self.cst / 3
-            RT3 = self.I3 / dl
+            RT1 = self.I1 / dl
+            self.I1 = self.I1 + (self.node - RT1) * ts
             RT2 = self.I2 / dl
+            self.I2 = self.I2 + (RT1 - RT2) * ts
+            self.I3 = self.I3 + (RT2 - self.I3 / dl) * ts
             self.val = self.I3 / dl
-            self.I1 += (RT2 - self.I1) * ts
-            self.I2 += (RT3 - self.I2) * ts
-            self.I3 += (self.node - self.I3) * ts
         if save:
             k = self.k
             self.hist[k] = self.val
@@ -136,7 +136,7 @@ class NodeSmooth(Node):
                 self.val = self.I1 = self.I2 = flow
             if self.type == "DELAY3":
                 self.val = flow
-                self.I1 = self.I2 = self.I3 = flow * self.cst / 3
+                self.I1 = self.I2 = self.I3 = flow * constant / 3
 
 
 class NodeConstant(Node):

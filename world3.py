@@ -540,7 +540,7 @@ mpai = NodeFlow("mpai", hg=h)
 #Loop 3
 ALLN = NodeConstant("ALLN", C, val=1000, hg=h)
 UILDT = NodeConstant("UILDT", C, val=10, hg=h)
-UILI = NodeConstant("UILI", C, val=8200000, hg=h)
+UILI = NodeConstant("UILI", C, val=8.2e6, hg=h)
 LLMYTM = NodeConstant("LLMYTM", C, val=4000, hg=h)
 
 LLMY1 = NodeConstant("LLMY1", CT, val=([0, 1.2],
@@ -788,12 +788,12 @@ ulgha = NodeFlow("ulgha", hg=h)
 LUFDT = NodeConstant("LUFDT", C, val=2, hg=h)
 AII = NodeConstant("AII", C, val=5e9, hg=h)
 PFRI = NodeConstant("PFRI", C, val=1, hg=h)
-ehspc = NodeSmooth("ehspc", "SMOOTH", nbpas, hg=h) # ft - it +1
+ehspc = NodeSmooth("ehspc", "SMOOTH", nbpas, hg=h)
 ple = NodeSmooth("ple", "SMOOTH3", nbpas, hg=h)
 diopc = NodeSmooth("diopc", "SMOOTH3", nbpas, hg=h)
 aiopc = NodeSmooth("aiopc", "SMOOTH", nbpas, hg=h)
 fcfpc = NodeSmooth("fcfpc", "SMOOTH3", nbpas, hg=h)
-lufd = NodeSmooth("lufd", "SMOOTHI", nbpas, val=LUFDT.val, hg=h)
+lufd = NodeSmooth("lufd", "SMOOTHI", nbpas, val=1, hg=h)
 ai = NodeSmooth("ai", "SMOOTHI", nbpas, val=AII.val, hg=h)
 lyf2 = NodeSmooth("lyf2", "SMOOTH3", nbpas, hg=h)
 pfr = NodeSmooth("pfr", "SMOOTHI", nbpas, val=PFRI.val, hg=h)
