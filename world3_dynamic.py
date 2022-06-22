@@ -46,7 +46,10 @@ class NodeStock(Node):
 
     def eval(self, ts, save=True):
         #text = "{}:{}->".format(self.name, self.val)
-        self.val = self.val + self.cons(*[p.val for p in self.pred]) * ts
+        if self.val:
+            self.val = self.val + self.cons(*[p.val for p in self.pred]) * ts
+        else:
+            self.val = self.cons(*[p.val for p in self.pred]) * ts
         if save:
             self.hist.append(self.val)
         #text += "{}".format(self.val)
@@ -56,7 +59,7 @@ class NodeStock(Node):
 class NodeFlow(Node):
     def __init__(self, name, val=None, hg=None):
         super().__init__(name, val, hg)
-        self.hist = [None]
+        self.hist = []
 
     def eval(self, dt, save=True):
         #text = "{}:{}->".format(self.name, self.val)
@@ -74,11 +77,6 @@ class NodeSmooth(Node):
         self.cst = None
         self.node = None
         self.k = 0
-        if t == "SMOOTH3":
-            self.I1 = None
-            self.histI1 = [None] * size
-            self.I2 = None
-            self.histI2 = [None] * size
         if t == "DELAY3":
             self.I1 = None
             self.histI1 = [None] * size
@@ -90,13 +88,8 @@ class NodeSmooth(Node):
     def eval(self, ts, save=True):
         #text = "{}:{}->".format(self.name, self.val)
         self.cons(*[p.val for p in self.pred])
-        if self.type == "SMOOTH" or self.type == "SMOOTHI":
+        if self.type == "SMOOTH":
             self.val += (self.node - self.val) * ts / self.cst
-        if self.type == "SMOOTH3":
-            dl = self.cst / 3
-            self.val += (self.I1 - self.val) * ts / dl
-            self.I1 += (self.I2 - self.I1) * ts / dl
-            self.I2 += (self.node - self.I2) * ts / dl
         if self.type == "DELAY3":
             dl = self.cst / 3
             RT1 = self.I1 / dl
@@ -108,9 +101,6 @@ class NodeSmooth(Node):
         if save:
             k = self.k
             self.hist[k] = self.val
-            if self.type == "SMOOTH3":
-                self.histI1[k] = self.I1
-                self.histI2[k] = self.I2
             if self.type == "DELAY3":
                 self.histI1[k] = self.I1
                 self.histI2[k] = self.I2
@@ -132,8 +122,6 @@ class NodeSmooth(Node):
         if not self.hist[0]:
             if self.type == "SMOOTH":
                 self.val = flow
-            if self.type == "SMOOTH3":
-                self.val = self.I1 = self.I2 = flow
             if self.type == "DELAY3":
                 self.val = flow
                 self.I1 = self.I2 = self.I3 = flow * constant / 3
@@ -188,6 +176,8 @@ class Hypergraph():
     def run(self, nbpas, ts):
         for i in range(nbpas):
             self.eval(ts)
+        for stock in self.stocks:
+            stock.hist.pop()
 
     def cond(n): return type(n) == NodeFlow or type(n) == NodeSmooth
      
@@ -206,7 +196,8 @@ class Hypergraph():
         return d2, gM, gP
         
     def set_rank(self):
-        d2, gM, gP = self.sub_graph_vertex(lambda x : type(x) == NodeFlow or (type(x) == NodeSmooth and x.type != "SMOOTHI"))
+        d2, gM, gP = self.sub_graph_vertex(lambda x : type(x) != NodeStock and type(x) != NodeConstant or (type(x) == NodeStock and not x.val))
+        #d2, gM, gP = self.sub_graph_vertex(lambda x: type(x) == NodeSmooth or (type(x) == NodeFlow and not x.val))
         size = len(d2)
         dM = [len(gi) for gi in gM]
         S0 = [i for i,di in enumerate(dM) if di == 0]
@@ -222,46 +213,6 @@ class Hypergraph():
             if len(Sk1) > 0 :
                 return rang_rec(Sk1, k+1)
         rang_rec(S0, 0)
-        #for i in range(len(d2)):
-        #    if d2[i] == "falm":
-        #print(r)
-        #        print(str(d2[i])+"="+str(r[i]))
-        #        print([d2[j] for j in gP[i]],[d2[j] for j in gM[i]])
-        #        print([r[j] for j in gP[i]],[r[j] for j in gM[i]])
-                #print(r[23],str(d2[23]))
-                #print(gP[i] )
-                #exit(0)
         self.nbrank = max(r) + 1
-        #self.nodesrank = [[] for _ in range(self.nbrank)]
-        #self.nodesrank = [j for _,j in sorted([(ri, i) for i, ri in enumerate(r)])]
         self.nodesrank = [self.nodes[d2[j]] for _,j in sorted([(ri, i) for i, ri in enumerate(r)])]
-        #for i,ri in enumerate(r):
-        #    self.nodesrank[ri].append(self.nodes[d2[i]])
-        #self.nodesrank.append(self.stocks)
-        self.nodesrank += [self.nodes[name] for name, x in self.nodes.items() if type(x) == NodeSmooth and x.type == "SMOOTHI"]
         self.nodesrank += self.stocks
-
-"""
-def traj_rungeKutta(x0, f, nbIter, pas):
-    nbVar = len(x0)
-    x = np.zeros((nbVar, nbIter), float)
-    x[:, 0] = x0
-    for k in range(nbIter - 1):
-        k1 = f(k, x[:, k])
-        k2 = f(k, x[:, k] + pas / 2 * k1)
-        k3 = f(k, x[:, k] + pas / 2 * k2)
-        k4 = f(k, x[:, k] + pas * k3)
-        x[:, k + 1] = x[:, k] + pas / 16. * (k1 + 2 * k2 + 2 * k3 + k4)
-        print(k1[0], k2[0], k3[0], k4[0], x[0])
-    return x
-
-def traj_newton(x0, f, nbIter, pas):
-    nbVar = len(x0)
-    x = np.zeros((nbVar, nbIter), float)
-    x[:, 0] = x0
-    for k in range(nbIter - 1):
-        k1 = f(k, x[:, k])
-        x[:, k + 1] = x[:, k] + pas * k1
-        print(k1[0], x[0])
-    return x
-    """
