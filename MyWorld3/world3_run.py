@@ -50,9 +50,9 @@ delta_ai = comparaison(w3.ai.hist, ai_ref)
 
 # ploting and printing gaps between real results and historical ones
 label_gap = ["Delta POP", "Delta FPC", "Delta IOPC", "Delta NRFR", "Delta FIOAA", "Delta AIPH", "Delta TAI",
-             "Delta IO", "Delta FCAOR", "Delta LMF", "Delta AL", "Delta LY", "Delta AI"]
+             "Delta IO", "Delta FCAOR", "Delta LMF", "Delta AL", "Delta LY"]
 sol_gap = [delta_pop, delta_fpc, delta_iopc, delta_nrfr, delta_fioaa, delta_aiph, delta_tai, delta_io, delta_fcaor,
-           delta_lmf, delta_al, delta_ly, delta_ai]
+           delta_lmf, delta_al, delta_ly]
 sol_min_gap = [min(elt) for elt in sol_gap]
 sol_max_gap = [max(elt) for elt in sol_gap]
 afficherreur(w3.t.hist, sol_gap, label_gap)
@@ -60,7 +60,7 @@ gap_tot = 0
 for var in sol_gap:
     for i in var:
         gap_tot += abs(i)
-print(gap_tot)
+print(gap_tot/200/12)
 
 
 ######################
