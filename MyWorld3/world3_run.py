@@ -70,9 +70,9 @@ params = {'lines.linewidth': '3'}
 plt.rcParams.update(params)
 #standard_run_overview
 stand_aff(w3.t.hist,
-            [w3.nrfr.hist, w3.iopc.hist, w3.fpc.hist, w3.pop.hist, w3.ppolx.hist],
-            ["NRFR", "IOPC", "FPC", "POP", "PPOLX"],
-            [[0, 1], [0, 1e3], [0, 1e3], [0, 16e9], [0, 32]],
+            [w3.nrfr.hist, w3.iopc.hist, w3.fpc.hist, w3.pop.hist, w3.ppolx.hist, w3.cbr.hist, w3.cdr.hist, w3.sopc.hist],
+            ["NRFR", "IOPC", "FPC", "POP", "PPOLX", "CBR", "CDR", "SOPC"],
+            [[0, 1], [0, 1e3], [0, 1e3], [0, 16e9], [0, 32], [0, 50], [0, 50], [0, 1e3]],
             img_background="background/overview.png",
             grid=1,
             title="World3 standard run")

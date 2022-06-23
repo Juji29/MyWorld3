@@ -364,7 +364,7 @@ sopc = NodeFlow("sopc", hg=h)
 #Related to jobs
 LFPF = NodeConstant("LFPF", C, val=0.75, hg=h)
 LUFDT = NodeConstant("LUFDT", C, val=2, hg=h)
-LUFDI =NodeConstant("LUFDI", C, val=2.8, hg=h)
+LUFDI =NodeConstant("LUFDI", C, val=2.6, hg=h)
 CUFI = NodeConstant("CUFI", C, val=0.999, hg=h)
 
 JPICU = NodeConstant("JPICU", CT, val=([50, 0.37],
