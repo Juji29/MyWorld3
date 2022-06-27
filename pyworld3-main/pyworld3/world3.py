@@ -417,6 +417,6 @@ def hello_world3():
                          title="World3 standard run")
     show()
 
-    print(world3.cuf)
+    print(world3.frsn)
 if __name__ == "__main__":
     hello_world3()

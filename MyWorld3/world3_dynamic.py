@@ -179,8 +179,6 @@ class Hypergraph():
         for stock in self.stocks:
             stock.hist.pop()
 
-    def cond(n): return type(n) == NodeFlow or type(n) == NodeSmooth
-     
     def sub_graph_vertex(self, cond):
         d2 = [name for name, n in self.nodes.items() if cond(n)]
         d1 = {name : i for i, name in enumerate(d2)}
@@ -196,8 +194,8 @@ class Hypergraph():
         return d2, gM, gP
         
     def set_rank(self):
-        d2, gM, gP = self.sub_graph_vertex(lambda x : type(x) != NodeStock and type(x) != NodeConstant or (type(x) == NodeStock and not x.val))
-        #d2, gM, gP = self.sub_graph_vertex(lambda x: type(x) == NodeSmooth or (type(x) == NodeFlow and not x.val))
+        d2, gM, gP = self.sub_graph_vertex(lambda x: type(x) == NodeSmooth or (type(x) == NodeFlow and not x.val))
+        d2inflow, gMinflow, gPinFlow = self.sub_graph_vertex(lambda x: type(x) == NodeFlow and x.val)
         size = len(d2)
         dM = [len(gi) for gi in gM]
         S0 = [i for i,di in enumerate(dM) if di == 0]
@@ -215,4 +213,5 @@ class Hypergraph():
         rang_rec(S0, 0)
         self.nbrank = max(r) + 1
         self.nodesrank = [self.nodes[d2[j]] for _,j in sorted([(ri, i) for i, ri in enumerate(r)])]
+        self.nodesrank += [self.nodes[d2inflow[j]] for j in range(len(d2inflow))]
         self.nodesrank += self.stocks
