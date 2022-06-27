@@ -27,7 +27,8 @@ if __name__ == "__main__":
                     [[0, 1], [0, 1e3], [0, 1e3], [0, 16e9], [0, 32], [0, 50], [0, 50], [0, 1e3]],
                     img_background="background/scenario{}-overview.png".format(N_SCENARIO),
                     grid=1,
-                    title="World3 Scenario {} Overview".format(N_SCENARIO))
+                    title="World3 Scenario {} Overview".format(N_SCENARIO),
+                    save=False)
 
         #Financial Sector
         classic_plot(w3.t.hist,
@@ -36,7 +37,8 @@ if __name__ == "__main__":
                     [[0, 1], [0, 4e12], [0, 4e12], [0, 200], [0, 0.201]],
                     img_background="background/scenario{}-financial.png".format(N_SCENARIO),
                     grid=1,
-                    title="World3 Scenario {} Financial Sector".format(N_SCENARIO))
+                    title="World3 Scenario {} Financial Sector".format(N_SCENARIO),
+                    save=False)
 
         #Agriculture Sector
         classic_plot(w3.t.hist,
@@ -45,7 +47,8 @@ if __name__ == "__main__":
                     [[0, 4e3], [0, 4e9], [0, 800], [0, 1.6], [0, 16e9]],
                     img_background="background/scenario{}-agriculture.png".format(N_SCENARIO),
                     grid=1,
-                    title="World3 Scenario {} Agricultural Sector".format(N_SCENARIO))
+                    title="World3 Scenario {} Agricultural Sector".format(N_SCENARIO),
+                    save=False)
 
     if VERSION == 2003:
         #State Of The World
@@ -54,8 +57,9 @@ if __name__ == "__main__":
                   ["NR", "IO", "F", "POP", "PPOLX"],
                   [[0, 2e12], [0, 4e12], [0, 6e12], [0, 12e9], [0, 40]],
                   img_background="background/scenario{}-1.png".format(N_SCENARIO),
-                  grid=0,
-                  title="World3 Scenario {} State Of The World".format(N_SCENARIO))
+                  grid=False,
+                  title="World3 Scenario {} State Of The World".format(N_SCENARIO),
+                  save=False)
 
         #Material Standard Of Living
         classic_plot(w3.t.hist,
@@ -63,8 +67,9 @@ if __name__ == "__main__":
                   ["FPC", "LE", "SOPC", "AIOPC"],
                   [[0, 1e3], [0, 90], [0, 1e3], [0, 250]],
                   img_background="background/scenario{}-2.png".format(N_SCENARIO),
-                  grid=0,
-                  title="World3 Scenario {} Material Standard Of Living".format(N_SCENARIO))
+                  grid=False,
+                  title="World3 Scenario {} Material Standard Of Living".format(N_SCENARIO),
+                  save=False)
 
         #Human Welfare And Footprint
         classic_plot(w3.t.hist,
@@ -72,8 +77,9 @@ if __name__ == "__main__":
                   ["HWI", "HEF"],
                   [[0, 1], [0, 4]],
                   img_background="background/scenario{}-3.png".format(N_SCENARIO),
-                  grid=0,
-                  title="World3 Scenario {} Human Welfare And Footprint".format(N_SCENARIO))
+                  grid=False,
+                  title="World3 Scenario {} Human Welfare And Footprint".format(N_SCENARIO),
+                  save=False)
 
     #To plot other variables (here the life expectancy)
     #single_plot(w3.t.hist, [w3.le.hist], "Time (years)", ["Life Expectancy"])

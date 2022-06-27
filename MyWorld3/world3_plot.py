@@ -22,7 +22,8 @@ def classic_plot(time, var_data, var_names, var_lims,
                          title=None,
                          figsize=None,
                          dist_spines=0.09,
-                         grid=False):
+                         grid=False,
+                         save=False):
 
     prop_cycle = plt.rcParams['axes.prop_cycle']
     colors = prop_cycle.by_key()['color']
@@ -76,3 +77,5 @@ def classic_plot(time, var_data, var_names, var_lims,
 
     plt.tight_layout()
     plt.show()
+    if save:
+        plt.savefig("img/{}".format(title))
