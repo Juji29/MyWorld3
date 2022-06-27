@@ -266,9 +266,9 @@ FRSN = NodeConstant("FRSN", CT, val=([-0.2, 0.5],
 if h.version == 1972:
     SFSN = NodeConstant("SFSN", CT, val=([0, 1.25],
                                          [200, 1],
-                                         [400, 0.85],
+                                         [400, 0.9],
                                          [600, 0.8],
-                                         [800, 0.7]), hg=h)
+                                         [800, 0.75]), hg=h)
 if h.version == 2003:
     SFSN = NodeConstant("SFSN", CT, val=([0, 1.25],
                                          [200, 0.94],
