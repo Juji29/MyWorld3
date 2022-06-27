@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter
 from matplotlib.image import imread
 
-def affichage_solo(time, y, labelX, labelY, window_title="World3 Results"):
+#########################
+# Different way to plot #
+#########################
+def single_plot(time, y, labelX, labelY, window_title="World3 Results"):
     plots = [(labelY[i], y[i]) for i in range(len(y))]
     for i, (title, data) in enumerate(plots):
         plt.figure(figsize=(20.48, 10.24))
@@ -14,48 +17,7 @@ def affichage_solo(time, y, labelX, labelY, window_title="World3 Results"):
         plt.suptitle(window_title)
         plt.show()
 
-def affichage_simultane(x, y, xmin, xmax, ymin, ymax, labelX, labelY, tx):
-    host = host_subplot(111, axes_class=axisartist.Axes)
-    plt.subplots_adjust(right=tx)
-
-    n = len(y)
-    par = [host.twinx() for _ in range(n-1)]
-    par.insert(0, host)
-
-    left = [0]
-    mini = [ymin[0]]
-    maxi = [ymax[0]]
-    for i in range(1, n):
-        mini.append(ymin[i])
-        maxi.append(ymax[i])
-
-    p = [None] * n
-    for i in range(n):
-        if i in left:
-            p[i], = par[0].plot(x, y[i], label=labelY[i])
-        else:
-            p[i], = par[i].plot(x, y[i], label=labelY[i])
-
-    par[0].set_xlim(xmin, xmax)
-    for i in range(n):
-        par[i].set_ylim(min(mini), max(maxi))
-
-    par[0].set_xlabel(labelX)
-    par[0].set_ylabel(labelY[0])
-    for i in range(1, n):
-        par[i].set_ylabel(labelY[i])
-
-    par[0].legend()
-    plt.show()
-
-
-def afficherreur(time, sol, label):
-    for s in range(len(sol)):
-        plt.plot(time, sol[s], label=label[s])
-    plt.legend()
-    plt.show()
-
-def stand_aff(time, var_data, var_names, var_lims,
+def classic_plot(time, var_data, var_names, var_lims,
                          img_background=None,
                          title=None,
                          figsize=None,
@@ -114,19 +76,3 @@ def stand_aff(time, var_data, var_names, var_lims,
 
     plt.tight_layout()
     plt.show()
-
-def read(csv):
-    val = []
-    with open(csv, "r") as c:
-        for line in c:
-            l = line.split(' ')
-            while '' in l:
-                l.remove('')
-            val += [float(item) for item in l]
-    return val
-
-def comparaison(val, ref):
-    ecart = []
-    for i in range(len(val)):
-        ecart.append((val[i] - ref[i]) / ref[i])
-    return ecart

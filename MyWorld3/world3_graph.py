@@ -1,5 +1,5 @@
 from world3_dynamic import *
-from world3_run import VERSION
+from world3_run import VERSION, INITIAL_TIME, FINAL_TIME
 from math import log
 import matplotlib.pyplot as plt
 
@@ -9,40 +9,41 @@ h = Hypergraph(VERSION)
 # Initial conditions #
 ######################
 
-IT = NodeConstant("IT", C, val=1900, hg=h) #Initial time - dt
-FT = NodeConstant("FT", C, val=2100, hg=h) #Final time
+IT = NodeConstant("IT", C, val=INITIAL_TIME, hg=h)
+FT = NodeConstant("FT", C, val=FINAL_TIME, hg=h)
 TS = NodeConstant("TS", C, val=0.5, hg=h)
 t = NodeStock("time", val=IT.val, hg=h)
 h.add_edge(lambda x: 1, t, [TS])
 
-nbpas = int((FT.val - IT.val) / TS.val)
+NB_STEP = int((FT.val - IT.val) / TS.val)
 
-######################
-# Constantes d'unité #
-######################
-RHGDP = NodeConstant("RHGDP", C, val=9508., hg=h)
-RLGDP = NodeConstant("RLGDP", C, val=24., hg=h)
+#########
+# Units #
+#########
+RHGDP = NodeConstant("RHGDP", C, val=9508, hg=h)
+RLGDP = NodeConstant("RLGDP", C, val=24, hg=h)
 TL = NodeConstant("TL", C, val=1.91, hg=h)
 HGHA = NodeConstant("HGHA", C, val=1e9, hg=h)
-OY = NodeConstant("OY", C, val=1., hg=h)
-UAGI = NodeConstant("UAGI", C, val=1., hg=h)
-UP = NodeConstant("UP", C, val=1., hg=h)
-GDPU = NodeConstant("GDPU", C, val=1., hg=h)
+OY = NodeConstant("OY", C, val=1, hg=h)
+UAGI = NodeConstant("UAGI", C, val=1, hg=h)
+UP = NodeConstant("UP", C, val=1, hg=h)
+GDPU = NodeConstant("GDPU", C, val=1, hg=h)
 
 ###################
 # Basic functions #
 ###################
-def prod(*l):
+def nodes_mltpld(*l):
     out = l[0]
     for x in l[1:]:
         out = out * x
     return out
 
-def somme(*l):
+def nodes_sum(*l):
     return sum([i for i in l])
 
-def moins(x, y): return x - y
-def div(x, y): return x / y
+def nodes_dif(x, y): return x - y
+
+def nodes_div(x, y): return x / y
 
 def clip(c1, c2, ts, t):
     if t <= ts : return c1
@@ -50,14 +51,8 @@ def clip(c1, c2, ts, t):
 
 def f_tab(tab, x):
     if tab[0][0] > x:
-        #if  abs(tab[0][0] - x) > 5:
-            #print(tab, x)
-            #exit(0)
         return tab[0][1]
     if tab[-1][0] < x:
-        #if abs(x - tab[-1][0]) > 5:
-            #print(tab, x)
-            #exit(0)
         return tab[-1][1]
     else:
         i = 0
@@ -67,9 +62,9 @@ def f_tab(tab, x):
                 return tab[i][1] + coeff * (x-tab[i][0])
             i += 1
 
-def f_tab1(x, y, z): return f_tab(x, y/z)
+def f_tab_div(x, y, z): return f_tab(x, y/z)
 
-def f_tab2(x, y, z): return f_tab(x, y - z)
+def f_tab_dif(x, y, z): return f_tab(x, y - z)
 
 ######################################
 # Variables close to population #
@@ -929,26 +924,26 @@ ulgha = NodeFlow("ulgha", hg=h)
 ####################
 # Smooth functions #
 ####################
-ehspc = NodeSmooth("ehspc", "SMOOTH", nbpas, hg=h)
-ple = NodeSmooth("ple", "DELAY3", nbpas, hg=h)
-diopc = NodeSmooth("diopc", "DELAY3", nbpas, hg=h)
-aiopc = NodeSmooth("aiopc", "SMOOTH", nbpas, hg=h)
-fcfpc = NodeSmooth("fcfpc", "DELAY3", nbpas, hg=h)
-lufd = NodeSmooth("lufd", "SMOOTH", nbpas, hg=h)
+ehspc = NodeSmooth("ehspc", "SMOOTH", NB_STEP, hg=h)
+ple = NodeSmooth("ple", "DELAY3", NB_STEP, hg=h)
+diopc = NodeSmooth("diopc", "DELAY3", NB_STEP, hg=h)
+aiopc = NodeSmooth("aiopc", "SMOOTH", NB_STEP, hg=h)
+fcfpc = NodeSmooth("fcfpc", "DELAY3", NB_STEP, hg=h)
+lufd = NodeSmooth("lufd", "SMOOTH", NB_STEP, hg=h)
 if h.version == 2003:
-    lyf2 = NodeSmooth("lyf2", "DELAY3", nbpas, hg=h)
-    nruf2 = NodeSmooth("nruf2", "DELAY3", nbpas, hg=h)
-    ppgf2 = NodeSmooth("ppgf2", "DELAY3", nbpas, hg=h)
-ppapr = NodeSmooth("ppapr", "DELAY3", nbpas, hg=h)
+    lyf2 = NodeSmooth("lyf2", "DELAY3", NB_STEP, hg=h)
+    nruf2 = NodeSmooth("nruf2", "DELAY3", NB_STEP, hg=h)
+    ppgf2 = NodeSmooth("ppgf2", "DELAY3", NB_STEP, hg=h)
+ppapr = NodeSmooth("ppapr", "DELAY3", NB_STEP, hg=h)
 
 #######################
 # Edges on population #
 #######################
-h.add_edge(somme, pop, [p1, p2, p3, p4])
-h.add_edge(prod, d1, [p1, m1])
-h.add_edge(prod, d2, [p2, m2])
-h.add_edge(prod, d3, [p3, m3])
-h.add_edge(prod, d4, [p4, m4])
+h.add_edge(nodes_sum, pop, [p1, p2, p3, p4])
+h.add_edge(nodes_mltpld, d1, [p1, m1])
+h.add_edge(nodes_mltpld, d2, [p2, m2])
+h.add_edge(nodes_mltpld, d3, [p3, m3])
+h.add_edge(nodes_mltpld, d4, [p4, m4])
 
 def f_mat1(p1, m1): return p1 * (1 - m1) / 15
 h.add_edge(f_mat1, mat1, [p1, m1])
@@ -957,10 +952,10 @@ h.add_edge(f_mat2, mat2, [p2, m2])
 def f_mat3(p3, m3): return p3 * (1 - m3) / 20
 h.add_edge(f_mat3, mat3, [p3, m3])
 
-h.add_edge(f_tab1, m1, [M1, le, OY])
-h.add_edge(f_tab1, m2, [M2, le, OY])
-h.add_edge(f_tab1, m3, [M3, le, OY])
-h.add_edge(f_tab1, m4, [M4, le, OY])
+h.add_edge(f_tab_div, m1, [M1, le, OY])
+h.add_edge(f_tab_div, m2, [M2, le, OY])
+h.add_edge(f_tab_div, m3, [M3, le, OY])
+h.add_edge(f_tab_div, m4, [M4, le, OY])
 
 def p1_evo(b, d1, mat1):
     return b - d1 - mat1
@@ -972,24 +967,24 @@ def p3_evo(mat2, d3, mat3):
 h.add_edge(p1_evo, p1, [b, d1, mat1])
 h.add_edge(p2_evo, p2, [mat1, d2, mat2])
 h.add_edge(p3_evo, p3, [mat2, d3, mat3])
-h.add_edge(moins, p4, [mat3, d4])
+h.add_edge(nodes_dif, p4, [mat3, d4])
 
-h.add_edge(somme, d, [d1, d2, d3, d4])
+h.add_edge(nodes_sum, d, [d1, d2, d3, d4])
 def f_cdr(d, pop): return 1000 * d / pop
 h.add_edge(f_cdr, cdr, [d, pop])
 
-h.add_edge(prod, le, [LEN, lmf, lmhs, lmp, lmc])
+h.add_edge(nodes_mltpld, le, [LEN, lmf, lmhs, lmp, lmc])
 
-h.add_edge(f_tab1, lmf, [LMF, fpc, SFPC])
-h.add_edge(f_tab1, hsapc, [HSAPC, sopc, GDPU])
+h.add_edge(f_tab_div, lmf, [LMF, fpc, SFPC])
+h.add_edge(f_tab_div, hsapc, [HSAPC, sopc, GDPU])
 
 def f_lmhs(lmhs1, lmhs2, t): return clip(lmhs1, lmhs2, 1940, t)
 h.add_edge(f_lmhs, lmhs, [lmhs1, lmhs2, t])
 
-h.add_edge(f_tab1, lmhs1, [LMHS1, ehspc, GDPU])
-h.add_edge(f_tab1, lmhs2, [LMHS2, ehspc, GDPU])
-h.add_edge(f_tab1, fpu, [FPU, pop, UP])
-h.add_edge(f_tab1, cmi, [CMI, iopc, GDPU])
+h.add_edge(f_tab_div, lmhs1, [LMHS1, ehspc, GDPU])
+h.add_edge(f_tab_div, lmhs2, [LMHS2, ehspc, GDPU])
+h.add_edge(f_tab_div, fpu, [FPU, pop, UP])
+h.add_edge(f_tab_div, cmi, [CMI, iopc, GDPU])
 
 def f_lmc(cmi, fpu): return 1 - cmi * fpu
 h.add_edge(f_lmc, lmc, [cmi, fpu])
@@ -1005,18 +1000,18 @@ h.add_edge(f_cbr, cbr, [b, pop])
 def f_tf(mtf, fce, dtf): return min(mtf, mtf * (1 - fce) + dtf * fce)
 h.add_edge(f_tf, tf, [mtf, fce, dtf])
 
-h.add_edge(prod, mtf, [MTFN, fm])
+h.add_edge(nodes_mltpld, mtf, [MTFN, fm])
 
-h.add_edge(f_tab1, fm, [FM, le, OY])
+h.add_edge(f_tab_div, fm, [FM, le, OY])
 
-h.add_edge(prod, dtf, [dcfs, cmple])
+h.add_edge(nodes_mltpld, dtf, [dcfs, cmple])
 
-h.add_edge(f_tab1, cmple, [CMPLE, ple, OY])
+h.add_edge(f_tab_div, cmple, [CMPLE, ple, OY])
 
 def f_dcfs(dcfsn, frsn, sfsn, t, zpgt): return clip(2, dcfsn * frsn * sfsn, t, zpgt)
 h.add_edge(f_dcfs, dcfs, [DCFSN, frsn, sfsn, t, ZPGT])
 
-h.add_edge(f_tab1, sfsn, [SFSN, diopc, GDPU])
+h.add_edge(f_tab_div, sfsn, [SFSN, diopc, GDPU])
 h.add_edge(f_tab, frsn, [FRSN, fie])
 
 def f_fie(iopc, aiopc): return (iopc - aiopc) / aiopc
@@ -1025,17 +1020,17 @@ h.add_edge(f_fie, fie, [iopc, aiopc])
 def f_nfc(mtf, dtf): return mtf / dtf - 1
 h.add_edge(f_nfc, nfc, [mtf, dtf])
 
-def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab1(fce, fcfpc, gdpu), t, fcest)
+def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab_div(fce, fcfpc, gdpu), t, fcest)
 h.add_edge(f_fce, fce, [FCE, fcfpc, GDPU, t, FCEST])
 
-h.add_edge(prod, fcapc, [fsafc, sopc])
+h.add_edge(nodes_mltpld, fcapc, [fsafc, sopc])
 
 h.add_edge(f_tab, fsafc, [FSAFC, nfc])
 
 ####################
 # Edges on capital #
 ####################
-h.add_edge(div, iopc, [io, pop])
+h.add_edge(nodes_div, iopc, [io, pop])
 
 def f_io(ic, fcaor, cuf, icor): return (ic * (1 - fcaor) * cuf) / icor
 h.add_edge(f_io, io, [ic, fcaor, cuf, icor])
@@ -1043,57 +1038,57 @@ h.add_edge(f_io, io, [ic, fcaor, cuf, icor])
 h.add_edge(clip, icor, [icor2, ICOR1, t, PYEAR])
 
 if h.version == 2003:
-    h.add_edge(prod, icor2, [icor2t, coym, copm])
+    h.add_edge(nodes_mltpld, icor2, [icor2t, coym, copm])
 
-h.add_edge(moins, ic, [icir, icdr])
-h.add_edge(div, icdr, [ic, ALIC])
+h.add_edge(nodes_dif, ic, [icir, icdr])
+h.add_edge(nodes_div, icdr, [ic, ALIC])
 
-h.add_edge(prod, icir, [io, fioai])
+h.add_edge(nodes_mltpld, icir, [io, fioai])
 
 def f_fioai(fioaa, fioas, fioac): return 1 - fioaa - fioas - fioac
 h.add_edge(f_fioai, fioai, [fioaa, fioas, fioac])
 
 h.add_edge(clip, fioac, [fioacv, FIOACC, t, IET])
 
-h.add_edge(f_tab1, fioacv, [FIOACV, iopc, IOPCD])
+h.add_edge(f_tab_div, fioacv, [FIOACV, iopc, IOPCD])
 
 h.add_edge(clip, isopc, [isopc2, isopc1, t, PYEAR])
 
-h.add_edge(f_tab1, isopc1, [ISOPC1, iopc, GDPU])
-h.add_edge(f_tab1, isopc2, [ISOPC2, iopc, GDPU])
+h.add_edge(f_tab_div, isopc1, [ISOPC1, iopc, GDPU])
+h.add_edge(f_tab_div, isopc2, [ISOPC2, iopc, GDPU])
 
 h.add_edge(clip, fioas, [fioas2, fioas1, t, PYEAR])
 
-h.add_edge(f_tab1, fioas1, [FIOAS1, sopc, isopc])
-h.add_edge(f_tab1, fioas2, [FIOAS2, sopc, isopc])
+h.add_edge(f_tab_div, fioas1, [FIOAS1, sopc, isopc])
+h.add_edge(f_tab_div, fioas2, [FIOAS2, sopc, isopc])
 
-h.add_edge(prod, scir, [io, fioas])
-h.add_edge(moins, sc, [scir, scdr])
-h.add_edge(div, scdr, [sc, ALSC])
+h.add_edge(nodes_mltpld, scir, [io, fioas])
+h.add_edge(nodes_dif, sc, [scir, scdr])
+h.add_edge(nodes_div, scdr, [sc, ALSC])
 
 def f_so(sc, cuf, scor): return sc *cuf / scor
 h.add_edge(f_so, so, [sc, cuf, SCOR])
 
-h.add_edge(div, sopc, [so, pop])
+h.add_edge(nodes_div, sopc, [so, pop])
 
 def f_j(pjis, pjas, pjss): return pjis + pjas + pjss
 h.add_edge(f_j, j, [pjis, pjas, pjss])
 
-h.add_edge(prod, pjis, [ic, jpicu])
-def f_jpicu(jpicu, iopc, gdpu): return 0.001 * f_tab1(jpicu, iopc, gdpu)
+h.add_edge(nodes_mltpld, pjis, [ic, jpicu])
+def f_jpicu(jpicu, iopc, gdpu): return 0.001 * f_tab_div(jpicu, iopc, gdpu)
 h.add_edge(f_jpicu, jpicu, [JPICU, iopc, GDPU])
 
-h.add_edge(prod, pjss, [sc, jpscu])
-def f_jpscu(jpscu, sopc, gdpu): return 0.001 * f_tab1(jpscu, sopc, gdpu)
+h.add_edge(nodes_mltpld, pjss, [sc, jpscu])
+def f_jpscu(jpscu, sopc, gdpu): return 0.001 * f_tab_div(jpscu, sopc, gdpu)
 h.add_edge(f_jpscu, jpscu, [JPSCU, sopc, GDPU])
 
-h.add_edge(prod, pjas, [jph, al])
-h.add_edge(f_tab1, jph, [JPH, aiph, UAGI])
+h.add_edge(nodes_mltpld, pjas, [jph, al])
+h.add_edge(f_tab_div, jph, [JPH, aiph, UAGI])
 
 def f_lf(p2, p3, lfpf): return (p2 + p3) * lfpf
 h.add_edge(f_lf, lf, [p2, p3, LFPF])
 
-h.add_edge(div, luf, [j, lf])
+h.add_edge(nodes_div, luf, [j, lf])
 
 h.add_edge(f_tab, cuf, [CUF, lufd])
 
@@ -1101,7 +1096,7 @@ h.add_edge(f_tab, cuf, [CUF, lufd])
 # Edges on agriculture #
 ########################
 #Loop 1
-h.add_edge(div, lfc, [al, PALT])
+h.add_edge(nodes_div, lfc, [al, PALT])
 
 def f_al(ldr, ler, lrui): return ldr - ler - lrui
 h.add_edge(f_al, al, [ldr, ler, lrui])
@@ -1112,24 +1107,24 @@ h.add_edge(f_pal, pal, [ldr])
 def f_f(ly, al, lfh, pl): return ly * al * lfh * (1 - pl)
 h.add_edge(f_f, f, [ly, al, LFH, PL])
 
-h.add_edge(div, fpc, [f, pop])
+h.add_edge(nodes_div, fpc, [f, pop])
 
 h.add_edge(clip, ifpc, [ifpc2, ifpc1, t, PYEAR])
 
-h.add_edge(f_tab1, ifpc1, [IFPC1, iopc, GDPU])
-h.add_edge(f_tab1, ifpc2, [IFPC2, iopc, GDPU])
+h.add_edge(f_tab_div, ifpc1, [IFPC1, iopc, GDPU])
+h.add_edge(f_tab_div, ifpc2, [IFPC2, iopc, GDPU])
 
-h.add_edge(prod, tai, [io, fioaa])
+h.add_edge(nodes_mltpld, tai, [io, fioaa])
 
 h.add_edge(clip, fioaa, [fioaa2, fioaa1, t, PYEAR])
 
-h.add_edge(f_tab1, fioaa1, [FIOAA1, fpc, ifpc])
-h.add_edge(f_tab1, fioaa2, [FIOAA2, fpc, ifpc])
+h.add_edge(f_tab_div, fioaa1, [FIOAA1, fpc, ifpc])
+h.add_edge(f_tab_div, fioaa2, [FIOAA2, fpc, ifpc])
 
 def f_ldr(tai, fiald, dcph): return tai * fiald / dcph
 h.add_edge(f_ldr, ldr, [tai, fiald, dcph])
 
-h.add_edge(f_tab1, dcph, [DCPH, pal, PALT])
+h.add_edge(f_tab_div, dcph, [DCPH, pal, PALT])
 
 #Loop 2
 def f_cai(tai, fiald): return tai * (1 - fiald)
@@ -1141,17 +1136,17 @@ h.add_edge(f_ai, ai, [cai, ai, ALAI])
 def f_aiph(ai, falm, al): return ai * (1 - falm) / al
 h.add_edge(f_aiph, aiph, [ai, falm, al])
 
-h.add_edge(f_tab1, lymc, [LYMC, aiph, UAGI])
+h.add_edge(f_tab_div, lymc, [LYMC, aiph, UAGI])
 
-h.add_edge(prod, ly, [lyf, lfert, lymc, lymap])
+h.add_edge(nodes_mltpld, ly, [lyf, lfert, lymc, lymap])
 
 h.add_edge(clip, lyf, [lyf2, LYF1, t, PYEAR])
 
 h.add_edge(clip, lymap, [lymap2, lymap1, t, PYEAR])
 
-h.add_edge(f_tab1, lymap1, [LYMAP1, io, IO70])
-h.add_edge(f_tab1, lymap2, [LYMAP2, io, IO70])
-h.add_edge(f_tab1, fiald, [FIALD, mpld, mpai])
+h.add_edge(f_tab_div, lymap1, [LYMAP1, io, IO70])
+h.add_edge(f_tab_div, lymap2, [LYMAP2, io, IO70])
+h.add_edge(f_tab_div, fiald, [FIALD, mpld, mpai])
 
 def f_mpld(ly, dcph, sd): return ly / (dcph * sd)
 h.add_edge(f_mpld, mpld, [ly, dcph, SD])
@@ -1159,22 +1154,22 @@ h.add_edge(f_mpld, mpld, [ly, dcph, SD])
 def f_mpai(alai, ly, mlymc, lymc): return alai * ly * mlymc / lymc
 h.add_edge(f_mpai, mpai, [ALAI, ly, mlymc, lymc])
 
-h.add_edge(f_tab1, mlymc, [MLYMC, aiph, UAGI])
+h.add_edge(f_tab_div, mlymc, [MLYMC, aiph, UAGI])
 
 #Loop 3
-h.add_edge(prod, all, [ALLN, llmy])
+h.add_edge(nodes_mltpld, all, [ALLN, llmy])
 
 def f_llmy(llmy2, llmy1, llmytm, oy, t): return clip(0.95 ** ((t - llmytm) / oy) * llmy1 + (1 - 0.95 ** ((t - llmytm) / oy)) * llmy2, llmy1, t, llmytm)
 h.add_edge(f_llmy, llmy, [llmy2, llmy1, LLMYTM, OY, t])
 
-h.add_edge(f_tab1, llmy1, [LLMY1, ly, ILF])
-h.add_edge(f_tab1, llmy2, [LLMY2, ly, ILF])
+h.add_edge(f_tab_div, llmy1, [LLMY1, ly, ILF])
+h.add_edge(f_tab_div, llmy2, [LLMY2, ly, ILF])
 
-h.add_edge(div, ler, [al, all])
+h.add_edge(nodes_div, ler, [al, all])
 
-h.add_edge(f_tab1, uilpc, [UILPC, iopc, GDPU])
+h.add_edge(f_tab_div, uilpc, [UILPC, iopc, GDPU])
 
-h.add_edge(prod, uilr, [uilpc, pop])
+h.add_edge(nodes_mltpld, uilr, [uilpc, pop])
 
 def f_lrui(uilr, uil, uildt): return max(0, uilr - uil) / uildt
 h.add_edge(f_lrui, lrui, [uilr, uil, UILDT])
@@ -1183,9 +1178,9 @@ def f_uil(lrui): return lrui
 h.add_edge(f_uil, uil, [lrui])
 
 #Loop 4
-h.add_edge(moins, lfert, [lfr, lfd])
+h.add_edge(nodes_dif, lfert, [lfr, lfd])
 h.add_edge(f_tab, lfdr, [LFDR, ppolx])
-h.add_edge(prod, lfd, [lfert, lfdr])
+h.add_edge(nodes_mltpld, lfd, [lfert, lfdr])
 
 #Loop 5
 def f_lfr(ilf, lfert, lfrt): return (ilf - lfert) / lfrt
@@ -1193,7 +1188,7 @@ h.add_edge(f_lfr, lfr, [ILF, lfert, lfrt])
 
 h.add_edge(f_tab, lfrt, [LFRT, falm])
 h.add_edge(f_tab, falm, [FALM, pfr])
-h.add_edge(div, fr, [fpc, SFPC])
+h.add_edge(nodes_div, fr, [fpc, SFPC])
 
 def f_pfr(fr, pfr, fspd): return (fr - pfr) / fspd
 h.add_edge(f_pfr, pfr, [fr, pfr, FSPD])
@@ -1205,7 +1200,7 @@ if h.version == 2003:
     def f_lytdr(lytd, lycm, t, pyear): return clip(lytd * lycm, 0, t, pyear)
     h.add_edge(f_lytdr, lytdr, [lytd, lycm, t, PYEAR])
 
-    h.add_edge(f_tab2, lycm, [LYCM, DFR, fr])
+    h.add_edge(f_tab_dif, lycm, [LYCM, DFR, fr])
     h.add_edge(f_tab, coym, [COYM, lyf])
 
 ######################
@@ -1213,12 +1208,12 @@ if h.version == 2003:
 ######################
 def f_nr(nrur): return - nrur
 h.add_edge(f_nr, nr, [nrur])
-h.add_edge(prod, nrur, [pop, pcrum, nruf])
+h.add_edge(nodes_mltpld, nrur, [pop, pcrum, nruf])
 
 h.add_edge(clip, nruf, [nruf2, NRUF1, t, PYEAR])
 
-h.add_edge(f_tab1, pcrum, [PCRUM, iopc, GDPU])
-h.add_edge(div, nrfr, [nr, NRI])
+h.add_edge(f_tab_div, pcrum, [PCRUM, iopc, GDPU])
+h.add_edge(nodes_div, nrfr, [nr, NRI])
 
 h.add_edge(clip, fcaor, [fcaor2, fcaor1, t, FCAORTM])
 
@@ -1244,17 +1239,17 @@ h.add_edge(f_ppgr, ppgr, [ppgio, ppgao, ppgf])
 
 h.add_edge(clip, ppgf, [ppgf2, PPGF1, t, PYEAR])
 
-h.add_edge(prod, ppgio, [pcrum, pop, FRPM, IMEF, IMTI])
-h.add_edge(prod, ppgao, [aiph, al, FIPM, AMTI])
+h.add_edge(nodes_mltpld, ppgio, [pcrum, pop, FRPM, IMEF, IMTI])
+h.add_edge(nodes_mltpld, ppgao, [aiph, al, FIPM, AMTI])
 
-h.add_edge(moins, ppol, [ppapr, ppasr])
-h.add_edge(div, ppolx, [ppol, PPOL70])
+h.add_edge(nodes_dif, ppol, [ppapr, ppasr])
+h.add_edge(nodes_div, ppolx, [ppol, PPOL70])
 
 def f_ppasr(ppol, ahl): return ppol / (1.4 * ahl)
 h.add_edge(f_ppasr, ppasr, [ppol, ahl])
 
 h.add_edge(f_tab, ahlm, [AHLM, ppolx])
-h.add_edge(prod, ahl, [AHL70, ahlm])
+h.add_edge(nodes_mltpld, ahl, [AHL70, ahlm])
 
 if h.version == 2003:
     def f_ptd(ptdr): return - ptdr
@@ -1274,13 +1269,13 @@ if h.version == 2003:
 def f_hwi(lei, ei, gdpi): return (lei + ei + gdpi) / 3
 h.add_edge(f_hwi, hwi, [lei, ei, gdpi])
 
-h.add_edge(f_tab1, lei, [LEI, le, OY])
-h.add_edge(f_tab1, ei, [EI, gdppc, GDPU])
+h.add_edge(f_tab_div, lei, [LEI, le, OY])
+h.add_edge(f_tab_div, ei, [EI, gdppc, GDPU])
 
 def f_gdpi(gdppc, rlgdp, rhgdp): return log(gdppc / rlgdp) / log(rhgdp / rlgdp)
 h.add_edge(f_gdpi, gdpi, [gdppc, RLGDP, RHGDP])
 
-h.add_edge(f_tab1, gdppc, [GDPPC, iopc, GDPU])
+h.add_edge(f_tab_div, gdppc, [GDPPC, iopc, GDPU])
 
 def f_hef(alggha, ulgha, algha, tl): return (alggha + ulgha + algha) / tl
 h.add_edge(f_hef, hef, [alggha, ulgha, algha, TL])
@@ -1288,8 +1283,8 @@ h.add_edge(f_hef, hef, [alggha, ulgha, algha, TL])
 def f_algha(ppgr, hup, hgha): return ppgr * hup / hgha
 h.add_edge(f_algha, algha, [ppgr, HUP, HGHA])
 
-h.add_edge(div, alggha, [al, HGHA])
-h.add_edge(div, ulgha, [uil, HGHA])
+h.add_edge(nodes_div, alggha, [al, HGHA])
+h.add_edge(nodes_div, ulgha, [uil, HGHA])
 
 ##############################
 # Edges linked to NodeSmooth #
