@@ -145,8 +145,9 @@ class NodeConstant(Node):
 
 
 class Hypergraph():
-    def __init__(self, nodes=[]):
+    def __init__(self, version, nodes=[]):
         self.nodes = {n.name: n for n in nodes}
+        self.version = version
         self.nbrank = None
         self.nodesrank = None
         self.stocks = [n for n in nodes if type(n) == NodeStock]

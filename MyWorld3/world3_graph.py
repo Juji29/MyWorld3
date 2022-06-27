@@ -1,14 +1,13 @@
 from world3_dynamic import *
+from world3_run import VERSION
 from math import log
 import matplotlib.pyplot as plt
 
-h = Hypergraph()
-
+h = Hypergraph(VERSION)
 
 ######################
 # Initial conditions #
 ######################
-version = 1972
 
 IT = NodeConstant("IT", C, val=1900, hg=h) #Initial time - dt
 FT = NodeConstant("FT", C, val=2100, hg=h) #Final time
@@ -135,12 +134,20 @@ cdr = NodeFlow("cdr", hg=h)
 
 LEN = NodeConstant("LEN", C, val=28, hg=h)
 HSID = NodeConstant("HSID", C, val=20, hg=h)
-LMF = NodeConstant("LMF", CT, val=([0, 0],
-                                   [1, 1],
-                                   [2, 1.2],
-                                   [3, 1.3],
-                                   [4, 1.35],
-                                   [5, 1.4]), hg=h)
+if h.version == 1972:
+    LMF = NodeConstant("LMF", CT, val=([0, 0],
+                                       [1, 1],
+                                       [2, 1.2],
+                                       [3, 1.3],
+                                       [4, 1.35],
+                                       [5, 1.4]), hg=h)
+if h.version == 2003:
+    LMF = NodeConstant("LMF", CT, val=([0, 0],
+                                       [1, 1],
+                                       [2, 1.43],
+                                       [3, 1.5],
+                                       [4, 1.5],
+                                       [5, 1.5]), hg=h)
 HSAPC = NodeConstant("HSAPC", CT, val=([0, 0],
                                        [250, 20],
                                        [500, 50],
@@ -156,12 +163,20 @@ LMHS1 = NodeConstant("LMHS1", CT, val=([0, 1],
                                        [60, 1.6],
                                        [80, 1.7],
                                        [100, 1.8]), hg=h)
-LMHS2 = NodeConstant("LMHS2", CT, val=([0, 1],
-                                       [20, 1.4],
-                                       [40, 1.6],
-                                       [60, 1.8],
-                                       [80, 1.95],
-                                       [100, 2]), hg=h)
+if h.version == 1972:
+    LMHS2 = NodeConstant("LMHS2", CT, val=([0, 1],
+                                           [20, 1.4],
+                                           [40, 1.6],
+                                           [60, 1.8],
+                                           [80, 1.95],
+                                           [100, 2]), hg=h)
+if h.version == 2003:
+    LMHS2 = NodeConstant("LMHS2", CT, val=([0, 1],
+                                           [20, 1.5],
+                                           [40, 1.9],
+                                           [60, 2],
+                                           [80, 2],
+                                           [100, 2]), hg=h)
 FPU = NodeConstant("FPU", CT, val=([0, 0],
                                    [2.0e9, 0.2],
                                    [4.0e9, 0.4],
@@ -212,21 +227,35 @@ PET = NodeConstant("PET", C, val=4000, hg=h)
 MTFN = NodeConstant("MTFN", C, val=12, hg=h)
 LPD = NodeConstant("LPD", C, val=20, hg=h)
 ZPGT = NodeConstant("ZPGT", C, val=4000, hg=h)
-DCFSN = NodeConstant("DCFSN", C, val=4, hg=h)
+if h.version == 1972:
+    DCFSN = NodeConstant("DCFSN", C, val=4, hg=h)
+if h.version == 2003:
+    DCFSN = NodeConstant("DCFSN", C, val=3.8, hg=h)
 SAD = NodeConstant("SAD", C, val=20, hg=h)
 IEAT = NodeConstant("IEAT", C, val=3, hg=h)
 FCEST = NodeConstant("FCEST", C, val=4000, hg=h)
 FRSNI = NodeConstant("FRSNI", C, val=0.82, hg=h)
 
-FM = NodeConstant("FM", CT, val=([0, 0],
-                                 [10, 0.2],
-                                 [20, 0.4],
-                                 [30, 0.6],
-                                 [40, 0.8],
-                                 [50, 0.9],
-                                 [60, 1],
-                                 [70, 1.05],
-                                 [80, 1.1]), hg=h)
+if h.version == 1972:
+    FM = NodeConstant("FM", CT, val=([0, 0],
+                                     [10, 0.2],
+                                     [20, 0.4],
+                                     [30, 0.6],
+                                     [40, 0.8],
+                                     [50, 0.9],
+                                     [60, 1],
+                                     [70, 1.05],
+                                     [80, 1.1]), hg=h)
+if h.version == 2003:
+    FM = NodeConstant("FM", CT, val=([0, 0],
+                                     [10, 0.2],
+                                     [20, 0.4],
+                                     [30, 0.6],
+                                     [40, 0.7],
+                                     [50, 0.75],
+                                     [60, 0.79],
+                                     [70, 0.84],
+                                     [80, 0.87]), hg=h)
 FCE = NodeConstant("FCE", CT, val=([0, 0.75],
                                    [0.5, 0.85],
                                    [1, 0.9],
@@ -239,11 +268,18 @@ FRSN = NodeConstant("FRSN", CT, val=([-0.2, 0.5],
                                      [0, 0.7],
                                      [0.1, 0.85],
                                      [0.2, 1]), hg=h)
-SFSN = NodeConstant("SFSN", CT, val=([0, 1.25],
-                                     [200, 1],
-                                     [400, 0.85],
-                                     [600, 0.8],
-                                     [800, 0.7]), hg=h)
+if h.version == 1972:
+    SFSN = NodeConstant("SFSN", CT, val=([0, 1.25],
+                                         [200, 1],
+                                         [400, 0.85],
+                                         [600, 0.8],
+                                         [800, 0.7]), hg=h)
+if h.version == 2003:
+    SFSN = NodeConstant("SFSN", CT, val=([0, 1.25],
+                                         [200, 0.94],
+                                         [400, 0.715],
+                                         [600, 0.59],
+                                         [800, 0.5]), hg=h)
 CMPLE = NodeConstant("CMPLE", CT, val=([0, 3],
                                        [10, 2.1],
                                        [20, 1.6],
@@ -263,7 +299,7 @@ fm = NodeFlow("fm", hg=h)
 fce = NodeFlow("fce", hg=h)
 frsn = NodeFlow("frsn", val=FRSNI.val, hg=h)
 sfsn = NodeFlow("sfsn", hg=h)
-if version == 1972:
+if h.version == 1972:
     nruf2 = NodeConstant("nruf2", C, val=1, hg=h)
     ppgf2 = NodeConstant("ppgf2", C, val=1, hg=h)
 cmple = NodeFlow("cmple", hg=h)
@@ -282,14 +318,17 @@ fcapc = NodeFlow("fcapc", hg=h)
 ################################
 #Related to industry
 ICOR1 = NodeConstant("ICOR1", C, val=3, hg=h)
-if version == 1972:
+if h.version == 1972:
     icor2 = NodeConstant("ICOR2", C, val=3, hg=h)
 ICI = NodeConstant("ICI", C, val=2.1e11, hg=h)
 ALIC = NodeConstant("ALIC", C, val=14, hg=h)
 IET = NodeConstant("IET", C, val=4000, hg=h)
 FIOACC = NodeConstant("FIOACC", C, val=0.43, hg=h)
 IOPCD = NodeConstant("IOPCD", C, val=400, hg=h)
-PYEAR = NodeConstant("PYEAR", C, val=1995, hg=h)
+if h.version == 1972:
+    PYEAR = NodeConstant("PYEAR", C, val=1975, hg=h)
+if h.version == 2003:
+    PYEAR = NodeConstant("PYEAR", C, val=1995, hg=h)
 
 FIOACV = NodeConstant("FIOACV", CT, val=([0, 0.3],
                                          [0.2, 0.32],
@@ -307,7 +346,7 @@ fioacv = NodeFlow("fioacv", hg=h)
 iopc = NodeFlow("iopc", hg=h)
 io = NodeFlow("io", hg=h)
 icor = NodeFlow("icor", hg=h)
-if version == 2003:
+if h.version == 2003:
     icor2 = NodeFlow("icor2", hg=h)
 ic = NodeStock("ic", val=ICI.val, hg=h)
 icdr = NodeFlow("icdr", hg=h)
@@ -475,46 +514,80 @@ ldr = NodeFlow("ldr", hg=h)
 ALAI = NodeConstant("ALAI", C, val=2, hg=h)
 AII = NodeConstant("AII", C, val=5e9, hg=h)
 LYF1 = NodeConstant("LYF1", C, val=1, hg=h)
-if version == 1972:
+if h.version == 1972:
     lyf2 = NodeConstant("lyf2", C, val=1, hg=h)
 IO70 = NodeConstant("IO70", C, val=7.9e11, hg=h)
 SD = NodeConstant("SD", C, val=0.07, hg=h)
 TDD = NodeConstant("TDD", C, val=20, hg=h)
 
-LYMC = NodeConstant("LYMC", CT, val=([0, 1],
-                                     [40, 3],
-                                     [80, 3.8],
-                                     [120, 4.4],
-                                     [160, 4.9],
-                                     [200, 5.4],
-                                     [240, 5.7],
-                                     [280, 6],
-                                     [320, 6.3],
-                                     [360, 6.6],
-                                     [400, 6.9],
-                                     [440, 7.2],
-                                     [480, 7.4],
-                                     [520, 7.6],
-                                     [560, 7.8],
-                                     [600, 8],
-                                     [640, 8.2],
-                                     [680, 8.4],
-                                     [720, 8.6],
-                                     [760, 8.8],
-                                     [800, 9],
-                                     [840, 9.2],
-                                     [880, 9.4],
-                                     [920, 9.6],
-                                     [960, 9.8],
-                                     [1000, 10]), hg=h)
+if h.version == 1972:
+    LYMC = NodeConstant("LYMC", CT, val=([0, 1],
+                                         [40, 3],
+                                         [80, 3.8],
+                                         [120, 4.4],
+                                         [160, 4.9],
+                                         [200, 5.4],
+                                         [240, 5.7],
+                                         [280, 6],
+                                         [320, 6.3],
+                                         [360, 6.6],
+                                         [400, 6.9],
+                                         [440, 7.2],
+                                         [480, 7.4],
+                                         [520, 7.6],
+                                         [560, 7.8],
+                                         [600, 8],
+                                         [640, 8.2],
+                                         [680, 8.4],
+                                         [720, 8.6],
+                                         [760, 8.8],
+                                         [800, 9],
+                                         [840, 9.2],
+                                         [880, 9.4],
+                                         [920, 9.6],
+                                         [960, 9.8],
+                                         [1000, 10]), hg=h)
+if h.version == 2003:
+    LYMC = NodeConstant("LYMC", CT, val=([0, 1],
+                                         [40, 3],
+                                         [80, 4.5],
+                                         [120, 5],
+                                         [160, 5.3],
+                                         [200, 5.6],
+                                         [240, 5.9],
+                                         [280, 6.1],
+                                         [320, 6.35],
+                                         [360, 6.6],
+                                         [400, 6.9],
+                                         [440, 7.2],
+                                         [480, 7.4],
+                                         [520, 7.6],
+                                         [560, 7.8],
+                                         [600, 8],
+                                         [640, 8.2],
+                                         [680, 8.4],
+                                         [720, 8.6],
+                                         [760, 8.8],
+                                         [800, 9],
+                                         [840, 9.2],
+                                         [880, 9.4],
+                                         [920, 9.6],
+                                         [960, 9.8],
+                                         [1000, 10]), hg=h)
 LYMAP1 = NodeConstant("LYMAP1", CT, val=([0, 1],
                                          [10, 1],
                                          [20, 0.7],
                                          [30, 0.4]), hg=h)
-LYMAP2 = NodeConstant("LYMAP2", CT, val=([0, 1],
-                                         [10, 1],
-                                         [20, 0.7],
-                                         [30, 0.4]), hg=h)
+if h.version == 1972:
+    LYMAP2 = NodeConstant("LYMAP2", CT, val=([0, 1],
+                                             [10, 1],
+                                             [20, 0.7],
+                                             [30, 0.4]), hg=h)
+if h.version == 2003:
+    LYMAP2 = NodeConstant("LYMAP2", CT, val=([0, 1],
+                                             [10, 1],
+                                             [20, 0.98],
+                                             [30, 0.95]), hg=h)
 FIALD = NodeConstant("FIALD", CT, val=([0, 0],
                                        [0.25, 0.05],
                                        [0.5, 0.15],
@@ -556,7 +629,10 @@ mpld = NodeFlow("mpld", hg=h)
 mpai = NodeFlow("mpai", hg=h)
 
 #Loop 3
-ALLN = NodeConstant("ALLN", C, val=6000, hg=h)
+if h.version == 1972:
+    ALLN = NodeConstant("ALLN", C, val=6000, hg=h)
+if h.version == 2003:
+    ALLN = NodeConstant("ALLN", C, val=1000, hg=h)
 UILDT = NodeConstant("UILDT", C, val=10, hg=h)
 UILI = NodeConstant("UILI", C, val=8.2e6, hg=h)
 LLMYTM = NodeConstant("LLMYTM", C, val=4000, hg=h)
@@ -571,16 +647,28 @@ LLMY1 = NodeConstant("LLMY1", CT, val=([0, 1.2],
                                        [7, 0.025],
                                        [8, 0.015],
                                        [9, 0.01]), hg=h)
-LLMY2 = NodeConstant("LLMY2", CT, val=([0, 1.2],
-                                       [1, 1],
-                                       [2, 0.63],
-                                       [3, 0.36],
-                                       [4, 0.16],
-                                       [5, 0.055],
-                                       [6, 0.04],
-                                       [7, 0.025],
-                                       [8, 0.015],
-                                       [9, 0.01]), hg=h)
+if h.version == 1972:
+    LLMY2 = NodeConstant("LLMY2", CT, val=([0, 1.2],
+                                           [1, 1],
+                                           [2, 0.63],
+                                           [3, 0.36],
+                                           [4, 0.16],
+                                           [5, 0.055],
+                                           [6, 0.04],
+                                           [7, 0.025],
+                                           [8, 0.015],
+                                           [9, 0.01]), hg=h)
+if h.version == 2003:
+    LLMY2 = NodeConstant("LLMY2", CT, val=([0, 1.2],
+                                           [1, 1],
+                                           [2, 0.63],
+                                           [3, 0.36],
+                                           [4, 0.29],
+                                           [5, 0.26],
+                                           [6, 0.24],
+                                           [7, 0.22],
+                                           [8, 0.21],
+                                           [9, 0.2]), hg=h)
 UILPC = NodeConstant("UILPC", CT, val=([0, 0.005],
                                        [200, 0.008],
                                        [400, 0.015],
@@ -618,7 +706,7 @@ ILF = NodeConstant("ILF", C, val=600, hg=h)
 SFPC = NodeConstant("SFPC", C, val=230, hg=h)
 FSPD = NodeConstant("FSPD", C, val=2, hg=h)
 PFRI = NodeConstant("PFRI", C, val=1, hg=h)
-if version == 2003:
+if h.version == 2003:
     DFR = NodeConstant("DFR", C, val=2, hg=h)
 
 LFRT = NodeConstant("LFRT", CT, val=([0, 20],
@@ -632,7 +720,7 @@ FALM = NodeConstant("FALM", CT, val=([0, 0],
                                      [2, 0.07],
                                      [3, 0.09],
                                      [4, 0.1]), hg=h)
-if version == 2003:
+if h.version == 2003:
     LYCM = NodeConstant("LYCM", CT, val=([0, 0],
                                          [1, 0.04]), hg=h)
     COYM = NodeConstant("COYM", CT, val=([1, 1],
@@ -643,14 +731,14 @@ if version == 2003:
                                          [2, 1.5]), hg=h)
 lfrt = NodeFlow("lfrt", hg=h)
 falm = NodeFlow("falm", hg=h)
-if version == 2003:
+if h.version == 2003:
     lycm = NodeFlow("lycm", hg=h)
     coym = NodeFlow("coym", hg=h)
 
 lfr = NodeFlow("lfr", hg=h)
 fr = NodeFlow("fr", hg=h)
 pfr = NodeStock("pfr", val=PFRI.val, hg=h)
-if version == 2003:
+if h.version == 2003:
     lytd = NodeStock("lytd", val=LYF1.val, hg=h)
     lytdr = NodeFlow("lytdr", hg=h)
 
@@ -659,19 +747,30 @@ if version == 2003:
 ################################
 NRI = NodeConstant("NRI", C, val=1e12, hg=h)
 NRUF1 = NodeConstant("NRUFI", C, val=1, hg=h)
-if version == 2003:
+if h.version == 2003:
     DNRUR = NodeConstant("DNRUR", C, val=4.8e9, hg=h)
 FCAORTM = NodeConstant("FCAORTM", C, val=4000, hg=h)
 
-PCRUM = NodeConstant("PCRUM", CT, val=([0, 0],
-                                       [200, 0.85],
-                                       [400, 2.6],
-                                       [600, 4.4],
-                                       [800, 5.4],
-                                       [1000, 6.2],
-                                       [1200, 6.8],
-                                       [1400, 7],
-                                       [1600, 7]), hg=h)
+if h.version == 1972:
+    PCRUM = NodeConstant("PCRUM", CT, val=([0, 0],
+                                           [200, 0.85],
+                                           [400, 2.6],
+                                           [600, 4.4],
+                                           [800, 5.4],
+                                           [1000, 6.2],
+                                           [1200, 6.8],
+                                           [1400, 7],
+                                           [1600, 7]), hg=h)
+if h.version == 2003:
+    PCRUM = NodeConstant("PCRUM", CT, val=([0, 0],
+                                           [200, 0.85],
+                                           [400, 2.6],
+                                           [600, 3.4],
+                                           [800, 3.8],
+                                           [1000, 4.1],
+                                           [1200, 4.4],
+                                           [1400, 4.7],
+                                           [1600, 5]), hg=h)
 FCAOR1 = NodeConstant("FCAOR1", CT, val=([0, 1],
                                          [0.1, 0.9],
                                          [0.2, 0.7],
@@ -683,18 +782,31 @@ FCAOR1 = NodeConstant("FCAOR1", CT, val=([0, 1],
                                          [0.8, 0.05],
                                          [0.9, 0.05],
                                          [1, 0.05]), hg=h)
-FCAOR2 = NodeConstant("FCAOR2", CT, val=([0, 1],
-                                         [0.1, 0.9],
-                                         [0.2, 0.7],
-                                         [0.3, 0.5],
-                                         [0.4, 0.2],
-                                         [0.5, 0.1],
-                                         [0.6, 0.05],
-                                         [0.7, 0.05],
-                                         [0.8, 0.05],
-                                         [0.9, 0.05],
-                                         [1, 0.05]), hg=h)
-if version == 2003:
+if h.version == 1972:
+    FCAOR2 = NodeConstant("FCAOR2", CT, val=([0, 1],
+                                             [0.1, 0.9],
+                                             [0.2, 0.7],
+                                             [0.3, 0.5],
+                                             [0.4, 0.2],
+                                             [0.5, 0.1],
+                                             [0.6, 0.05],
+                                             [0.7, 0.05],
+                                             [0.8, 0.05],
+                                             [0.9, 0.05],
+                                             [1, 0.05]), hg=h)
+if h.version == 2003:
+    FCAOR2 = NodeConstant("FCAOR2", CT, val=([0, 1],
+                                             [0.1, 0.2],
+                                             [0.2, 0.1],
+                                             [0.3, 0.05],
+                                             [0.4, 0.05],
+                                             [0.5, 0.05],
+                                             [0.6, 0.05],
+                                             [0.7, 0.05],
+                                             [0.8, 0.05],
+                                             [0.9, 0.05],
+                                             [1, 0.05]), hg=h)
+if h.version == 2003:
     NRCM = NodeConstant("NRCM", CT, val=([-1, -0.04],
                                          [0, 0]), hg=h)
     ICOR2T = NodeConstant("ICOR2T", CT, val=([0, 3.75],
@@ -712,7 +824,7 @@ pcrum = NodeFlow("pcrum", hg=h)
 fcaor = NodeFlow("fcaor", hg=h)
 fcaor1 = NodeFlow("fcaor1", hg=h)
 fcaor2 = NodeFlow("fcaor2", hg=h)
-if version == 2003:
+if h.version == 2003:
     nrcm = NodeFlow("nrcm", hg=h)
     icor2t = NodeFlow("icor2t", hg=h)
 
@@ -720,7 +832,7 @@ nr = NodeStock("nr", val=NRI.val, hg=h)
 nrur = NodeFlow("nrur", hg=h)
 nruf = NodeFlow("nruf", hg=h)
 nrfr = NodeFlow("nrfr", hg=h)
-if version == 2003:
+if h.version == 2003:
     nrtd = NodeStock("nrtd", val=NRUF1.val, hg=h)
     nrate = NodeFlow("nrate", hg=h)
 
@@ -737,7 +849,7 @@ PPTD = NodeConstant("PPTD", C, val=20, hg=h)
 PPOLI = NodeConstant("PPOLI", C, val=2.5e7, hg=h)
 PPOL70 = NodeConstant("PPOLI70", C, val=1.36e8, hg=h)
 AHL70 = NodeConstant("AHL70", C, val=1.5, hg=h)
-if version == 2003:
+if h.version == 2003:
     DPOLX = NodeConstant("DPOLX", C, val=1.2, hg=h)
 
 AHLM = NodeConstant("AHLM", CT, val=([1, 1],
@@ -745,7 +857,7 @@ AHLM = NodeConstant("AHLM", CT, val=([1, 1],
                                      [501, 21],
                                      [751, 31],
                                      [1001, 41]), hg=h)
-if version == 2003:
+if h.version == 2003:
     POLGFM = NodeConstant("POLGFM", CT, val=([-1, -0.04],
                                              [0, 0]), hg=h)
     COPM = NodeConstant("COPM", CT, val=([0, 1.25],
@@ -761,7 +873,7 @@ if version == 2003:
                                          [1, 1]), hg=h)
 
 ahlm = NodeFlow("ahlm", hg=h)
-if version == 2003:
+if h.version == 2003:
     polgfm = NodeFlow("polgfm", hg=h)
     copm = NodeFlow("copm", hg=h)
 
@@ -773,7 +885,7 @@ ppol = NodeStock("ppol", val=PPOLI.val, hg=h)
 ppolx = NodeFlow("ppolx", hg=h)
 ppasr = NodeFlow("ppasr", hg=h)
 ahl = NodeFlow("ahl", hg=h)
-if version == 2003:
+if h.version == 2003:
     ptd = NodeStock("ptd", val=PPGF1.val, hg=h)
     ptdr = NodeFlow("ptdr", hg=h)
 
@@ -823,7 +935,7 @@ diopc = NodeSmooth("diopc", "DELAY3", nbpas, hg=h)
 aiopc = NodeSmooth("aiopc", "SMOOTH", nbpas, hg=h)
 fcfpc = NodeSmooth("fcfpc", "DELAY3", nbpas, hg=h)
 lufd = NodeSmooth("lufd", "SMOOTH", nbpas, hg=h)
-if version == 2003:
+if h.version == 2003:
     lyf2 = NodeSmooth("lyf2", "DELAY3", nbpas, hg=h)
     nruf2 = NodeSmooth("nruf2", "DELAY3", nbpas, hg=h)
     ppgf2 = NodeSmooth("ppgf2", "DELAY3", nbpas, hg=h)
@@ -930,7 +1042,7 @@ h.add_edge(f_io, io, [ic, fcaor, cuf, icor])
 
 h.add_edge(clip, icor, [icor2, ICOR1, t, PYEAR])
 
-if version == 2003:
+if h.version == 2003:
     h.add_edge(prod, icor2, [icor2t, coym, copm])
 
 h.add_edge(moins, ic, [icir, icdr])
@@ -1086,7 +1198,7 @@ h.add_edge(div, fr, [fpc, SFPC])
 def f_pfr(fr, pfr, fspd): return (fr - pfr) / fspd
 h.add_edge(f_pfr, pfr, [fr, pfr, FSPD])
 
-if version == 2003:
+if h.version == 2003:
     def f_lytd(lytdr): return - lytdr
     h.add_edge(f_lytd, lytd, [lytdr])
 
@@ -1113,7 +1225,7 @@ h.add_edge(clip, fcaor, [fcaor2, fcaor1, t, FCAORTM])
 h.add_edge(f_tab, fcaor1, [FCAOR1, nrfr])
 h.add_edge(f_tab, fcaor2, [FCAOR2, nrfr])
 
-if version == 2003:
+if h.version == 2003:
     def f_nrtd(nrate): return - nrate
     h.add_edge(f_nrtd, nrtd, [nrate])
 
@@ -1144,7 +1256,7 @@ h.add_edge(f_ppasr, ppasr, [ppol, ahl])
 h.add_edge(f_tab, ahlm, [AHLM, ppolx])
 h.add_edge(prod, ahl, [AHL70, ahlm])
 
-if version == 2003:
+if h.version == 2003:
     def f_ptd(ptdr): return - ptdr
     h.add_edge(f_ptd, ptd, [ptdr])
 
@@ -1188,7 +1300,7 @@ h.add_edge(diopc.f_smooth, diopc, [iopc, SAD])
 h.add_edge(aiopc.f_smooth, aiopc, [iopc, IEAT])
 h.add_edge(fcfpc.f_smooth, fcfpc, [fcapc, HSID])
 h.add_edge(lufd.f_smooth, lufd, [luf, LUFDT])
-if version == 2003:
+if h.version == 2003:
     h.add_edge(lyf2.f_smooth, lyf2, [lytd, TDD])
     h.add_edge(nruf2.f_smooth, nruf2, [nrtd, TDD])
     h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD])
