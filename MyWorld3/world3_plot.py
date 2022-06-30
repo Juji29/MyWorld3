@@ -58,9 +58,9 @@ def classic_plot(time, var_data, var_names, var_lims,
         ax.set_ylim(lim[0], lim[1])
 
     for ax_ in axs:
-        formatter_ = EngFormatter(places=0, sep="\N{THIN SPACE}")
+        formatter_ = EngFormatter(places=1, sep="\N{THIN SPACE}")
         ax_.tick_params(axis='y', rotation=90)
-        ax_.yaxis.set_major_locator(plt.MaxNLocator(5))
+        ax_.yaxis.set_major_locator(plt.MaxNLocator(4))
         ax_.yaxis.set_major_formatter(formatter_)
 
     tkw = dict(size=4, width=1.5)
