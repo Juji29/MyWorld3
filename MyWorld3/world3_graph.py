@@ -15,6 +15,7 @@ t = NodeStock("time", val=IT.val, hg=h)
 h.add_edge(lambda x: 1, t, [TS])
 NB_STEP = int((FT.val - IT.val) / TS.val)
 
+
 #########
 # Units #
 #########
@@ -177,14 +178,28 @@ RLT = NodeConstant("RLT", C, val=30, hg=h)
 PET = NodeConstant("PET", C, val=4000, hg=h)
 MTFN = NodeConstant("MTFN", C, val=12, hg=h)
 LPD = NodeConstant("LPD", C, val=20, hg=h)
-ZPGT = NodeConstant("ZPGT", C, val=4000, hg=h)
+if 1 <= N_SCENARIO <= 6:
+    ZPGT = NodeConstant("ZPGT", C, val=4000, hg=h)
+if 7 <= N_SCENARIO <= 9:
+    ZPGT = NodeConstant("ZPGT", C, val=2002, hg=h)
+if N_SCENARIO == 10:
+    ZPGT = NodeConstant("ZPGT", C, val=1982, hg=h)
+if N_SCENARIO == 11:
+    ZPGT = NodeConstant("ZPGT", C, val=2012, hg=h)
 if h.version == 1972:
     DCFSN = NodeConstant("DCFSN", C, val=4, hg=h)
 if h.version == 2003:
     DCFSN = NodeConstant("DCFSN", C, val=3.8, hg=h)
 SAD = NodeConstant("SAD", C, val=20, hg=h)
 IEAT = NodeConstant("IEAT", C, val=3, hg=h)
-FCEST = NodeConstant("FCEST", C, val=4000, hg=h)
+if 1 <= N_SCENARIO <= 6:
+    FCEST = NodeConstant("FCEST", C, val=4000, hg=h)
+if 7 <= N_SCENARIO <= 9:
+    FCEST = NodeConstant("FCEST", C, val=2002, hg=h)
+if N_SCENARIO == 10:
+    FCEST = NodeConstant("FCEST", C, val=1982, hg=h)
+if N_SCENARIO == 11:
+    FCEST = NodeConstant("FCEST", C, val=2012, hg=h)
 FRSNI = NodeConstant("FRSNI", C, val=0.82, hg=h)
 
 if h.version == 1972:
@@ -276,14 +291,36 @@ ICOR1 = NodeConstant("ICOR1", C, val=3, hg=h)
 if h.version == 1972:
     ICOR2 = NodeConstant("ICOR2", C, val=3, hg=h)
 ICI = NodeConstant("ICI", C, val=2.1e11, hg=h)
-ALIC = NodeConstant("ALIC", C, val=14, hg=h)
-IET = NodeConstant("IET", C, val=4000, hg=h)
-FIOACC = NodeConstant("FIOACC", C, val=0.43, hg=h)
-IOPCD = NodeConstant("IOPCD", C, val=400, hg=h)
+ALIC1 = NodeConstant("ALIC1", C, val=14, hg=h)
+if 1 <= N_SCENARIO <= 7:
+    ALIC2 = NodeConstant("ALIC2", C, val=14, hg=h)
+if 8 <= N_SCENARIO <= 11:
+    ALIC2 = NodeConstant("ALIC2", C, val=18, hg=h)
+if 1 <= N_SCENARIO <= 7:
+    IET = NodeConstant("IET", C, val=4000, hg=h)
+if 8 <= N_SCENARIO <= 9:
+    IET = NodeConstant("IET", C, val=2002, hg=h)
+if N_SCENARIO == 10:
+    IET = NodeConstant("IET", C, val=1982, hg=h)
+if N_SCENARIO == 11:
+    IET = NodeConstant("IET", C, val=2012, hg=h)
+FIOAC1 = NodeConstant("FIOAC1", C, val=0.43, hg=h)
+FIOAC2 = NodeConstant("FIOAC2", C, val=0.43, hg=h)
+if 1 <= N_SCENARIO <= 7:
+    IOPCD = NodeConstant("IOPCD", C, val=400, hg=h)
+if 8 <= N_SCENARIO <= 11:
+    IOPCD = NodeConstant("IOPCD", C, val=350, hg=h)
 if h.version == 1972:
     PYEAR = NodeConstant("PYEAR", C, val=1975, hg=h)
 if h.version == 2003:
-    PYEAR = NodeConstant("PYEAR", C, val=1995, hg=h)
+    if 1 <= N_SCENARIO <= 2 or N_SCENARIO == 7:
+        PYEAR = NodeConstant("PYEAR", C, val=1995, hg=h)
+    if 3 <= N_SCENARIO <= 6 or 8 <= N_SCENARIO <= 9:
+        PYEAR = NodeConstant("PYEAR", C, val=2002, hg=h)
+    if N_SCENARIO == 10:
+        PYEAR = NodeConstant("PYEAR", C, val=1982, hg=h)
+    if N_SCENARIO == 11:
+        PYEAR = NodeConstant("PYEAR", C, val=2012, hg=h)
 
 FIOACV = NodeConstant("FIOACV", CT, val=([0, 0.3],
                                          [0.2, 0.32],
@@ -305,14 +342,21 @@ if h.version == 2003:
     icor2 = NodeFlow("icor2", hg=h)
 ic = NodeStock("ic", val=ICI.val, hg=h)
 icdr = NodeFlow("icdr", hg=h)
+alic = NodeFlow("alic", hg=h)
 icir = NodeFlow("icir", hg=h)
 fioai = NodeFlow("fioai", hg=h)
 fioac = NodeFlow("fioac", hg=h)
+fioacc = NodeFlow("fioacc", hg=h)
 
 #Related to services
 SCI = NodeConstant("SCI", C, val=1.44e11, hg=h)
-ALSC = NodeConstant("ALSC", C, val=20, hg=h)
-SCOR = NodeConstant("SCOR", C, val=1, hg=h)
+ALSC1 = NodeConstant("ALSC1", C, val=20, hg=h)
+if 1 <= N_SCENARIO <= 7:
+    ALSC2 = NodeConstant("ALSC2", C, val=20, hg=h)
+if 8 <= N_SCENARIO <= 11:
+    ALSC2 = NodeConstant("ALSC2", C, val=25, hg=h)
+SCOR1 = NodeConstant("SCOR1", C, val=1, hg=h)
+SCOR2 = NodeConstant("SCOR2", C, val=1, hg=h)
 
 ISOPC1 = NodeConstant("ISOPC1", CT, val=([0, 40],
                                          [200, 300],
@@ -352,13 +396,15 @@ fioas = NodeFlow("fioas", hg=h)
 scir = NodeFlow("scir", hg=h)
 sc = NodeStock("sc", val=SCI.val, hg=h)
 scdr = NodeFlow("scdr", hg=h)
+alsc = NodeFlow("alsc", hg=h)
 so = NodeFlow("so", hg=h)
 sopc = NodeFlow("sopc", hg=h)
+scor = NodeFlow("scor", hg=h)
 
 #Related to jobs
 LFPF = NodeConstant("LFPF", C, val=0.75, hg=h)
 LUFDT = NodeConstant("LUFDT", C, val=2, hg=h)
-CUFI = NodeConstant("CUFI", C, val=1, hg=h)
+CUFI = NodeConstant("CUFI", C, val=0.98, hg=h)
 
 JPICU = NodeConstant("JPICU", CT, val=([50, 3.7e-4],
                                        [200, 1.8e-4],
@@ -468,7 +514,11 @@ fioaa = NodeFlow("fioaa", hg=h)
 ldr = NodeFlow("ldr", hg=h)
 
 #Loop 2
-ALAI = NodeConstant("ALAI", C, val=2, hg=h)
+ALAI1 = NodeConstant("ALAI1", C, val=2, hg=h)
+if 1 <= N_SCENARIO <= 7:
+    ALAI2 = NodeConstant("ALAI2", C, val=2, hg=h)
+if 8 <= N_SCENARIO <= 11:
+    ALAI2 = NodeConstant("ALAI2", C, val=2.5, hg=h)
 AII = NodeConstant("AII", C, val=5e9, hg=h)
 LYF1 = NodeConstant("LYF1", C, val=1, hg=h)
 if h.version == 1972:
@@ -580,6 +630,7 @@ mlymc = NodeFlow("mlymc", hg=h)
 
 cai = NodeFlow("cai", hg=h)
 ai = NodeStock("ai", val=AII.val, hg=h)
+alai = NodeFlow("alai", hg=h)
 aiph = NodeFlow("aiph", hg=h)
 ly = NodeFlow("ly", hg=h)
 lyf = NodeFlow("lyf", hg=h)
@@ -595,7 +646,14 @@ if h.version == 2003:
     ALLN = NodeConstant("ALLN", C, val=1000, hg=h)
 UILDT = NodeConstant("UILDT", C, val=10, hg=h)
 UILI = NodeConstant("UILI", C, val=8.2e6, hg=h)
-LLMYTM = NodeConstant("LLMYTM", C, val=4000, hg=h)
+if 1 <= N_SCENARIO <= 4 or 7 <= N_SCENARIO <= 8:
+    LLMYTM = NodeConstant("LLMYTM", C, val=4000, hg=h)
+if 5 <= N_SCENARIO <= 6 or N_SCENARIO == 9:
+    LLMYTM = NodeConstant("LLMYTM", C, val=2002, hg=h)
+if N_SCENARIO == 10:
+    LLMYTM = NodeConstant("LLMYTM", C, val=1982, hg=h)
+if N_SCENARIO == 11:
+    LLMYTM = NodeConstant("LLMYTM", C, val=2012, hg=h)
 
 LLMY1 = NodeConstant("LLMY1", CT, val=([0, 1.2],
                                        [1, 1],
@@ -681,8 +739,12 @@ FALM = NodeConstant("FALM", CT, val=([0, 0],
                                      [3, 0.09],
                                      [4, 0.1]), hg=h)
 if h.version == 2003:
-    LYCM = NodeConstant("LYCM", CT, val=([0, 0],
-                                         [1, 0]), hg=h)
+    if 1 <= N_SCENARIO <= 3 or 7 <= N_SCENARIO <= 8:
+        LYCM = NodeConstant("LYCM", CT, val=([0, 0],
+                                             [1, 0]), hg=h)
+    if 4 <= N_SCENARIO <= 6 or 9 <= N_SCENARIO <= 11:
+        LYCM = NodeConstant("LYCM", CT, val=([0, 0],
+                                             [1, 0.04]), hg=h)
     COYM = NodeConstant("COYM", CT, val=([1, 1],
                                          [1.2, 1.05],
                                          [1.4, 1.12],
@@ -712,7 +774,14 @@ if N_SCENARIO > 1:
 NRUF1 = NodeConstant("NRUFI", C, val=1, hg=h)
 if h.version == 1972:
     NRUF2 = NodeConstant("NRUF2", C, val=1, hg=h)
-FCAORTM = NodeConstant("FCAORTM", C, val=4000, hg=h)
+if N_SCENARIO == 1:
+    FCAORTM = NodeConstant("FCAORTM", C, val=4000, hg=h)
+if 2 <= N_SCENARIO <= 9:
+    FCAORTM = NodeConstant("FCAORTM", C, val=2002, hg=h)
+if N_SCENARIO == 10:
+    FCAORTM = NodeConstant("FCAORTM", C, val=1982, hg=h)
+if N_SCENARIO == 11:
+    FCAORTM = NodeConstant("FCAORTM", C, val=2012, hg=h)
 if h.version == 2003:
     DNRUR = NodeConstant("DNRUR", C, val=4.8e9, hg=h)
 
@@ -760,20 +829,37 @@ if h.version == 1972:
                                              [0.9, 0.05],
                                              [1, 0.05]), hg=h)
 if h.version == 2003:
-    FCAOR2 = NodeConstant("FCAOR2", CT, val=([0, 1],
-                                             [0.1, 0.2],
-                                             [0.2, 0.1],
-                                             [0.3, 0.05],
-                                             [0.4, 0.05],
-                                             [0.5, 0.05],
-                                             [0.6, 0.05],
-                                             [0.7, 0.05],
-                                             [0.8, 0.05],
-                                             [0.9, 0.05],
-                                             [1, 0.05]), hg=h)
+    if N_SCENARIO > 1:
+        FCAOR2 = NodeConstant("FCAOR2", CT, val=([0, 1],
+                                                 [0.1, 0.1],
+                                                 [0.2, 0.05],
+                                                 [0.3, 0.05],
+                                                 [0.4, 0.05],
+                                                 [0.5, 0.05],
+                                                 [0.6, 0.05],
+                                                 [0.7, 0.05],
+                                                 [0.8, 0.05],
+                                                 [0.9, 0.05],
+                                                 [1, 0.05]), hg=h)
+    if N_SCENARIO == 1:
+        FCAOR2 = NodeConstant("FCAOR2", CT, val=([0, 1],
+                                                 [0.1, 0.2],
+                                                 [0.2, 0.1],
+                                                 [0.3, 0.05],
+                                                 [0.4, 0.05],
+                                                 [0.5, 0.05],
+                                                 [0.6, 0.05],
+                                                 [0.7, 0.05],
+                                                 [0.8, 0.05],
+                                                 [0.9, 0.05],
+                                                 [1, 0.05]), hg=h)
 if h.version == 2003:
-    NRCM = NodeConstant("NRCM", CT, val=([-1, 0],
-                                         [0, 0]), hg=h)
+    if 1 <= N_SCENARIO <= 5 or 7 <= N_SCENARIO <= 8:
+        NRCM = NodeConstant("NRCM", CT, val=([-1, 0],
+                                             [0, 0]), hg=h)
+    if N_SCENARIO == 6 or 9 <= N_SCENARIO <= 11:
+        NRCM = NodeConstant("NRCM", CT, val=([-1, -0.04],
+                                             [0, 0]), hg=h)
     ICOR2T = NodeConstant("ICOR2T", CT, val=([0, 3.75],
                                              [0.1, 3.6],
                                              [0.2, 3.47],
@@ -828,8 +914,12 @@ AHLM = NodeConstant("AHLM", CT, val=([1, 1],
                                      [751, 31],
                                      [1001, 41]), hg=h)
 if h.version == 2003:
-    POLGFM = NodeConstant("POLGFM", CT, val=([-1, 0],
-                                             [0, 0]), hg=h)
+    if 1 <= N_SCENARIO <= 2 or 7 <= N_SCENARIO <= 8:
+        POLGFM = NodeConstant("POLGFM", CT, val=([-1, 0],
+                                                 [0, 0]), hg=h)
+    if 3 <= N_SCENARIO <= 6 or 9 <= N_SCENARIO <= 11:
+        POLGFM = NodeConstant("POLGFM", CT, val=([-1, -0.04],
+                                                 [0, 0]), hg=h)
     COPM = NodeConstant("COPM", CT, val=([0, 1.25],
                                          [0.1, 1.2],
                                          [0.2, 1.15],
@@ -1048,14 +1138,15 @@ if h.version == 2003:
     h.add_edge(nodes_mltpld, icor2, [icor2t, coym, copm])
 
 h.add_edge(nodes_dif, ic, [icir, icdr])
-h.add_edge(nodes_div, icdr, [ic, ALIC])
-
+h.add_edge(nodes_div, icdr, [ic, alic])
+h.add_edge(clip, alic, [ALIC2, ALIC1, t, PYEAR])
 h.add_edge(nodes_mltpld, icir, [io, fioai])
 
 def f_fioai(fioaa, fioas, fioac): return 1 - fioaa - fioas - fioac
 h.add_edge(f_fioai, fioai, [fioaa, fioas, fioac])
 
-h.add_edge(clip, fioac, [fioacv, FIOACC, t, IET])
+h.add_edge(clip, fioac, [fioacv, fioacc, t, IET])
+h.add_edge(clip, fioacc, [FIOAC2, FIOAC1, t, PYEAR])
 
 h.add_edge(f_tab_div, fioacv, [FIOACV, iopc, IOPCD])
 
@@ -1071,12 +1162,14 @@ h.add_edge(f_tab_div, fioas2, [FIOAS2, sopc, isopc])
 
 h.add_edge(nodes_mltpld, scir, [io, fioas])
 h.add_edge(nodes_dif, sc, [scir, scdr])
-h.add_edge(nodes_div, scdr, [sc, ALSC])
+h.add_edge(clip, alsc, [ALSC2, ALSC1, t, PYEAR])
+h.add_edge(nodes_div, scdr, [sc, alsc])
 
 def f_so(sc, cuf, scor): return sc *cuf / scor
-h.add_edge(f_so, so, [sc, cuf, SCOR])
+h.add_edge(f_so, so, [sc, cuf, scor])
 
 h.add_edge(nodes_div, sopc, [so, pop])
+h.add_edge(clip, scor, [SCOR2, SCOR1, t, PYEAR])
 
 def f_j(pjis, pjas, pjss): return pjis + pjas + pjss
 h.add_edge(f_j, j, [pjis, pjas, pjss])
@@ -1136,7 +1229,9 @@ def f_cai(tai, fiald): return tai * (1 - fiald)
 h.add_edge(f_cai, cai, [tai, fiald])
 
 def f_ai(cai, ai, alai): return (cai - ai) / alai
-h.add_edge(f_ai, ai, [cai, ai, ALAI])
+h.add_edge(f_ai, ai, [cai, ai, alai])
+
+h.add_edge(clip, alai, [ALAI2, ALAI1, t, PYEAR])
 
 def f_aiph(ai, falm, al): return ai * (1 - falm) / al
 h.add_edge(f_aiph, aiph, [ai, falm, al])
@@ -1160,7 +1255,7 @@ def f_mpld(ly, dcph, sd): return ly / (dcph * sd)
 h.add_edge(f_mpld, mpld, [ly, dcph, SD])
 
 def f_mpai(alai, ly, mlymc, lymc): return alai * ly * mlymc / lymc
-h.add_edge(f_mpai, mpai, [ALAI, ly, mlymc, lymc])
+h.add_edge(f_mpai, mpai, [alai, ly, mlymc, lymc])
 
 h.add_edge(f_tab_div, mlymc, [MLYMC, aiph, UAGI])
 
@@ -1253,11 +1348,7 @@ if h.version == 1972:
 if h.version == 2003:
     h.add_edge(clip, ppgf, [ppgf2, PPGF1, t, PYEAR])
 
-if N_SCENARIO <= 2:
-    h.add_edge(nodes_mltpld, ppgio, [pcrum, pop, FRPM, IMEF, IMTI])
-if N_SCENARIO > 2:
-    def f_ppgio(pcrum, pop, frpm, imef, imti): return 0.96 * pcrum * pop * frpm * imef * imti
-    h.add_edge(f_ppgio, ppgio, [pcrum, pop, FRPM, IMEF, IMTI])
+h.add_edge(nodes_mltpld, ppgio, [pcrum, pop, FRPM, IMEF, IMTI])
 h.add_edge(nodes_mltpld, ppgao, [aiph, al, FIPM, AMTI])
 
 h.add_edge(nodes_dif, ppol, [ppapr, ppasr])
