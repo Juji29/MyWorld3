@@ -1297,7 +1297,7 @@ def f_pfr(fr, pfr, fspd): return (fr - pfr) / fspd
 h.add_edge(f_pfr, pfr, [fr, pfr, FSPD])
 
 if h.version == 2003:
-    def f_lytd(lytdr): return - lytdr
+    def f_lytd(lytdr): return lytdr
     h.add_edge(f_lytd, lytd, [lytdr])
 
     def f_lytdr(lytd, lycm, t, pyear): return clip(lytd * lycm, 0, t, pyear)
@@ -1327,7 +1327,7 @@ h.add_edge(f_tab, fcaor1, [FCAOR1, nrfr])
 h.add_edge(f_tab, fcaor2, [FCAOR2, nrfr])
 
 if h.version == 2003:
-    def f_nrtd(nrate): return - nrate
+    def f_nrtd(nrate): return nrate
     h.add_edge(f_nrtd, nrtd, [nrate])
 
     def f_nrate(nrtd, nrcm, t, pyear): return clip(nrtd * nrcm, 0, t, pyear)
@@ -1361,7 +1361,7 @@ h.add_edge(f_tab, ahlm, [AHLM, ppolx])
 h.add_edge(nodes_mltpld, ahl, [AHL70, ahlm])
 
 if h.version == 2003:
-    def f_ptd(ptdr): return - ptdr
+    def f_ptd(ptdr): return ptdr
     h.add_edge(f_ptd, ptd, [ptdr])
 
     def f_ptdr(ptd, polgfm, t, pyear): return clip(ptd * polgfm, 0, t, pyear)
