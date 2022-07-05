@@ -953,9 +953,10 @@ if h.version == 2003:
     ptdr = NodeFlow("ptdr", hg=h)
 
 
-################
-# Update Index #
-################
+#########
+# Index #
+#########
+POF = NodeConstant("POF", C, val=0.22, hg=h)
 HUP = NodeConstant("HUP", C, val=4, hg=h)
 RHGDP = NodeConstant("RHGDP", C, val=9508, hg=h)
 RLGDP = NodeConstant("RLGDP", C, val=24, hg=h)
@@ -983,6 +984,15 @@ GDPPC = NodeConstant("GDPPC", CT, val=([0, 120],
                                        [600, 1800],
                                        [800, 2500],
                                        [1000, 3200]), hg=h)
+foa = NodeFlow("foa", hg=h)
+foi = NodeFlow("foi", hg=h)
+fos = NodeFlow("fos", hg=h)
+
+resint = NodeFlow("resint", hg=h)
+plinid = NodeFlow("plinid", hg=h)
+cio = NodeFlow("cio", hg=h)
+ciopc = NodeFlow("ciopc", hg=h)
+
 lei = NodeFlow("lei", hg=h)
 ei = NodeFlow("ei", hg=h)
 gdppc = NodeFlow("gdppc", hg=h)
@@ -1077,6 +1087,7 @@ h.add_edge(f_tab_div, hsapc, [HSAPC, sopc, GDPU])
 def f_lmhs(lmhs1, lmhs2, t): return clip(lmhs1, lmhs2, 1940, t)
 h.add_edge(f_lmhs, lmhs, [lmhs1, lmhs2, t])
 
+h.add_edge(ehspc.f_smooth, ehspc, [hsapc, HSID])
 h.add_edge(f_tab_div, lmhs1, [LMHS1, ehspc, GDPU])
 h.add_edge(f_tab_div, lmhs2, [LMHS2, ehspc, GDPU])
 h.add_edge(f_tab_div, fpu, [FPU, pop, UP])
@@ -1097,24 +1108,27 @@ def f_tf(mtf, fce, dtf): return min(mtf, mtf * (1 - fce) + dtf * fce)
 h.add_edge(f_tf, tf, [mtf, fce, dtf])
 
 h.add_edge(nodes_mltpld, mtf, [MTFN, fm])
-
 h.add_edge(f_tab_div, fm, [FM, le, OY])
-
 h.add_edge(nodes_mltpld, dtf, [dcfs, cmple])
-
+h.add_edge(ple.f_smooth, ple, [le, LPD])
 h.add_edge(f_tab_div, cmple, [CMPLE, ple, OY])
 
 def f_dcfs(dcfsn, frsn, sfsn, t, zpgt): return clip(2, dcfsn * frsn * sfsn, t, zpgt)
 h.add_edge(f_dcfs, dcfs, [DCFSN, frsn, sfsn, t, ZPGT])
 
+h.add_edge(diopc.f_smooth, diopc, [iopc, SAD])
 h.add_edge(f_tab_div, sfsn, [SFSN, diopc, GDPU])
 h.add_edge(f_tab, frsn, [FRSN, fie])
 
 def f_fie(iopc, aiopc): return (iopc - aiopc) / aiopc
 h.add_edge(f_fie, fie, [iopc, aiopc])
 
+h.add_edge(aiopc.f_smooth, aiopc, [iopc, IEAT])
+
 def f_nfc(mtf, dtf): return mtf / dtf - 1
 h.add_edge(f_nfc, nfc, [mtf, dtf])
+
+h.add_edge(fcfpc.f_smooth, fcfpc, [fcapc, HSID])
 
 def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab_div(fce, fcfpc, gdpu), t, fcest)
 h.add_edge(f_fce, fce, [FCE, fcfpc, GDPU, t, FCEST])
@@ -1187,7 +1201,7 @@ def f_lf(p2, p3, lfpf): return (p2 + p3) * lfpf
 h.add_edge(f_lf, lf, [p2, p3, LFPF])
 
 h.add_edge(nodes_div, luf, [j, lf])
-
+h.add_edge(lufd.f_smooth, lufd, [luf, LUFDT])
 h.add_edge(f_tab, cuf, [CUF, lufd])
 
 ########################
@@ -1244,6 +1258,7 @@ if h.version == 1972:
     h.add_edge(clip, lyf, [LYF2, LYF1, t, PYEAR])
 if h.version == 2003:
     h.add_edge(clip, lyf, [lyf2, LYF1, t, PYEAR])
+    h.add_edge(lyf2.f_smooth, lyf2, [lytd, TDD])
 
 h.add_edge(clip, lymap, [lymap2, lymap1, t, PYEAR])
 
@@ -1317,6 +1332,7 @@ if h.version == 1972:
     h.add_edge(clip, nruf, [NRUF2, NRUF1, t, PYEAR])
 if h.version == 2003:
     h.add_edge(clip, nruf, [nruf2, NRUF1, t, PYEAR])
+    h.add_edge(nruf2.f_smooth, nruf2, [nrtd, TDD])
 
 h.add_edge(f_tab_div, pcrum, [PCRUM, iopc, GDPU])
 h.add_edge(nodes_div, nrfr, [nr, NRI])
@@ -1347,10 +1363,11 @@ if h.version == 1972:
     h.add_edge(clip, ppgf, [PPGF2, PPGF1, t, PYEAR])
 if h.version == 2003:
     h.add_edge(clip, ppgf, [ppgf2, PPGF1, t, PYEAR])
+    h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD])
 
 h.add_edge(nodes_mltpld, ppgio, [pcrum, pop, FRPM, IMEF, IMTI])
 h.add_edge(nodes_mltpld, ppgao, [aiph, al, FIPM, AMTI])
-
+h.add_edge(ppapr.f_smooth, ppapr, [ppgr, PPTD])
 h.add_edge(nodes_dif, ppol, [ppapr, ppasr])
 h.add_edge(nodes_div, ppolx, [ppol, PPOL70])
 
@@ -1373,8 +1390,25 @@ if h.version == 2003:
     h.add_edge(f_tab, copm, [COPM, ppgf])
 
 ###################
-# Edges on update #
+# Edges on index #
 ###################
+def f_foa(pof, f, so, io): return (pof * f) / (pof * f + so+ io)
+h.add_edge(f_foa, foa, [POF, f, so, io])
+
+def f_foi(pof, f, so, io): return io / (pof * f + so+ io)
+h.add_edge(f_foi, foi, [POF, f, so, io])
+
+def f_fos(pof, f, so, io): return so / (pof * f + so+ io)
+h.add_edge(f_fos, fos, [POF, f, so, io])
+
+h.add_edge(nodes_div, resint, [nrur, io])
+
+def f_plinid(ppgio, ppgf, io): return (ppgio * ppgf) / io
+h.add_edge(f_plinid, plinid, [ppgio, ppgf, io])
+
+h.add_edge(nodes_mltpld, cio, [io, fioac])
+h.add_edge(nodes_div, ciopc, [cio, pop])
+
 def f_hwi(lei, ei, gdpi): return (lei + ei + gdpi) / 3
 h.add_edge(f_hwi, hwi, [lei, ei, gdpi])
 
@@ -1394,21 +1428,4 @@ h.add_edge(f_algha, algha, [ppgr, HUP, HGHA])
 
 h.add_edge(nodes_div, alggha, [al, HGHA])
 h.add_edge(nodes_div, ulgha, [uil, HGHA])
-
-##############################
-# Edges linked to NodeSmooth #
-##############################
-h.add_edge(ehspc.f_smooth, ehspc, [hsapc, HSID])
-h.add_edge(ple.f_smooth, ple, [le, LPD])
-h.add_edge(diopc.f_smooth, diopc, [iopc, SAD])
-h.add_edge(aiopc.f_smooth, aiopc, [iopc, IEAT])
-h.add_edge(fcfpc.f_smooth, fcfpc, [fcapc, HSID])
-h.add_edge(lufd.f_smooth, lufd, [luf, LUFDT])
-if h.version == 2003:
-    h.add_edge(lyf2.f_smooth, lyf2, [lytd, TDD])
-    h.add_edge(nruf2.f_smooth, nruf2, [nrtd, TDD])
-    h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD])
-h.add_edge(ppapr.f_smooth, ppapr, [ppgr, PPTD])
-
-
 

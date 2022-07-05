@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 INITIAL_TIME = 1900
 FINAL_TIME = 2100
-VERSION = 1972
-N_SCENARIO = 1
+VERSION = 2003
+N_SCENARIO = 5
 
 if __name__ == "__main__":
     #########
@@ -64,9 +64,9 @@ if __name__ == "__main__":
 
         #Material Standard Of Living
         classic_plot(w3.t.hist,
-                  [w3.fpc.hist, w3.le.hist, w3.sopc.hist, w3.gdppc.hist],
-                  ["FPC", "LE", "SOPC", "GDPPC"],
-                  [[0, 1e3], [0, 90], [0, 1e3], [0, 2e3]],
+                  [w3.fpc.hist, w3.le.hist, w3.sopc.hist, w3.ciopc.hist],
+                  ["FPC", "LE", "SOPC", "CIOPC"],
+                  [[0, 1e3], [0, 90], [0, 1e3], [0, 250]],
                   img_background="background/scenario{}-2.png".format(N_SCENARIO),
                   grid=False,
                   title="World3 Scenario {} Material Standard Of Living".format(N_SCENARIO),
