@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 INITIAL_TIME = 1900
 FINAL_TIME = 2100
 VERSION = 2003
-N_SCENARIO = 5
+N_SCENARIO = 2
 
 if __name__ == "__main__":
     #########
