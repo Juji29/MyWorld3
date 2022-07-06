@@ -3,7 +3,19 @@ from world3_run import VERSION, INITIAL_TIME, FINAL_TIME, N_SCENARIO
 from math import log
 import matplotlib.pyplot as plt
 
-h = Hypergraph(VERSION)
+if type(VERSION) == int:
+    h = Hypergraph(VERSION)
+else:
+    raise ErrorVersionNotInt()
+
+if type(INITIAL_TIME) != int or INITIAL_TIME < 0:
+    raise ErrorInitialTime()
+
+if type(FINAL_TIME) != int or FINAL_TIME < INITIAL_TIME:
+    raise ErrorFinalTime()
+
+if type(N_SCENARIO) != int or N_SCENARIO < 0:
+    raise ErrorNScenario()
 
 ######################
 # Initial conditions #
@@ -85,6 +97,7 @@ mat3 = NodeFlow("mat3", hg=h)
 #Related to death
 LEN = NodeConstant("LEN", C, val=28, hg=h)
 HSID = NodeConstant("HSID", C, val=20, hg=h)
+EHSPCI = NodeConstant("EHSPCI", C, val=0, hg=h)
 if h.version == 1972:
     LMF = NodeConstant("LMF", CT, val=([0, 0],
                                        [1, 1],
@@ -169,7 +182,7 @@ lmp = NodeFlow("lmp", hg=h)
 d = NodeFlow("d", hg=h)
 cdr = NodeFlow("cdr", hg=h)
 lmhs = NodeFlow("lmhs", hg=h)
-ehspc = NodeStock("ehspc", val=0, hg=h)
+ehspc = NodeStock("ehspc", val=EHSPCI.val, hg=h)
 lmc = NodeFlow("lmc", hg=h)
 le = NodeFlow("le", hg=h)
 
@@ -1112,13 +1125,13 @@ h.add_edge(f_tf, tf, [mtf, fce, dtf])
 h.add_edge(nodes_mltpld, mtf, [MTFN, fm])
 h.add_edge(f_tab_div, fm, [FM, le, OY])
 h.add_edge(nodes_mltpld, dtf, [dcfs, cmple])
-h.add_edge(ple.f_smooth, ple, [le, LPD])
+h.add_edge(ple.f_delayinit, ple, [le, LPD])
 h.add_edge(f_tab_div, cmple, [CMPLE, ple, OY])
 
 def f_dcfs(dcfsn, frsn, sfsn, t, zpgt): return clip(2, dcfsn * frsn * sfsn, t, zpgt)
 h.add_edge(f_dcfs, dcfs, [DCFSN, frsn, sfsn, t, ZPGT])
 
-h.add_edge(diopc.f_smooth, diopc, [iopc, SAD])
+h.add_edge(diopc.f_delayinit, diopc, [iopc, SAD])
 h.add_edge(f_tab_div, sfsn, [SFSN, diopc, GDPU])
 h.add_edge(f_tab, frsn, [FRSN, fie])
 
@@ -1131,7 +1144,7 @@ h.add_edge(f_aiopc, aiopc, [iopc, aiopc, IEAT])
 def f_nfc(mtf, dtf): return mtf / dtf - 1
 h.add_edge(f_nfc, nfc, [mtf, dtf])
 
-h.add_edge(fcfpc.f_smooth, fcfpc, [fcapc, HSID])
+h.add_edge(fcfpc.f_delayinit, fcfpc, [fcapc, HSID])
 
 def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab_div(fce, fcfpc, gdpu), t, fcest)
 h.add_edge(f_fce, fce, [FCE, fcfpc, GDPU, t, FCEST])
@@ -1264,7 +1277,7 @@ if h.version == 1972:
     h.add_edge(clip, lyf, [LYF2, LYF1, t, PYEAR])
 if h.version == 2003:
     h.add_edge(clip, lyf, [lyf2, LYF1, t, PYEAR])
-    h.add_edge(lyf2.f_smooth, lyf2, [lytd, TDD])
+    h.add_edge(lyf2.f_delayinit, lyf2, [lytd, TDD])
 
 h.add_edge(clip, lymap, [lymap2, lymap1, t, PYEAR])
 
@@ -1338,7 +1351,7 @@ if h.version == 1972:
     h.add_edge(clip, nruf, [NRUF2, NRUF1, t, PYEAR])
 if h.version == 2003:
     h.add_edge(clip, nruf, [nruf2, NRUF1, t, PYEAR])
-    h.add_edge(nruf2.f_smooth, nruf2, [nrtd, TDD])
+    h.add_edge(nruf2.f_delayinit, nruf2, [nrtd, TDD])
 
 h.add_edge(f_tab_div, pcrum, [PCRUM, iopc, GDPU])
 h.add_edge(nodes_div, nrfr, [nr, NRI])
@@ -1369,11 +1382,11 @@ if h.version == 1972:
     h.add_edge(clip, ppgf, [PPGF2, PPGF1, t, PYEAR])
 if h.version == 2003:
     h.add_edge(clip, ppgf, [ppgf2, PPGF1, t, PYEAR])
-    h.add_edge(ppgf2.f_smooth, ppgf2, [ptd, TDD])
+    h.add_edge(ppgf2.f_delayinit, ppgf2, [ptd, TDD])
 
 h.add_edge(nodes_mltpld, ppgio, [pcrum, pop, FRPM, IMEF, IMTI])
 h.add_edge(nodes_mltpld, ppgao, [aiph, al, FIPM, AMTI])
-h.add_edge(ppapr.f_smooth, ppapr, [ppgr, PPTD])
+h.add_edge(ppapr.f_delayinit, ppapr, [ppgr, PPTD])
 h.add_edge(nodes_dif, ppol, [ppapr, ppasr])
 h.add_edge(nodes_div, ppolx, [ppol, PPOL70])
 

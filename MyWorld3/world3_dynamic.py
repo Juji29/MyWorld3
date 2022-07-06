@@ -110,7 +110,7 @@ class NodeDelay3(Node):
         return "{0.name:<8} {3} IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()),
                                                              ",".join(self.get_succ_name()), value)
 
-    def f_smooth(self, flow, constant):
+    def f_delayinit(self, flow, constant):
         self.node = flow
         self.cst = constant
         if not self.hist[0]:
