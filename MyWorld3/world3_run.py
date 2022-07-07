@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 INITIAL_TIME = 1900
 FINAL_TIME = 2100
-VERSION = 2003
-N_SCENARIO = 6
+VERSION = 1972
+N_SCENARIO = 1
 
 if __name__ == "__main__":
     #########
@@ -22,10 +22,9 @@ if __name__ == "__main__":
     if VERSION == 1972:
         #Overview
         classic_plot(w3.t.hist,
-                    [w3.nrfr.hist, w3.iopc.hist, w3.fpc.hist, w3.pop.hist, w3.ppolx.hist,
-                     w3.cbr.hist, w3.cdr.hist, w3.sopc.hist],
-                    ["NRFR", "IOPC", "FPC", "POP", "PPOLX", "CBR", "CDR", "SOPC"],
-                    [[0, 1], [0, 1e3], [0, 1e3], [0, 16e9], [0, 32], [0, 50], [0, 50], [0, 1e3]],
+                    [w3.nrfr.hist, w3.iopc.hist, w3.fpc.hist, w3.pop.hist, w3.ppolx.hist],
+                    ["NRFR", "IOPC", "FPC", "POP", "PPOLX"],
+                    [[0, 1], [0, 1e3], [0, 1e3], [0, 16e9], [0, 32]],
                     img_background="background/scenario{}-overview.png".format(N_SCENARIO),
                     grid=1,
                     title="World3 Scenario {} Overview".format(N_SCENARIO),

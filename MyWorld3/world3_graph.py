@@ -974,7 +974,7 @@ HUP = NodeConstant("HUP", C, val=4, hg=h)
 RHGDP = NodeConstant("RHGDP", C, val=9508, hg=h)
 RLGDP = NodeConstant("RLGDP", C, val=24, hg=h)
 TL = NodeConstant("TL", C, val=1.91, hg=h)
-HGHA = NodeConstant("HGHA", C, val=1e9, hg=h)
+GHAH = NodeConstant("GHAH", C, val=1e9, hg=h)
 
 LEI = NodeConstant("LEI", CT, val=([25, 0],
                                    [35, 0.16],
@@ -1442,9 +1442,9 @@ h.add_edge(f_tab_div, gdppc, [GDPPC, iopc, GDPU])
 def f_hef(alggha, ulgha, algha, tl): return (alggha + ulgha + algha) / tl
 h.add_edge(f_hef, hef, [alggha, ulgha, algha, TL])
 
-def f_algha(ppgr, hup, hgha): return ppgr * hup / hgha
-h.add_edge(f_algha, algha, [ppgr, HUP, HGHA])
+def f_algha(ppgr, hup, ghah): return ppgr * hup / ghah
+h.add_edge(f_algha, algha, [ppgr, HUP, GHAH])
 
-h.add_edge(nodes_div, alggha, [al, HGHA])
-h.add_edge(nodes_div, ulgha, [uil, HGHA])
+h.add_edge(nodes_div, alggha, [al, GHAH])
+h.add_edge(nodes_div, ulgha, [uil, GHAH])
 
