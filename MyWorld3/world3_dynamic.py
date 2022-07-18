@@ -1,30 +1,31 @@
-import numpy as np
-from scipy.integrate import solve_ivp, odeint
-import matplotlib.pyplot as plt
-
 C = "CONSTANT"
 CT = "CONSTANT_TABLE"
 
 
 class ErrorNodeAlreadyExists(Exception): pass
+class ErrorVersionNotInt(Exception): exit(0)
+class ErrorInitialTime(Exception): exit(0)
+class ErrorFinalTime(Exception): exit(0)
+class ErrorTimeStep(Exception): exit(0)
+class ErrorNScenario(Exception): exit(0)
 
 
 class Node:
     def __init__(self, name, val=None, hg=None):
         self.name = name  # string
         self.val = val    # float
-        self.cons = None  # fonction
-        self.pred = []    # predecesseurs
-        self.succ = []    # successeurs
-        self.rank = None  # rang
-        if hg is not None: # ajout du noeud à l'hypergraphe hg
+        self.cons = None  # function
+        self.pred = []    # predecessors
+        self.succ = []    # successors
+        self.rank = None  # rank
+        if hg is not None:  # add node to a hypergraph hg
             hg.add_node(self)
 
     def __repr__(self):
         value = "None"
-        if self.val != None:
+        if self.val:
             value = "{:.03f}".format(self.val)
-        return "{0.name:<8} {3} IN: {1:<20} OUT: {2} HIST: {4}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value, self.hist)
+        return "{0.name:<8} {3} IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value)
 
     def set_cons(self, f, pred):
         self.cons = f
@@ -45,15 +46,15 @@ class NodeStock(Node):
         self.hist = [val]
 
     def eval(self, ts, save=True):
-        #text = "{}:{}->".format(self.name, self.val)
+        # text = "{}:{}->".format(self.name, self.val)
         if self.val:
             self.val = self.val + self.cons(*[p.val for p in self.pred]) * ts
         else:
             self.val = self.cons(*[p.val for p in self.pred]) * ts
         if save:
             self.hist.append(self.val)
-        #text += "{}".format(self.val)
-        #print(text)
+        # text += "{}".format(self.val)
+        # print(text)
 
 
 class NodeFlow(Node):
@@ -62,29 +63,25 @@ class NodeFlow(Node):
         self.hist = []
 
     def eval(self, dt, save=True):
-        #text = "{}:{}->".format(self.name, self.val)
+        # text = "{}:{}->".format(self.name, self.val)
         self.val = self.cons(*[p.val for p in self.pred])
         if save:
             self.hist.append(self.val)
-        #text += "{}".format(self.val)
-        #print(text)
+        # text += "{}".format(self.val)
+        # print(text)
 
 class NodeDelay3(Node):
-    def __init__(self, name, size, val=None, hg=None):
+    def __init__(self, name, val=None, hg=None):
         super().__init__(name, val, hg)
-        self.hist = [None] * size
+        self.hist = []
         self.cst = None
         self.node = None
-        self.k = 0
         self.I1 = None
-        self.histI1 = [None] * size
         self.I2 = None
-        self.histI2 = [None] * size
         self.I3 = None
-        self.histI3 = [None] * size
 
     def eval(self, ts, save=True):
-        #text = "{}:{}->".format(self.name, self.val)
+        # text = "{}:{}->".format(self.name, self.val)
         self.cons(*[p.val for p in self.pred])
         dl = self.cst / 3
         RT1 = self.I1 / dl
@@ -94,26 +91,14 @@ class NodeDelay3(Node):
         self.I3 = self.I3 + (RT2 - self.I3 / dl) * ts
         self.val = self.I3 / dl
         if save:
-            k = self.k
-            self.hist[k] = self.val
-            self.histI1[k] = self.I1
-            self.histI2[k] = self.I2
-            self.histI3[k] = self.I3
-            self.k += 1
-        #text += "{}".format(self.val)
-        #print(text)
-
-    def __repr__(self):
-        value = "None"
-        if self.val != None:
-            value = "{:.03f}".format(self.val)
-        return "{0.name:<8} {3} IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()),
-                                                             ",".join(self.get_succ_name()), value)
+            self.hist.append(self.val)
+        # text += "{}".format(self.val)
+        # print(text)
 
     def f_delayinit(self, flow, constant):
         self.node = flow
         self.cst = constant
-        if not self.hist[0]:
+        if not self.hist:
             self.val = flow
             self.I1 = self.I2 = self.I3 = flow * constant / 3
 
@@ -148,11 +133,12 @@ class Hypergraph():
 
     def add_node(self, node):
         if node.name in self.nodes:
-            print("Le Node {} existe déjà. Modifier la modélisation :".format(node.name))
+            print("Node {} already exists. Modify the modelling :".format(node.name))
             print(self.nodes[node.name])
             raise ErrorNodeAlreadyExists()
         self.nodes[node.name] = node
-        if type(node) == NodeStock: self.stocks.append(node)
+        if type(node) == NodeStock:
+            self.stocks.append(node)
 
     def add_nodes(self, nodes):
         for n in nodes:
@@ -165,15 +151,16 @@ class Hypergraph():
         for ns in self.nodesrank:
             ns.eval(ts)
 
-    def run(self, nbpas, ts):
-        for i in range(nbpas):
+    def run(self, it, ft, ts):
+        nb_step = int((ft - it) / ts)
+        for i in range(nb_step):
             self.eval(ts)
         for stock in self.stocks:
             stock.hist.pop()
 
     def sub_graph_vertex(self, cond):
         d2 = [name for name, n in self.nodes.items() if cond(n)]
-        d1 = {name : i for i, name in enumerate(d2)}
+        d1 = {name: i for i, name in enumerate(d2)}
         size = len(d2)
         gM = [[] for _ in range(size)]
         gP = [[] for _ in range(size)]
@@ -189,8 +176,9 @@ class Hypergraph():
         d2, gM, gP = self.sub_graph_vertex(lambda x: type(x) == NodeDelay3 or type(x) == NodeFlow)
         size = len(d2)
         dM = [len(gi) for gi in gM]
-        S0 = [i for i,di in enumerate(dM) if di == 0]
-        r = [None]*size
+        S0 = [i for i, di in enumerate(dM) if di == 0]
+        r = [None] * size
+
         def rang_rec(Sk, k):
             Sk1 = []
             for i in Sk:
@@ -199,9 +187,10 @@ class Hypergraph():
                     dM[j] -= 1
                     if dM[j] == 0:
                         Sk1.append(j)
-            if len(Sk1) > 0 :
+            if len(Sk1) > 0:
                 return rang_rec(Sk1, k+1)
+
         rang_rec(S0, 0)
         self.nbrank = max(r) + 1
-        self.nodesrank = [self.nodes[d2[j]] for _,j in sorted([(ri, i) for i, ri in enumerate(r)])]
+        self.nodesrank = [self.nodes[d2[j]] for _, j in sorted([(ri, i) for i, ri in enumerate(r)])]
         self.nodesrank += self.stocks

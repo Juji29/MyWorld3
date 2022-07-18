@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter
 from matplotlib.image import imread
 
-#########################
-# Different way to plot #
-#########################
+##########################
+# Different ways to plot #
+##########################
 def single_plot(time, y, labelX, labelY, window_title="World3 Results"):
     plots = [(labelY[i], y[i]) for i in range(len(y))]
     for i, (title, data) in enumerate(plots):

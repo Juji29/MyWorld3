@@ -1,5 +1,5 @@
 from world3_dynamic import *
-from world3_run import VERSION, INITIAL_TIME, FINAL_TIME, N_SCENARIO
+from world3_run import VERSION, INITIAL_TIME, FINAL_TIME, TIME_STEP, N_SCENARIO
 from math import log
 import matplotlib.pyplot as plt
 
@@ -14,6 +14,9 @@ if type(INITIAL_TIME) != int or INITIAL_TIME < 0:
 if type(FINAL_TIME) != int or FINAL_TIME < INITIAL_TIME:
     raise ErrorFinalTime()
 
+if (type(TIME_STEP) != float and type(TIME_STEP) != int) or INITIAL_TIME < TIME_STEP < 0:
+    raise ErrorTimeStep()
+
 if type(N_SCENARIO) != int or N_SCENARIO < 0:
     raise ErrorNScenario()
 
@@ -22,10 +25,9 @@ if type(N_SCENARIO) != int or N_SCENARIO < 0:
 ######################
 IT = NodeConstant("IT", C, val=INITIAL_TIME, hg=h)
 FT = NodeConstant("FT", C, val=FINAL_TIME, hg=h)
-TS = NodeConstant("TS", C, val=0.5, hg=h)
+TS = NodeConstant("TS", C, val=TIME_STEP, hg=h)
 t = NodeStock("time", val=IT.val, hg=h)
 h.add_edge(lambda x: 1, t, [TS])
-NB_STEP = int((FT.val - IT.val) / TS.val)
 
 
 #########
@@ -286,13 +288,13 @@ cbr = NodeFlow("cbr", hg=h)
 tf = NodeFlow("tf", hg=h)
 mtf = NodeFlow("mtf", hg=h)
 dtf = NodeFlow("dtf", hg=h)
-ple = NodeDelay3("ple", NB_STEP, hg=h)
+ple = NodeDelay3("ple", hg=h)
 dcfs = NodeFlow("dcfs", hg=h)
-diopc = NodeDelay3("diopc", NB_STEP, hg=h)
+diopc = NodeDelay3("diopc", hg=h)
 fie = NodeFlow("fie", hg=h)
 aiopc = NodeStock("aiopc", val=AIOPCI.val, hg=h)
 nfc = NodeFlow("nfc", hg=h)
-fcfpc = NodeDelay3("fcfpc", NB_STEP, hg=h)
+fcfpc = NodeDelay3("fcfpc", hg=h)
 fcapc = NodeFlow("fcapc", hg=h)
 
 
@@ -648,7 +650,7 @@ aiph = NodeFlow("aiph", hg=h)
 ly = NodeFlow("ly", hg=h)
 lyf = NodeFlow("lyf", hg=h)
 if h.version == 2003:
-    lyf2 = NodeDelay3("lyf2", NB_STEP, hg=h)
+    lyf2 = NodeDelay3("lyf2", hg=h)
 mpld = NodeFlow("mpld", hg=h)
 mpai = NodeFlow("mpai", hg=h)
 
@@ -896,7 +898,7 @@ nr = NodeStock("nr", val=NRI.val, hg=h)
 nrur = NodeFlow("nrur", hg=h)
 nruf = NodeFlow("nruf", hg=h)
 if h.version == 2003:
-    nruf2 = NodeDelay3("nruf2", NB_STEP, hg=h)
+    nruf2 = NodeDelay3("nruf2", hg=h)
 nrfr = NodeFlow("nrfr", hg=h)
 if h.version == 2003:
     nrtd = NodeStock("nrtd", val=NRUF1.val, hg=h)
@@ -953,10 +955,10 @@ if h.version == 2003:
 ppgr = NodeFlow("ppgr", hg=h)
 ppgf = NodeFlow("ppgf", hg=h)
 if h.version == 2003:
-    ppgf2 = NodeDelay3("ppgf2", NB_STEP, hg=h)
+    ppgf2 = NodeDelay3("ppgf2", hg=h)
 ppgio = NodeFlow("ppgio", hg=h)
 ppgao = NodeFlow("ppgao", hg=h)
-ppapr = NodeDelay3("ppapr", NB_STEP, hg=h)
+ppapr = NodeDelay3("ppapr", hg=h)
 ppol = NodeStock("ppol", val=PPOLI.val, hg=h)
 ppolx = NodeFlow("ppolx", hg=h)
 ppasr = NodeFlow("ppasr", hg=h)

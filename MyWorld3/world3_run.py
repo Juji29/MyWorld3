@@ -2,9 +2,10 @@ import world3_graph as w3
 from world3_plot import *
 import matplotlib.pyplot as plt
 
+VERSION = 1972
 INITIAL_TIME = 1900
 FINAL_TIME = 2100
-VERSION = 1972
+TIME_STEP = 0.5
 N_SCENARIO = 1
 
 if __name__ == "__main__":
@@ -12,7 +13,7 @@ if __name__ == "__main__":
     # Solve #
     #########
     w3.h.set_rank()
-    w3.h.run(w3.NB_STEP, w3.TS.val)
+    w3.h.run(INITIAL_TIME, FINAL_TIME, TIME_STEP)
 
     ######################
     # Plots of variables #
