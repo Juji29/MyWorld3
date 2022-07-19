@@ -3,22 +3,35 @@ from world3_run import VERSION, INITIAL_TIME, FINAL_TIME, TIME_STEP, N_SCENARIO
 from math import log
 import matplotlib.pyplot as plt
 
-if type(VERSION) == int:
+try:
+    VERSION = int
     h = Hypergraph(VERSION)
-else:
-    raise ErrorVersionNotInt()
+except ValueError:
+    print("VERSION must be an integer.")
 
-if type(INITIAL_TIME) != int or INITIAL_TIME < 0:
-    raise ErrorInitialTime()
+try:
+    INITIAL_TIME = int
+    INITIAL_TIME < 0
+except ValueError:
+    print("INITIAL_TIME must be a positive integer.")
 
-if type(FINAL_TIME) != int or FINAL_TIME < INITIAL_TIME:
-    raise ErrorFinalTime()
+try:
+    FINAL_TIME = int
+    FINAL_TIME < INITIAL_TIME
+except ValueError:
+    print("FINAL_TIME must be a positive integer higher than INITIAL_TIME.")
 
-if (type(TIME_STEP) != float and type(TIME_STEP) != int) or INITIAL_TIME < TIME_STEP < 0:
-    raise ErrorTimeStep()
+try:
+    TIME_STEP = float
+    INITIAL_TIME < TIME_STEP < 0
+except :
+    print("TIME_STEP must be a positive float lower than INITIAL_TIME.")
 
-if type(N_SCENARIO) != int or N_SCENARIO < 0:
-    raise ErrorNScenario()
+try:
+    N_SCENARIO = int
+    N_SCENARIO < 0
+except ValueError:
+    print("N_SCENARIO must be a positive integer.")
 
 ######################
 # Initial conditions #

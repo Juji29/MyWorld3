@@ -1,13 +1,7 @@
 C = "CONSTANT"
 CT = "CONSTANT_TABLE"
 
-
 class ErrorNodeAlreadyExists(Exception): pass
-class ErrorVersionNotInt(Exception): exit(0)
-class ErrorInitialTime(Exception): exit(0)
-class ErrorFinalTime(Exception): exit(0)
-class ErrorTimeStep(Exception): exit(0)
-class ErrorNScenario(Exception): exit(0)
 
 
 class Node:
