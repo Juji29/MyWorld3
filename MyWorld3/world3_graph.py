@@ -4,31 +4,26 @@ from math import log
 import matplotlib.pyplot as plt
 
 try:
-    VERSION = int
     h = Hypergraph(VERSION)
 except ValueError:
     print("VERSION must be an integer.")
 
 try:
-    INITIAL_TIME = int
     INITIAL_TIME < 0
 except ValueError:
     print("INITIAL_TIME must be a positive integer.")
 
 try:
-    FINAL_TIME = int
     FINAL_TIME < INITIAL_TIME
 except ValueError:
     print("FINAL_TIME must be a positive integer higher than INITIAL_TIME.")
 
 try:
-    TIME_STEP = float
     INITIAL_TIME < TIME_STEP < 0
 except :
     print("TIME_STEP must be a positive float lower than INITIAL_TIME.")
 
 try:
-    N_SCENARIO = int
     N_SCENARIO < 0
 except ValueError:
     print("N_SCENARIO must be a positive integer.")
@@ -109,7 +104,7 @@ mat1 = NodeFlow("mat1", hg=h)
 mat2 = NodeFlow("mat2", hg=h)
 mat3 = NodeFlow("mat3", hg=h)
 
-#Related to death
+# Related to death
 LEN = NodeConstant("LEN", C, val=28, hg=h)
 HSID = NodeConstant("HSID", C, val=20, hg=h)
 EHSPCI = NodeConstant("EHSPCI", C, val=0, hg=h)
@@ -201,7 +196,7 @@ ehspc = NodeStock("ehspc", val=EHSPCI.val, hg=h)
 lmc = NodeFlow("lmc", hg=h)
 le = NodeFlow("le", hg=h)
 
-#Related to birth
+# Related to birth
 RLT = NodeConstant("RLT", C, val=30, hg=h)
 PET = NodeConstant("PET", C, val=4000, hg=h)
 MTFN = NodeConstant("MTFN", C, val=12, hg=h)
@@ -314,7 +309,7 @@ fcapc = NodeFlow("fcapc", hg=h)
 ################################
 # Variables close to capital #
 ################################
-#Related to industry
+# Related to industry
 ICOR1 = NodeConstant("ICOR1", C, val=3, hg=h)
 if h.version == 1972:
     ICOR2 = NodeConstant("ICOR2", C, val=3, hg=h)
@@ -376,7 +371,7 @@ fioai = NodeFlow("fioai", hg=h)
 fioac = NodeFlow("fioac", hg=h)
 fioacc = NodeFlow("fioacc", hg=h)
 
-#Related to services
+# Related to services
 SCI = NodeConstant("SCI", C, val=1.44e11, hg=h)
 ALSC1 = NodeConstant("ALSC1", C, val=20, hg=h)
 if 1 <= N_SCENARIO <= 7:
@@ -429,7 +424,7 @@ so = NodeFlow("so", hg=h)
 sopc = NodeFlow("sopc", hg=h)
 scor = NodeFlow("scor", hg=h)
 
-#Related to jobs
+# Related to jobs
 LFPF = NodeConstant("LFPF", C, val=0.75, hg=h)
 LUFDT = NodeConstant("LUFDT", C, val=2, hg=h)
 LUFDI = NodeConstant("LUFDI", C, val=1, hg=h)
@@ -477,7 +472,7 @@ lufd = NodeStock("lufd", val=LUFDI.val, hg=h)
 ##################################
 # Variables close to agriculture #
 ##################################
-#Loop 1
+# Loop 1
 PALT = NodeConstant("PALT", C, val=3.2e9, hg=h)
 ALI = NodeConstant("ALI", C, val=0.9e9, hg=h)
 PALI = NodeConstant("PALI", C, val=2.3e9, hg=h)
@@ -541,7 +536,7 @@ tai = NodeFlow("tai", hg=h)
 fioaa = NodeFlow("fioaa", hg=h)
 ldr = NodeFlow("ldr", hg=h)
 
-#Loop 2
+# Loop 2
 ALAI1 = NodeConstant("ALAI1", C, val=2, hg=h)
 if 1 <= N_SCENARIO <= 7:
     ALAI2 = NodeConstant("ALAI2", C, val=2, hg=h)
@@ -667,7 +662,7 @@ if h.version == 2003:
 mpld = NodeFlow("mpld", hg=h)
 mpai = NodeFlow("mpai", hg=h)
 
-#Loop 3
+# Loop 3
 if h.version == 1972:
     ALLN = NodeConstant("ALLN", C, val=6000, hg=h)
 if h.version == 2003:
@@ -735,7 +730,7 @@ uilr = NodeFlow("uilr", hg=h)
 lrui = NodeFlow("lrui", hg=h)
 uil = NodeStock("uil", val=UILI.val, hg=h)
 
-#Loop 4
+# Loop 4
 LFERTI = NodeConstant("LFERTI", C, val=600, hg=h)
 
 LFDR = NodeConstant("LFDR", CT, val=([0, 0],
@@ -747,7 +742,7 @@ lfdr = NodeFlow("lfdr", hg=h)
 lfert = NodeStock("lfert", val=LFERTI.val, hg=h)
 lfd = NodeFlow("lfd", hg=h)
 
-#Loop 5
+# Loop 5
 ILF = NodeConstant("ILF", C, val=600, hg=h)
 SFPC = NodeConstant("SFPC", C, val=230, hg=h)
 FSPD = NodeConstant("FSPD", C, val=2, hg=h)
@@ -1241,7 +1236,7 @@ h.add_edge(f_tab, cuf, [CUF, lufd])
 ########################
 # Edges on agriculture #
 ########################
-#Loop 1
+# Loop 1
 h.add_edge(nodes_div, lfc, [al, PALT])
 
 def f_al(ldr, ler, lrui): return ldr - ler - lrui
@@ -1272,7 +1267,7 @@ h.add_edge(f_ldr, ldr, [tai, fiald, dcph])
 
 h.add_edge(f_tab_div, dcph, [DCPH, pal, PALT])
 
-#Loop 2
+# Loop 2
 def f_cai(tai, fiald): return tai * (1 - fiald)
 h.add_edge(f_cai, cai, [tai, fiald])
 
@@ -1308,7 +1303,7 @@ h.add_edge(f_mpai, mpai, [alai, ly, mlymc, lymc])
 
 h.add_edge(f_tab_div, mlymc, [MLYMC, aiph, UAGI])
 
-#Loop 3
+# Loop 3
 h.add_edge(nodes_mltpld, all, [ALLN, llmy])
 
 def f_llmy(llmy2, llmy1, llmytm, oy, t): return clip(0.95 ** ((t - llmytm) / oy) * llmy1 + (1 - 0.95 ** ((t - llmytm) / oy)) * llmy2, llmy1, t, llmytm)
@@ -1329,12 +1324,12 @@ h.add_edge(f_lrui, lrui, [uilr, uil, UILDT])
 def f_uil(lrui): return lrui
 h.add_edge(f_uil, uil, [lrui])
 
-#Loop 4
+# Loop 4
 h.add_edge(nodes_dif, lfert, [lfr, lfd])
 h.add_edge(f_tab, lfdr, [LFDR, ppolx])
 h.add_edge(nodes_mltpld, lfd, [lfert, lfdr])
 
-#Loop 5
+# Loop 5
 def f_lfr(ilf, lfert, lfrt): return (ilf - lfert) / lfrt
 h.add_edge(f_lfr, lfr, [ILF, lfert, lfrt])
 

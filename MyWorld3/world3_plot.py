@@ -76,6 +76,6 @@ def classic_plot(time, var_data, var_names, var_lims,
         fig.suptitle(title, x=0.95, ha="right", fontsize=10)
 
     plt.tight_layout()
-    plt.show()
     if save:
-        plt.savefig("img/{}".format(title))
+        plt.savefig("save/{}".format(title))
+    plt.show()
