@@ -1,7 +1,6 @@
 from world3_dynamic import *
 from world3_run import VERSION, INITIAL_TIME, FINAL_TIME, TIME_STEP, N_SCENARIO
 from math import log
-import matplotlib.pyplot as plt
 
 try:
     h = Hypergraph(VERSION)
@@ -20,7 +19,7 @@ except ValueError:
 
 try:
     INITIAL_TIME < TIME_STEP < 0
-except :
+except ValueError:
     print("TIME_STEP must be a positive float lower than INITIAL_TIME.")
 
 try:
