@@ -116,12 +116,12 @@ class NodeConstant(Node):
 
 
 class Hypergraph:
-    def __init__(self, version: int):
+    def __init__(self, version: int, nodes=[]):
         self.version = version
-        self.nodes = {}
+        self.nodes = {n.name: n for n in nodes}
         self.nbrank = None
         self.nodesrank = None
-        self.stocks = []
+        self.stocks = [n for n in nodes if type(n) == NodeStock]
 
     def __repr__(self):
         return "\n".join([str(v) for c,v in self.nodes.items()])
