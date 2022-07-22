@@ -12,7 +12,6 @@ if __name__ == "__main__":
     #########
     # Solve #
     #########
-    w3.h.set_rank()
     w3.h.run(INITIAL_TIME, FINAL_TIME, TIME_STEP)
 
     ######################

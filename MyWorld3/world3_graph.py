@@ -30,10 +30,8 @@ except ValueError:
 ######################
 # Initial conditions #
 ######################
-IT = NodeConstant("IT", C, val=INITIAL_TIME, hg=h)
-FT = NodeConstant("FT", C, val=FINAL_TIME, hg=h)
 TS = NodeConstant("TS", C, val=TIME_STEP, hg=h)
-t = NodeStock("time", val=IT.val, hg=h)
+t = NodeStock("time", val=INITIAL_TIME, hg=h)
 h.add_edge(lambda x: 1, t, [TS])
 
 
@@ -1456,4 +1454,3 @@ h.add_edge(f_algha, algha, [ppgr, HUP, GHAH])
 
 h.add_edge(nodes_div, alggha, [al, GHAH])
 h.add_edge(nodes_div, ulgha, [uil, GHAH])
-

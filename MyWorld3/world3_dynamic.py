@@ -64,6 +64,7 @@ class NodeFlow(Node):
         # text += "{}".format(self.val)
         # print(text)
 
+
 class NodeDelay3(Node):
     def __init__(self, name, val=None, hg=None):
         super().__init__(name, val, hg)
@@ -114,13 +115,13 @@ class NodeConstant(Node):
         return "{0.name:<8} {3} IN: {1:<20} OUT: {2}".format(self, ",".join(self.get_pred_name()), ",".join(self.get_succ_name()), value)
 
 
-class Hypergraph():
-    def __init__(self, version: int, nodes=[]):
-        self.nodes = {n.name: n for n in nodes}
+class Hypergraph:
+    def __init__(self, version: int):
         self.version = version
+        self.nodes = {}
         self.nbrank = None
         self.nodesrank = None
-        self.stocks = [n for n in nodes if type(n) == NodeStock]
+        self.stocks = []
 
     def __repr__(self):
         return "\n".join([str(v) for c,v in self.nodes.items()])
@@ -146,6 +147,7 @@ class Hypergraph():
             ns.eval(ts)
 
     def run(self, it, ft, ts):
+        self.set_rank()
         nb_step = int((ft - it) / ts)
         for i in range(nb_step):
             self.eval(ts)
