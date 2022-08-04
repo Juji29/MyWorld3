@@ -54,6 +54,17 @@ def single_plot(time, y, labelX, labelY, window_title="World3 Results"):
         plt.suptitle(window_title)
         plt.show()
 
+def multiple_plot(time, y, labelX, labelY, window_title="World3 Results"):
+    plots = [(labelY[i], y[i]) for i in range(len(y))]
+    plt.figure(figsize=(20.48, 10.24))
+    plt.xlabel(labelX, fontsize=16)
+    for i, (title, data) in enumerate(plots):
+        plt.plot(time, data, label=title)
+    plt.legend(fontsize=16)
+    plt.grid()
+    plt.suptitle(window_title)
+    plt.show()
+
 def classic_plot(time, var_data, var_names, var_lims,
                          img_background=None,
                          title=None,
