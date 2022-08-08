@@ -96,7 +96,7 @@ if __name__ == "__main__":
                      ["NR", "IO", "F", "POP", "PPOLX"],
                      [[0, 2e12], [0, 4e12], [0, 6e12], [0, 12e9], [0, 40]],
                      img_background="background/scenario{}-1.png".format(N_SCENARIO),
-                     grid=False,
+                     grid=1,
                      title="World3 Scenario {} State Of The World".format(N_SCENARIO),
                      save=False)
 
@@ -106,7 +106,7 @@ if __name__ == "__main__":
                      ["FPC", "LE", "SOPC", "CIOPC"],
                      [[0, 1e3], [0, 90], [0, 1e3], [0, 250]],
                      img_background="background/scenario{}-2.png".format(N_SCENARIO),
-                     grid=False,
+                     grid=1,
                      title="World3 Scenario {} Material Standard Of Living".format(N_SCENARIO),
                      save=False)
 
@@ -116,7 +116,7 @@ if __name__ == "__main__":
                      ["HWI", "HEF"],
                      [[0, 1], [0, 4]],
                      img_background="background/scenario{}-3.png".format(N_SCENARIO),
-                     grid=False,
+                     grid=1,
                      title="World3 Scenario {} Human Welfare And Footprint".format(N_SCENARIO),
                      save=False)
 
