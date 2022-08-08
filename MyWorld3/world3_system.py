@@ -45,6 +45,7 @@ try:
     world3 = World3(VERSION)
 except ValueError:
     print("VERSION must be an integer.")
+    exit(0)
 
 try:
     INITIAL_TIME < 0
@@ -65,6 +66,12 @@ try:
     N_SCENARIO < 0
 except ValueError:
     print("N_SCENARIO must be a positive integer.")
+
+# Convention: NodeConstant are written in UPPER letters as global constants
+#             when NodeFlow, NodeStock and NodeDelay3 are written in lower letters.
+
+# From line 75 to line 1175, it is created the different nodes defined in World3 model.
+# From line 1175 to the end, it is defined equations which link these nodes.
 
 ######################
 # Initial conditions #
@@ -90,12 +97,6 @@ P1I = NodeConstant("P1I", C, val=6.50e8, hg=world3)
 P2I = NodeConstant("P2I", C, val=7.00e8, hg=world3)
 P3I = NodeConstant("P3I", C, val=1.90e8, hg=world3)
 P4I = NodeConstant("P4I", C, val=6.00e7, hg=world3)
-
-p1 = NodeStock("p1", val=P1I.val, hg=world3)
-p2 = NodeStock("p2", val=P2I.val, hg=world3)
-p3 = NodeStock("p3", val=P3I.val, hg=world3)
-p4 = NodeStock("p4", val=P4I.val, hg=world3)
-pop = NodeFlow("pop", hg=world3)
 
 M1 = NodeConstant("M1", CT, val=([20, 0.0567],
                                  [30, 0.0366],
@@ -126,6 +127,13 @@ M4 = NodeConstant("M4", CT, val=([20, 0.13],
                                  [70, 0.05],
                                  [80, 0.04]), hg=world3)
 
+pop = NodeFlow("pop", hg=world3)
+
+p1 = NodeStock("p1", val=P1I.val, hg=world3)
+p2 = NodeStock("p2", val=P2I.val, hg=world3)
+p3 = NodeStock("p3", val=P3I.val, hg=world3)
+p4 = NodeStock("p4", val=P4I.val, hg=world3)
+
 m1 = NodeFlow("m1", hg=world3)
 m2 = NodeFlow("m2", hg=world3)
 m3 = NodeFlow("m3", hg=world3)
@@ -144,6 +152,8 @@ mat3 = NodeFlow("mat3", hg=world3)
 LEN = NodeConstant("LEN", C, val=28, hg=world3)
 HSID = NodeConstant("HSID", C, val=20, hg=world3)
 EHSPCI = NodeConstant("EHSPCI", C, val=0, hg=world3)
+
+# LMF values depend on the version used
 if world3.version == 1972:
     LMF = NodeConstant("LMF", CT, val=([0, 0],
                                        [1, 1],
@@ -158,6 +168,7 @@ if world3.version == 2003:
                                        [3, 1.5],
                                        [4, 1.5],
                                        [5, 1.5]), hg=world3)
+
 HSAPC = NodeConstant("HSAPC", CT, val=([0, 0],
                                        [250, 20],
                                        [500, 50],
@@ -173,6 +184,8 @@ LMHS1 = NodeConstant("LMHS1", CT, val=([0, 1],
                                        [60, 1.6],
                                        [80, 1.7],
                                        [100, 1.8]), hg=world3)
+
+# LMHS2 values depend on the version used
 if world3.version == 1972:
     LMHS2 = NodeConstant("LMHS2", CT, val=([0, 1],
                                            [20, 1.4],
@@ -187,6 +200,7 @@ if world3.version == 2003:
                                            [60, 2],
                                            [80, 2],
                                            [100, 2]), hg=world3)
+
 FPU = NodeConstant("FPU", CT, val=([0, 0],
                                    [2e9, 0.2],
                                    [4e9, 0.4],
@@ -238,6 +252,8 @@ PET = NodeConstant("PET", C, val=4000, hg=world3)
 MTFN = NodeConstant("MTFN", C, val=12, hg=world3)
 LPD = NodeConstant("LPD", C, val=20, hg=world3)
 AIOPCI = NodeConstant("AIOPCI", C, val=43.3, hg=world3)
+
+# ZPGT values depend on scenario chosen
 if 1 <= N_SCENARIO <= 6:
     ZPGT = NodeConstant("ZPGT", C, val=4000, hg=world3)
 if 7 <= N_SCENARIO <= 9:
@@ -246,12 +262,17 @@ if N_SCENARIO == 10:
     ZPGT = NodeConstant("ZPGT", C, val=1982, hg=world3)
 if N_SCENARIO == 11:
     ZPGT = NodeConstant("ZPGT", C, val=2012, hg=world3)
+
+# DCFSN values depend on the version used
 if world3.version == 1972:
     DCFSN = NodeConstant("DCFSN", C, val=4, hg=world3)
 if world3.version == 2003:
     DCFSN = NodeConstant("DCFSN", C, val=3.8, hg=world3)
+
 SAD = NodeConstant("SAD", C, val=20, hg=world3)
 IEAT = NodeConstant("IEAT", C, val=3, hg=world3)
+
+# FCEST values depend on scenario used
 if 1 <= N_SCENARIO <= 6:
     FCEST = NodeConstant("FCEST", C, val=4000, hg=world3)
 if 7 <= N_SCENARIO <= 9:
@@ -261,6 +282,7 @@ if N_SCENARIO == 10:
 if N_SCENARIO == 11:
     FCEST = NodeConstant("FCEST", C, val=2012, hg=world3)
 
+# FM values depend on the version used
 if world3.version == 1972:
     FM = NodeConstant("FM", CT, val=([0, 0],
                                      [10, 0.2],
@@ -281,6 +303,7 @@ if world3.version == 2003:
                                      [60, 0.79],
                                      [70, 0.84],
                                      [80, 0.87]), hg=world3)
+
 CMPLE = NodeConstant("CMPLE", CT, val=([0, 3],
                                        [10, 2.1],
                                        [20, 1.6],
@@ -290,6 +313,8 @@ CMPLE = NodeConstant("CMPLE", CT, val=([0, 3],
                                        [60, 1.1],
                                        [70, 1.05],
                                        [80, 1]), hg=world3)
+
+# SFSN values depend on the version used
 if world3.version == 1972:
     SFSN = NodeConstant("SFSN", CT, val=([0, 1.25],
                                          [200, 1],
@@ -302,6 +327,7 @@ if world3.version == 2003:
                                          [400, 0.715],
                                          [600, 0.59],
                                          [800, 0.5]), hg=world3)
+
 FRSN = NodeConstant("FRSN", CT, val=([-0.2, 0.5],
                                      [-0.1, 0.6],
                                      [0, 0.7],
@@ -347,14 +373,21 @@ fcapc = NodeFlow("fcapc", hg=world3)
 ################################
 # Related to industry
 ICOR1 = NodeConstant("ICOR1", C, val=3, hg=world3)
+
+# ICOR2 values depend on the version used (is a NodeFlow if version is 2003)
 if world3.version == 1972:
     ICOR2 = NodeConstant("ICOR2", C, val=3, hg=world3)
+
 ICI = NodeConstant("ICI", C, val=2.1e11, hg=world3)
 ALIC1 = NodeConstant("ALIC1", C, val=14, hg=world3)
+
+# ALIC2 values depend on scenario chosen
 if 1 <= N_SCENARIO <= 7:
     ALIC2 = NodeConstant("ALIC2", C, val=14, hg=world3)
 if 8 <= N_SCENARIO <= 11:
     ALIC2 = NodeConstant("ALIC2", C, val=18, hg=world3)
+
+# IET values depend on scenario chosen
 if 1 <= N_SCENARIO <= 7:
     IET = NodeConstant("IET", C, val=4000, hg=world3)
 if 8 <= N_SCENARIO <= 9:
@@ -363,12 +396,17 @@ if N_SCENARIO == 10:
     IET = NodeConstant("IET", C, val=1982, hg=world3)
 if N_SCENARIO == 11:
     IET = NodeConstant("IET", C, val=2012, hg=world3)
+
 FIOAC1 = NodeConstant("FIOAC1", C, val=0.43, hg=world3)
 FIOAC2 = NodeConstant("FIOAC2", C, val=0.43, hg=world3)
+
+# IOPCD values depend on scenario chosen
 if 1 <= N_SCENARIO <= 7:
     IOPCD = NodeConstant("IOPCD", C, val=400, hg=world3)
 if 8 <= N_SCENARIO <= 11:
     IOPCD = NodeConstant("IOPCD", C, val=350, hg=world3)
+
+# PYEAR values depend on the version used and on scenario chosen
 if world3.version == 1972:
     PYEAR = NodeConstant("PYEAR", C, val=1975, hg=world3)
 if world3.version == 2003:
@@ -397,8 +435,11 @@ fioacv = NodeFlow("fioacv", hg=world3)
 iopc = NodeFlow("iopc", hg=world3)
 io = NodeFlow("io", hg=world3)
 icor = NodeFlow("icor", hg=world3)
+
+# ICOR2 values depend on the version used (is a NodeConstant if version is 1972)
 if world3.version == 2003:
     icor2 = NodeFlow("icor2", hg=world3)
+
 ic = NodeStock("ic", val=ICI.val, hg=world3)
 icdr = NodeFlow("icdr", hg=world3)
 alic = NodeFlow("alic", hg=world3)
@@ -410,10 +451,13 @@ fioacc = NodeFlow("fioacc", hg=world3)
 # Related to services
 SCI = NodeConstant("SCI", C, val=1.44e11, hg=world3)
 ALSC1 = NodeConstant("ALSC1", C, val=20, hg=world3)
+
+# ALSC2 values depend on scenario chosen
 if 1 <= N_SCENARIO <= 7:
     ALSC2 = NodeConstant("ALSC2", C, val=20, hg=world3)
 if 8 <= N_SCENARIO <= 11:
     ALSC2 = NodeConstant("ALSC2", C, val=25, hg=world3)
+
 SCOR1 = NodeConstant("SCOR1", C, val=1, hg=world3)
 SCOR2 = NodeConstant("SCOR2", C, val=1, hg=world3)
 
@@ -574,19 +618,28 @@ ldr = NodeFlow("ldr", hg=world3)
 
 # Loop 2
 ALAI1 = NodeConstant("ALAI1", C, val=2, hg=world3)
+
+# ALAI2 values depend on scenario chosen
 if 1 <= N_SCENARIO <= 7:
     ALAI2 = NodeConstant("ALAI2", C, val=2, hg=world3)
 if 8 <= N_SCENARIO <= 11:
     ALAI2 = NodeConstant("ALAI2", C, val=2.5, hg=world3)
+
 AII = NodeConstant("AII", C, val=5e9, hg=world3)
 LYF1 = NodeConstant("LYF1", C, val=1, hg=world3)
+
+# LYF2 values depend on the version used (is a NodeDelay3 if version is 2003)
 if world3.version == 1972:
     LYF2 = NodeConstant("LYF2", C, val=1, hg=world3)
+
 IO70 = NodeConstant("IO70", C, val=7.9e11, hg=world3)
 SD = NodeConstant("SD", C, val=0.07, hg=world3)
+
+# TDD values depend on the version used (not used in 1972)
 if world3.version == 2003:
     TDD = NodeConstant("TDD", C, val=20, hg=world3)
 
+# LYMC values depend on the version used
 if world3.version == 1972:
     LYMC = NodeConstant("LYMC", CT, val=([0, 1],
                                          [40, 3],
@@ -641,10 +694,13 @@ if world3.version == 2003:
                                          [920, 9.6],
                                          [960, 9.8],
                                          [1000, 10]), hg=world3)
+
 LYMAP1 = NodeConstant("LYMAP1", CT, val=([0, 1],
                                          [10, 1],
                                          [20, 0.7],
                                          [30, 0.4]), hg=world3)
+
+# LYMAP2 values depend on the version used
 if world3.version == 1972:
     LYMAP2 = NodeConstant("LYMAP2", CT, val=([0, 1],
                                              [10, 1],
@@ -655,6 +711,7 @@ if world3.version == 2003:
                                              [10, 1],
                                              [20, 0.98],
                                              [30, 0.95]), hg=world3)
+
 FIALD = NodeConstant("FIALD", CT, val=([0, 0],
                                        [0.25, 0.05],
                                        [0.5, 0.15],
@@ -693,18 +750,25 @@ alai = NodeFlow("alai", hg=world3)
 aiph = NodeFlow("aiph", hg=world3)
 ly = NodeFlow("ly", hg=world3)
 lyf = NodeFlow("lyf", hg=world3)
+
+# lyf2 values depend on the version used (is a NodeConstant if version is 1972)
 if world3.version == 2003:
     lyf2 = NodeDelay3("lyf2", hg=world3)
+
 mpld = NodeFlow("mpld", hg=world3)
 mpai = NodeFlow("mpai", hg=world3)
 
 # Loop 3
+# ALLN values depend on the version used
 if world3.version == 1972:
     ALLN = NodeConstant("ALLN", C, val=6000, hg=world3)
 if world3.version == 2003:
     ALLN = NodeConstant("ALLN", C, val=1000, hg=world3)
+
 UILDT = NodeConstant("UILDT", C, val=10, hg=world3)
 UILI = NodeConstant("UILI", C, val=8.2e6, hg=world3)
+
+# LLMYTM values depend on scenario chosen
 if 1 <= N_SCENARIO <= 4 or 7 <= N_SCENARIO <= 8:
     LLMYTM = NodeConstant("LLMYTM", C, val=4000, hg=world3)
 if 5 <= N_SCENARIO <= 6 or N_SCENARIO == 9:
@@ -724,6 +788,8 @@ LLMY1 = NodeConstant("LLMY1", CT, val=([0, 1.2],
                                        [7, 0.025],
                                        [8, 0.015],
                                        [9, 0.01]), hg=world3)
+
+# LLMY2 values depend on the version used
 if world3.version == 1972:
     LLMY2 = NodeConstant("LLMY2", CT, val=([0, 1.2],
                                            [1, 1],
@@ -746,6 +812,7 @@ if world3.version == 2003:
                                            [7, 0.22],
                                            [8, 0.21],
                                            [9, 0.2]), hg=world3)
+
 UILPC = NodeConstant("UILPC", CT, val=([0, 0.005],
                                        [200, 0.008],
                                        [400, 0.015],
@@ -783,6 +850,8 @@ ILF = NodeConstant("ILF", C, val=600, hg=world3)
 SFPC = NodeConstant("SFPC", C, val=230, hg=world3)
 FSPD = NodeConstant("FSPD", C, val=2, hg=world3)
 PFRI = NodeConstant("PFRI", C, val=1, hg=world3)
+
+# DFR values depend on the version used (not used in 1972)
 if world3.version == 2003:
     DFR = NodeConstant("DFR", C, val=2, hg=world3)
 
@@ -797,6 +866,9 @@ FALM = NodeConstant("FALM", CT, val=([0, 0],
                                      [2, 0.07],
                                      [3, 0.09],
                                      [4, 0.1]), hg=world3)
+
+# LYCM values depend on the version used and on scenario chosen (not used in 1972)
+# COYM values depend on the version used (not used in 1972)
 if world3.version == 2003:
     if 1 <= N_SCENARIO <= 3 or 7 <= N_SCENARIO <= 8:
         LYCM = NodeConstant("LYCM", CT, val=([0, 0],
@@ -810,15 +882,18 @@ if world3.version == 2003:
                                          [1.6, 1.25],
                                          [1.8, 1.35],
                                          [2, 1.5]), hg=world3)
-lfrt = NodeFlow("lfrt", hg=world3)
-falm = NodeFlow("falm", hg=world3)
-if world3.version == 2003:
+
     lycm = NodeFlow("lycm", hg=world3)
     coym = NodeFlow("coym", hg=world3)
+
+lfrt = NodeFlow("lfrt", hg=world3)
+falm = NodeFlow("falm", hg=world3)
 
 lfr = NodeFlow("lfr", hg=world3)
 fr = NodeFlow("fr", hg=world3)
 pfr = NodeStock("pfr", val=PFRI.val, hg=world3)
+
+# lytd and lytdr values depend on the version used (not used in 1972)
 if world3.version == 2003:
     lytd = NodeStock("lytd", val=LYF1.val, hg=world3)
     lytdr = NodeFlow("lytdr", hg=world3)
@@ -826,13 +901,19 @@ if world3.version == 2003:
 ################################
 # Variables close to resources #
 ################################
+# NRI values depend on scenario chosen
 if N_SCENARIO == 1:
     NRI = NodeConstant("NRI", C, val=1e12, hg=world3)
 if N_SCENARIO > 1:
     NRI = NodeConstant("NRI", C, val=2e12, hg=world3)
+
 NRUF1 = NodeConstant("NRUFI", C, val=1, hg=world3)
+
+# NRUF2 values depend on the version used (is a NodeDelay3 if version is 2003)
 if world3.version == 1972:
     NRUF2 = NodeConstant("NRUF2", C, val=1, hg=world3)
+
+# FCAORTM values depend on scenario chosen
 if N_SCENARIO == 1:
     FCAORTM = NodeConstant("FCAORTM", C, val=4000, hg=world3)
 if 2 <= N_SCENARIO <= 9:
@@ -841,9 +922,12 @@ if N_SCENARIO == 10:
     FCAORTM = NodeConstant("FCAORTM", C, val=1982, hg=world3)
 if N_SCENARIO == 11:
     FCAORTM = NodeConstant("FCAORTM", C, val=2012, hg=world3)
+
+# DNRUR values depend on the version used (not used in 1972)
 if world3.version == 2003:
     DNRUR = NodeConstant("DNRUR", C, val=4.8e9, hg=world3)
 
+# PCRUM values depend on the version used
 if world3.version == 1972:
     PCRUM = NodeConstant("PCRUM", CT, val=([0, 0],
                                            [200, 0.85],
@@ -864,6 +948,7 @@ if world3.version == 2003:
                                            [1200, 4.4],
                                            [1400, 4.7],
                                            [1600, 5]), hg=world3)
+
 FCAOR1 = NodeConstant("FCAOR1", CT, val=([0, 1],
                                          [0.1, 0.9],
                                          [0.2, 0.7],
@@ -875,6 +960,8 @@ FCAOR1 = NodeConstant("FCAOR1", CT, val=([0, 1],
                                          [0.8, 0.05],
                                          [0.9, 0.05],
                                          [1, 0.05]), hg=world3)
+
+# FCAOR2 values depend on the version used and on scenario chosen
 if world3.version == 1972:
     FCAOR2 = NodeConstant("FCAOR2", CT, val=([0, 1],
                                              [0.1, 0.9],
@@ -912,6 +999,9 @@ if world3.version == 2003:
                                                  [0.8, 0.05],
                                                  [0.9, 0.05],
                                                  [1, 0.05]), hg=world3)
+
+# NRCM values depend on the version used and on scenario chosen (not used in 1972)
+# ICOR2T values depend on the version used (not used in 1972)
 if world3.version == 2003:
     if 1 <= N_SCENARIO <= 5 or 7 <= N_SCENARIO <= 8:
         NRCM = NodeConstant("NRCM", CT, val=([-1, 0],
@@ -930,20 +1020,26 @@ if world3.version == 2003:
                                              [0.8, 3.02],
                                              [0.9, 3.01],
                                              [1, 3]), hg=world3)
+
+    nrcm = NodeFlow("nrcm", hg=world3)
+    icor2t = NodeFlow("icor2t", hg=world3)
+
 pcrum = NodeFlow("pcrum", hg=world3)
 fcaor = NodeFlow("fcaor", hg=world3)
 fcaor1 = NodeFlow("fcaor1", hg=world3)
 fcaor2 = NodeFlow("fcaor2", hg=world3)
-if world3.version == 2003:
-    nrcm = NodeFlow("nrcm", hg=world3)
-    icor2t = NodeFlow("icor2t", hg=world3)
 
 nr = NodeStock("nr", val=NRI.val, hg=world3)
 nrur = NodeFlow("nrur", hg=world3)
 nruf = NodeFlow("nruf", hg=world3)
+
+# nruf2 values depend on the version used (is a NodeConstant if version is 1972)
 if world3.version == 2003:
     nruf2 = NodeDelay3("nruf2", hg=world3)
+
 nrfr = NodeFlow("nrfr", hg=world3)
+
+# nrtd and nrate values depend on the version used (not used in 1972)
 if world3.version == 2003:
     nrtd = NodeStock("nrtd", val=NRUF1.val, hg=world3)
     nrate = NodeFlow("nrate", hg=world3)
@@ -953,8 +1049,11 @@ if world3.version == 2003:
 # Variables close to pollution #
 ################################
 PPGF1 = NodeConstant("PPGF1", C, val=1, hg=world3)
+
+# PPGF2 values depend on the version used (is a NodeDelay3 if version is 2003)
 if world3.version == 1972:
     PPGF2 = NodeConstant("PPGF2", C, val=1, hg=world3)
+
 FRPM = NodeConstant("FRPM", C, val=0.02, hg=world3)
 IMEF = NodeConstant("IMEF", C, val=0.1, hg=world3)
 IMTI = NodeConstant("IMTI", C, val=10, hg=world3)
@@ -964,6 +1063,8 @@ PPTD = NodeConstant("PPTD", C, val=20, hg=world3)
 PPOLI = NodeConstant("PPOLI", C, val=2.5e7, hg=world3)
 PPOL70 = NodeConstant("PPOLI70", C, val=1.36e8, hg=world3)
 AHL70 = NodeConstant("AHL70", C, val=1.5, hg=world3)
+
+# DPOLX values depend on the version used (not used in 1972)
 if world3.version == 2003:
     DPOLX = NodeConstant("DPOLX", C, val=1.2, hg=world3)
 
@@ -972,6 +1073,9 @@ AHLM = NodeConstant("AHLM", CT, val=([1, 1],
                                      [501, 21],
                                      [751, 31],
                                      [1001, 41]), hg=world3)
+
+# POLGFM values depend on the version used and on scenario chosen (not used in 1972)
+# COPM values depend on the version used (not used in 1972)
 if world3.version == 2003:
     if 1 <= N_SCENARIO <= 2 or 7 <= N_SCENARIO <= 8:
         POLGFM = NodeConstant("POLGFM", CT, val=([-1, 0],
@@ -991,15 +1095,17 @@ if world3.version == 2003:
                                          [0.9, 1],
                                          [1, 1]), hg=world3)
 
-ahlm = NodeFlow("ahlm", hg=world3)
-if world3.version == 2003:
     polgfm = NodeFlow("polgfm", hg=world3)
     copm = NodeFlow("copm", hg=world3)
 
+ahlm = NodeFlow("ahlm", hg=world3)
 ppgr = NodeFlow("ppgr", hg=world3)
 ppgf = NodeFlow("ppgf", hg=world3)
+
+# ppgf2 values depend on the version used (is a NodeConstant if version is 1972)
 if world3.version == 2003:
     ppgf2 = NodeDelay3("ppgf2", hg=world3)
+
 ppgio = NodeFlow("ppgio", hg=world3)
 ppgao = NodeFlow("ppgao", hg=world3)
 ppapr = NodeDelay3("ppapr", hg=world3)
@@ -1007,6 +1113,8 @@ ppol = NodeStock("ppol", val=PPOLI.val, hg=world3)
 ppolx = NodeFlow("ppolx", hg=world3)
 ppasr = NodeFlow("ppasr", hg=world3)
 ahl = NodeFlow("ahl", hg=world3)
+
+# ptd and ptdr values depend on the version used (not used in 1972)
 if world3.version == 2003:
     ptd = NodeStock("ptd", val=PPGF1.val, hg=world3)
     ptdr = NodeFlow("ptdr", hg=world3)
@@ -1064,9 +1172,10 @@ alggha = NodeFlow("alggha", hg=world3)
 ulgha = NodeFlow("ulgha", hg=world3)
 
 
-###################
-# Basic functions #
-###################
+
+#####################################
+# Basic functions used in equations #
+#####################################
 def nodes_mltpld(*l):
     out = l[0]
     for x in l[1:]:
@@ -1101,263 +1210,267 @@ def f_tab_div(x, y, z): return f_tab(x, y/z)
 
 def f_tab_dif(x, y, z): return f_tab(x, y - z)
 
-#######################
-# Edges on population #
-#######################
-world3.add_equation(nodes_sum, pop, [p1, p2, p3, p4])
-world3.add_equation(nodes_mltpld, d1, [p1, m1])
-world3.add_equation(nodes_mltpld, d2, [p2, m2])
-world3.add_equation(nodes_mltpld, d3, [p3, m3])
-world3.add_equation(nodes_mltpld, d4, [p4, m4])
 
+###########################
+# Equations on population #
+###########################
+
+# Functions which are not defined in basic ones
+def p1_evo(b, d1, mat1): return b - d1 - mat1
+def p2_evo(mat1, d2, mat2): return mat1 - d2 - mat2
+def p3_evo(mat2, d3, mat3): return mat2 - d3 - mat3
 def f_mat1(p1, m1): return p1 * (1 - m1) / 15
-world3.add_equation(f_mat1, mat1, [p1, m1])
 def f_mat2(p2, m2): return p2 * (1 - m2) / 30
-world3.add_equation(f_mat2, mat2, [p2, m2])
 def f_mat3(p3, m3): return p3 * (1 - m3) / 20
-world3.add_equation(f_mat3, mat3, [p3, m3])
 
-world3.add_equation(f_tab_div, m1, [M1, le, OY])
-world3.add_equation(f_tab_div, m2, [M2, le, OY])
-world3.add_equation(f_tab_div, m3, [M3, le, OY])
-world3.add_equation(f_tab_div, m4, [M4, le, OY])
 
-def p1_evo(b, d1, mat1):
-    return b - d1 - mat1
-def p2_evo(mat1, d2, mat2):
-    return mat1 - d2 - mat2
-def p3_evo(mat2, d3, mat3):
-    return mat2 - d3 - mat3
+def f_cdr(d, pop): return 1000 * d / pop
+def f_ehspc(hsapc, ehspc, hsid): return (hsapc - ehspc) / hsid
+def f_lmhs(lmhs1, lmhs2, t): return clip(lmhs1, lmhs2, 1940, t)
+def f_lmc(cmi, fpu): return 1 - cmi * fpu
+
+
+def f_b(d, pet, tf, p2, rlt, t): return clip(d, 0.5 * tf * p2 / rlt, t, pet)
+def f_cbr(b, pop): return 1000 * b / pop
+def f_tf(mtf, fce, dtf): return min(mtf, mtf * (1 - fce) + dtf * fce)
+def f_dcfs(dcfsn, frsn, sfsn, t, zpgt): return clip(2, dcfsn * frsn * sfsn, t, zpgt)
+def f_fie(iopc, aiopc): return (iopc - aiopc) / aiopc
+def f_aiopc(iopc, aiopc, ieat): return (iopc - aiopc) / ieat
+def f_nfc(mtf, dtf): return mtf / dtf - 1
+def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab_div(fce, fcfpc, gdpu), t, fcest)
+
+
+# Creation of equations
+
+# Population dynamics
+world3.add_equation(nodes_sum, pop, [p1, p2, p3, p4])
 
 world3.add_equation(p1_evo, p1, [b, d1, mat1])
-world3.add_equation(p2_evo, p2, [mat1, d2, mat2])
-world3.add_equation(p3_evo, p3, [mat2, d3, mat3])
-world3.add_equation(nodes_dif, p4, [mat3, d4])
+world3.add_equation(nodes_mltpld, d1, [p1, m1])
+world3.add_equation(f_tab_div, m1, [M1, le, OY])
+world3.add_equation(f_mat1, mat1, [p1, m1])
 
+world3.add_equation(p2_evo, p2, [mat1, d2, mat2])
+world3.add_equation(nodes_mltpld, d2, [p2, m2])
+world3.add_equation(f_tab_div, m2, [M2, le, OY])
+world3.add_equation(f_mat2, mat2, [p2, m2])
+
+world3.add_equation(p3_evo, p3, [mat2, d3, mat3])
+world3.add_equation(nodes_mltpld, d3, [p3, m3])
+world3.add_equation(f_tab_div, m3, [M3, le, OY])
+world3.add_equation(f_mat3, mat3, [p3, m3])
+
+world3.add_equation(nodes_dif, p4, [mat3, d4])
+world3.add_equation(nodes_mltpld, d4, [p4, m4])
+world3.add_equation(f_tab_div, m4, [M4, le, OY])
+
+# Death
 world3.add_equation(nodes_sum, d, [d1, d2, d3, d4])
-def f_cdr(d, pop): return 1000 * d / pop
 world3.add_equation(f_cdr, cdr, [d, pop])
 
 world3.add_equation(nodes_mltpld, le, [LEN, lmf, lmhs, lmp, lmc])
-
 world3.add_equation(f_tab_div, lmf, [LMF, fpc, SFPC])
+
 world3.add_equation(f_tab_div, hsapc, [HSAPC, sopc, GDPU])
-
-def f_lmhs(lmhs1, lmhs2, t): return clip(lmhs1, lmhs2, 1940, t)
-world3.add_equation(f_lmhs, lmhs, [lmhs1, lmhs2, t])
-
-def f_ehspc(hsapc, ehspc, hsid): return (hsapc - ehspc) / hsid
 world3.add_equation(f_ehspc, ehspc, [hsapc, ehspc, HSID])
-
+world3.add_equation(f_lmhs, lmhs, [lmhs1, lmhs2, t])
 world3.add_equation(f_tab_div, lmhs1, [LMHS1, ehspc, GDPU])
 world3.add_equation(f_tab_div, lmhs2, [LMHS2, ehspc, GDPU])
+
 world3.add_equation(f_tab_div, fpu, [FPU, pop, UP])
 world3.add_equation(f_tab_div, cmi, [CMI, iopc, GDPU])
-
-def f_lmc(cmi, fpu): return 1 - cmi * fpu
 world3.add_equation(f_lmc, lmc, [cmi, fpu])
-
 world3.add_equation(f_tab, lmp, [LMP, ppolx])
 
-def f_b(d, pet, tf, p2, rlt, t): return clip(d, 0.5 * tf * p2 / rlt, t, pet)
+# Birth
 world3.add_equation(f_b, b, [d, PET, tf, p2, RLT, t])
-
-def f_cbr(b, pop): return 1000 * b / pop
 world3.add_equation(f_cbr, cbr, [b, pop])
 
-def f_tf(mtf, fce, dtf): return min(mtf, mtf * (1 - fce) + dtf * fce)
 world3.add_equation(f_tf, tf, [mtf, fce, dtf])
-
 world3.add_equation(nodes_mltpld, mtf, [MTFN, fm])
 world3.add_equation(f_tab_div, fm, [FM, le, OY])
 world3.add_equation(nodes_mltpld, dtf, [dcfs, cmple])
-world3.add_equation(ple.f_delayinit, ple, [le, LPD])
-world3.add_equation(f_tab_div, cmple, [CMPLE, ple, OY])
 
-def f_dcfs(dcfsn, frsn, sfsn, t, zpgt): return clip(2, dcfsn * frsn * sfsn, t, zpgt)
+world3.add_equation(f_tab_div, cmple, [CMPLE, ple, OY])
+world3.add_equation(ple.f_delayinit, ple, [le, LPD])
+
 world3.add_equation(f_dcfs, dcfs, [DCFSN, frsn, sfsn, t, ZPGT])
+world3.add_equation(f_tab_div, sfsn, [SFSN, diopc, GDPU])
 
 world3.add_equation(diopc.f_delayinit, diopc, [iopc, SAD])
-world3.add_equation(f_tab_div, sfsn, [SFSN, diopc, GDPU])
-world3.add_equation(f_tab, frsn, [FRSN, fie])
 
-def f_fie(iopc, aiopc): return (iopc - aiopc) / aiopc
+world3.add_equation(f_tab, frsn, [FRSN, fie])
 world3.add_equation(f_fie, fie, [iopc, aiopc])
 
-def f_aiopc(iopc, aiopc, ieat): return (iopc - aiopc) / ieat
 world3.add_equation(f_aiopc, aiopc, [iopc, aiopc, IEAT])
 
-def f_nfc(mtf, dtf): return mtf / dtf - 1
 world3.add_equation(f_nfc, nfc, [mtf, dtf])
-
-world3.add_equation(fcfpc.f_delayinit, fcfpc, [fcapc, HSID])
-
-def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab_div(fce, fcfpc, gdpu), t, fcest)
 world3.add_equation(f_fce, fce, [FCE, fcfpc, GDPU, t, FCEST])
-
+world3.add_equation(fcfpc.f_delayinit, fcfpc, [fcapc, HSID])
 world3.add_equation(nodes_mltpld, fcapc, [fsafc, sopc])
-
 world3.add_equation(f_tab, fsafc, [FSAFC, nfc])
 
-####################
-# Edges on capital #
-####################
-world3.add_equation(nodes_div, iopc, [io, pop])
 
+########################
+# Equations on capital #
+########################
+
+# Functions which are not defined in basic ones
 def f_io(ic, fcaor, cuf, icor): return (ic * (1 - fcaor) * cuf) / icor
+def f_fioai(fioaa, fioas, fioac): return 1 - fioaa - fioas - fioac
+
+
+def f_so(sc, cuf, scor): return sc * cuf / scor
+
+
+def f_lf(p2, p3, lfpf): return (p2 + p3) * lfpf
+def f_lufd(luf, lufd, lufdt): return (luf - lufd) / lufdt
+
+
+# Creation of equations
+
+# Industrial
+world3.add_equation(nodes_div, iopc, [io, pop])
 world3.add_equation(f_io, io, [ic, fcaor, cuf, icor])
 
 if world3.version == 1972:
     world3.add_equation(clip, icor, [ICOR2, ICOR1, t, PYEAR])
 if world3.version == 2003:
     world3.add_equation(clip, icor, [icor2, ICOR1, t, PYEAR])
-    world3.add_equation(nodes_mltpld, icor2, [icor2t, coym, copm])
 
 world3.add_equation(nodes_dif, ic, [icir, icdr])
 world3.add_equation(nodes_div, icdr, [ic, alic])
 world3.add_equation(clip, alic, [ALIC2, ALIC1, t, PYEAR])
 world3.add_equation(nodes_mltpld, icir, [io, fioai])
 
-def f_fioai(fioaa, fioas, fioac): return 1 - fioaa - fioas - fioac
 world3.add_equation(f_fioai, fioai, [fioaa, fioas, fioac])
-
 world3.add_equation(clip, fioac, [fioacv, fioacc, t, IET])
 world3.add_equation(clip, fioacc, [FIOAC2, FIOAC1, t, PYEAR])
-
 world3.add_equation(f_tab_div, fioacv, [FIOACV, iopc, IOPCD])
 
-world3.add_equation(clip, isopc, [isopc2, isopc1, t, PYEAR])
+if world3.version == 2003:
+    world3.add_equation(nodes_mltpld, icor2, [icor2t, coym, copm])
 
+# Services
+world3.add_equation(clip, isopc, [isopc2, isopc1, t, PYEAR])
 world3.add_equation(f_tab_div, isopc1, [ISOPC1, iopc, GDPU])
 world3.add_equation(f_tab_div, isopc2, [ISOPC2, iopc, GDPU])
 
 world3.add_equation(clip, fioas, [fioas2, fioas1, t, PYEAR])
-
 world3.add_equation(f_tab_div, fioas1, [FIOAS1, sopc, isopc])
 world3.add_equation(f_tab_div, fioas2, [FIOAS2, sopc, isopc])
 
 world3.add_equation(nodes_mltpld, scir, [io, fioas])
 world3.add_equation(nodes_dif, sc, [scir, scdr])
-world3.add_equation(clip, alsc, [ALSC2, ALSC1, t, PYEAR])
 world3.add_equation(nodes_div, scdr, [sc, alsc])
+world3.add_equation(clip, alsc, [ALSC2, ALSC1, t, PYEAR])
 
-def f_so(sc, cuf, scor): return sc *cuf / scor
 world3.add_equation(f_so, so, [sc, cuf, scor])
-
 world3.add_equation(nodes_div, sopc, [so, pop])
 world3.add_equation(clip, scor, [SCOR2, SCOR1, t, PYEAR])
 
-def f_j(pjis, pjas, pjss): return pjis + pjas + pjss
-world3.add_equation(f_j, j, [pjis, pjas, pjss])
-
+# Jobs
+world3.add_equation(nodes_sum, j, [pjis, pjas, pjss])
 world3.add_equation(nodes_mltpld, pjis, [ic, jpicu])
 world3.add_equation(f_tab_div, jpicu, [JPICU, iopc, GDPU])
-
 world3.add_equation(nodes_mltpld, pjss, [sc, jpscu])
 world3.add_equation(f_tab_div, jpscu, [JPSCU, sopc, GDPU])
-
 world3.add_equation(nodes_mltpld, pjas, [jph, al])
 world3.add_equation(f_tab_div, jph, [JPH, aiph, UAGI])
 
-def f_lf(p2, p3, lfpf): return (p2 + p3) * lfpf
 world3.add_equation(f_lf, lf, [p2, p3, LFPF])
-
 world3.add_equation(nodes_div, luf, [j, lf])
-
-def f_lufd(luf, lufd, lufdt): return (luf - lufd) / lufdt
 world3.add_equation(f_lufd, lufd, [luf, lufd, LUFDT])
-
 world3.add_equation(f_tab, cuf, [CUF, lufd])
 
-########################
-# Edges on agriculture #
-########################
+
+############################
+# Equations on agriculture #
+############################
+
+# Functions which are not defined in basic ones
+def f_al(ldr, ler, lrui): return ldr - ler - lrui
+def f_pal(ldr): return - ldr
+def f_f(ly, al, lfh, pl): return ly * al * lfh * (1 - pl)
+def f_ldr(tai, fiald, dcph): return tai * fiald / dcph
+
+
+def f_cai(tai, fiald): return tai * (1 - fiald)
+def f_ai(cai, ai, alai): return (cai - ai) / alai
+def f_aiph(ai, falm, al): return ai * (1 - falm) / al
+def f_mpld(ly, dcph, sd): return ly / (dcph * sd)
+def f_mpai(alai, ly, mlymc, lymc): return alai * ly * mlymc / lymc
+
+
+def f_llmy(llmy2, llmy1, llmytm, oy, t):
+    return clip(0.95 ** ((t - llmytm) / oy) * llmy1 + (1 - 0.95 ** ((t - llmytm) / oy)) * llmy2, llmy1, t, llmytm)
+def f_lrui(uilr, uil, uildt): return max(0, uilr - uil) / uildt
+def f_uil(lrui): return lrui
+
+
+def f_lfr(ilf, lfert, lfrt): return (ilf - lfert) / lfrt
+def f_pfr(fr, pfr, fspd): return (fr - pfr) / fspd
+def f_lytd(lytdr): return lytdr
+def f_lytdr(lytd, lycm, t, pyear): return clip(lytd * lycm, 0, t, pyear)
+
+
+# Creation of equations
+
 # Loop 1
 world3.add_equation(nodes_div, lfc, [al, PALT])
-
-def f_al(ldr, ler, lrui): return ldr - ler - lrui
 world3.add_equation(f_al, al, [ldr, ler, lrui])
-
-def f_pal(ldr): return - ldr
 world3.add_equation(f_pal, pal, [ldr])
 
-def f_f(ly, al, lfh, pl): return ly * al * lfh * (1 - pl)
 world3.add_equation(f_f, f, [ly, al, LFH, PL])
-
 world3.add_equation(nodes_div, fpc, [f, pop])
-
 world3.add_equation(clip, ifpc, [ifpc2, ifpc1, t, PYEAR])
-
 world3.add_equation(f_tab_div, ifpc1, [IFPC1, iopc, GDPU])
 world3.add_equation(f_tab_div, ifpc2, [IFPC2, iopc, GDPU])
 
 world3.add_equation(nodes_mltpld, tai, [io, fioaa])
-
 world3.add_equation(clip, fioaa, [fioaa2, fioaa1, t, PYEAR])
-
 world3.add_equation(f_tab_div, fioaa1, [FIOAA1, fpc, ifpc])
 world3.add_equation(f_tab_div, fioaa2, [FIOAA2, fpc, ifpc])
 
-def f_ldr(tai, fiald, dcph): return tai * fiald / dcph
 world3.add_equation(f_ldr, ldr, [tai, fiald, dcph])
-
 world3.add_equation(f_tab_div, dcph, [DCPH, pal, PALT])
 
 # Loop 2
-def f_cai(tai, fiald): return tai * (1 - fiald)
 world3.add_equation(f_cai, cai, [tai, fiald])
-
-def f_ai(cai, ai, alai): return (cai - ai) / alai
 world3.add_equation(f_ai, ai, [cai, ai, alai])
-
 world3.add_equation(clip, alai, [ALAI2, ALAI1, t, PYEAR])
-
-def f_aiph(ai, falm, al): return ai * (1 - falm) / al
 world3.add_equation(f_aiph, aiph, [ai, falm, al])
 
 world3.add_equation(f_tab_div, lymc, [LYMC, aiph, UAGI])
-
 world3.add_equation(nodes_mltpld, ly, [lyf, lfert, lymc, lymap])
 
 if world3.version == 1972:
     world3.add_equation(clip, lyf, [LYF2, LYF1, t, PYEAR])
 if world3.version == 2003:
     world3.add_equation(clip, lyf, [lyf2, LYF1, t, PYEAR])
-    world3.add_equation(lyf2.f_delayinit, lyf2, [lytd, TDD])
 
 world3.add_equation(clip, lymap, [lymap2, lymap1, t, PYEAR])
-
 world3.add_equation(f_tab_div, lymap1, [LYMAP1, io, IO70])
 world3.add_equation(f_tab_div, lymap2, [LYMAP2, io, IO70])
+
 world3.add_equation(f_tab_div, fiald, [FIALD, mpld, mpai])
-
-def f_mpld(ly, dcph, sd): return ly / (dcph * sd)
 world3.add_equation(f_mpld, mpld, [ly, dcph, SD])
-
-def f_mpai(alai, ly, mlymc, lymc): return alai * ly * mlymc / lymc
 world3.add_equation(f_mpai, mpai, [alai, ly, mlymc, lymc])
-
 world3.add_equation(f_tab_div, mlymc, [MLYMC, aiph, UAGI])
+
+if world3.version == 2003:
+    world3.add_equation(lyf2.f_delayinit, lyf2, [lytd, TDD])
 
 # Loop 3
 world3.add_equation(nodes_mltpld, all, [ALLN, llmy])
-
-def f_llmy(llmy2, llmy1, llmytm, oy, t): return clip(0.95 ** ((t - llmytm) / oy) * llmy1 + (1 - 0.95 ** ((t - llmytm) / oy)) * llmy2, llmy1, t, llmytm)
 world3.add_equation(f_llmy, llmy, [llmy2, llmy1, LLMYTM, OY, t])
-
 world3.add_equation(f_tab_div, llmy1, [LLMY1, ly, ILF])
 world3.add_equation(f_tab_div, llmy2, [LLMY2, ly, ILF])
-
 world3.add_equation(nodes_div, ler, [al, all])
 
 world3.add_equation(f_tab_div, uilpc, [UILPC, iopc, GDPU])
-
 world3.add_equation(nodes_mltpld, uilr, [uilpc, pop])
-
-def f_lrui(uilr, uil, uildt): return max(0, uilr - uil) / uildt
 world3.add_equation(f_lrui, lrui, [uilr, uil, UILDT])
-
-def f_uil(lrui): return lrui
 world3.add_equation(f_uil, uil, [lrui])
 
 # Loop 4
@@ -1366,30 +1479,34 @@ world3.add_equation(f_tab, lfdr, [LFDR, ppolx])
 world3.add_equation(nodes_mltpld, lfd, [lfert, lfdr])
 
 # Loop 5
-def f_lfr(ilf, lfert, lfrt): return (ilf - lfert) / lfrt
 world3.add_equation(f_lfr, lfr, [ILF, lfert, lfrt])
-
 world3.add_equation(f_tab, lfrt, [LFRT, falm])
+
 world3.add_equation(f_tab, falm, [FALM, pfr])
 world3.add_equation(nodes_div, fr, [fpc, SFPC])
-
-def f_pfr(fr, pfr, fspd): return (fr - pfr) / fspd
 world3.add_equation(f_pfr, pfr, [fr, pfr, FSPD])
 
 if world3.version == 2003:
-    def f_lytd(lytdr): return lytdr
     world3.add_equation(f_lytd, lytd, [lytdr])
-
-    def f_lytdr(lytd, lycm, t, pyear): return clip(lytd * lycm, 0, t, pyear)
     world3.add_equation(f_lytdr, lytdr, [lytd, lycm, t, PYEAR])
 
     world3.add_equation(f_tab_dif, lycm, [LYCM, DFR, fr])
     world3.add_equation(f_tab, coym, [COYM, lyf])
 
-######################
-# Edges on resources #
-######################
+
+##########################
+# Equations on resources #
+##########################
+
+# Functions which are not defined in basic ones
 def f_nr(nrur): return - nrur
+def f_nrtd(nrate): return nrate
+def f_nrate(nrtd, nrcm, t, pyear): return clip(nrtd * nrcm, 0, t, pyear)
+def f_nrcm(nrcm, nrur, dnrur): return f_tab(nrcm, 1 - nrur/dnrur)
+
+
+# Creation of equations
+
 world3.add_equation(f_nr, nr, [nrur])
 world3.add_equation(nodes_mltpld, nrur, [pop, pcrum, nruf])
 
@@ -1397,99 +1514,112 @@ if world3.version == 1972:
     world3.add_equation(clip, nruf, [NRUF2, NRUF1, t, PYEAR])
 if world3.version == 2003:
     world3.add_equation(clip, nruf, [nruf2, NRUF1, t, PYEAR])
-    world3.add_equation(nruf2.f_delayinit, nruf2, [nrtd, TDD])
 
 world3.add_equation(f_tab_div, pcrum, [PCRUM, iopc, GDPU])
+
 world3.add_equation(nodes_div, nrfr, [nr, NRI])
 
 world3.add_equation(clip, fcaor, [fcaor2, fcaor1, t, FCAORTM])
-
 world3.add_equation(f_tab, fcaor1, [FCAOR1, nrfr])
 world3.add_equation(f_tab, fcaor2, [FCAOR2, nrfr])
 
 if world3.version == 2003:
-    def f_nrtd(nrate): return nrate
+    world3.add_equation(nruf2.f_delayinit, nruf2, [nrtd, TDD])
     world3.add_equation(f_nrtd, nrtd, [nrate])
-
-    def f_nrate(nrtd, nrcm, t, pyear): return clip(nrtd * nrcm, 0, t, pyear)
     world3.add_equation(f_nrate, nrate, [nrtd, nrcm, t, PYEAR])
-
-    def f_nrcm(nrcm, nrur, dnrur): return f_tab(nrcm, 1 - nrur/dnrur)
     world3.add_equation(f_nrcm, nrcm, [NRCM, nrur, DNRUR])
+
     world3.add_equation(f_tab, icor2t, [ICOR2T, nruf])
 
-######################
-# Edges on pollution #
-######################
+
+##########################
+# Equations on pollution #
+##########################
+
+# Functions which are not defined in basic ones
 def f_ppgr(ppgio, ppgao, ppgf): return (ppgio + ppgao) * ppgf
+def f_ppasr(ppol, ahl): return ppol / (1.4 * ahl)
+def f_ptd(ptdr): return ptdr
+def f_ptdr(ptd, polgfm, t, pyear): return clip(ptd * polgfm, 0, t, pyear)
+def f_polgfm(polgfm, ppolx, dpolx): return f_tab(polgfm, 1 - ppolx/dpolx)
+
+
+# Creation of equations
 world3.add_equation(f_ppgr, ppgr, [ppgio, ppgao, ppgf])
 
 if world3.version == 1972:
     world3.add_equation(clip, ppgf, [PPGF2, PPGF1, t, PYEAR])
 if world3.version == 2003:
     world3.add_equation(clip, ppgf, [ppgf2, PPGF1, t, PYEAR])
-    world3.add_equation(ppgf2.f_delayinit, ppgf2, [ptd, TDD])
 
 world3.add_equation(nodes_mltpld, ppgio, [pcrum, pop, FRPM, IMEF, IMTI])
 world3.add_equation(nodes_mltpld, ppgao, [aiph, al, FIPM, AMTI])
 world3.add_equation(ppapr.f_delayinit, ppapr, [ppgr, PPTD])
 world3.add_equation(nodes_dif, ppol, [ppapr, ppasr])
 world3.add_equation(nodes_div, ppolx, [ppol, PPOL70])
-
-def f_ppasr(ppol, ahl): return ppol / (1.4 * ahl)
 world3.add_equation(f_ppasr, ppasr, [ppol, ahl])
 
 world3.add_equation(f_tab, ahlm, [AHLM, ppolx])
 world3.add_equation(nodes_mltpld, ahl, [AHL70, ahlm])
 
 if world3.version == 2003:
-    def f_ptd(ptdr): return ptdr
+    world3.add_equation(ppgf2.f_delayinit, ppgf2, [ptd, TDD])
     world3.add_equation(f_ptd, ptd, [ptdr])
-
-    def f_ptdr(ptd, polgfm, t, pyear): return clip(ptd * polgfm, 0, t, pyear)
     world3.add_equation(f_ptdr, ptdr, [ptd, polgfm, t, PYEAR])
 
-    def f_polgfm(polgfm, ppolx, dpolx): return f_tab(polgfm, 1 - ppolx/dpolx)
     world3.add_equation(f_polgfm, polgfm, [POLGFM, ppolx, DPOLX])
 
     world3.add_equation(f_tab, copm, [COPM, ppgf])
 
-####################
-# Edges on indexes #
-####################
+
+########################
+# Equations on indexes #
+########################
+
+# Functions which are not defined in basic ones
 def f_foa(pof, f, so, io): return (pof * f) / (pof * f + so+ io)
-world3.add_equation(f_foa, foa, [POF, f, so, io])
-
 def f_foi(pof, f, so, io): return io / (pof * f + so+ io)
-world3.add_equation(f_foi, foi, [POF, f, so, io])
-
 def f_fos(pof, f, so, io): return so / (pof * f + so+ io)
-world3.add_equation(f_fos, fos, [POF, f, so, io])
 
-world3.add_equation(nodes_div, resint, [nrur, io])
 
 def f_plinid(ppgio, ppgf, io): return (ppgio * ppgf) / io
+
+
+def f_hwi(lei, ei, gdpi): return (lei + ei + gdpi) / 3
+def f_gdpi(gdppc, rlgdp, rhgdp): return log(gdppc / rlgdp, 10) / log(rhgdp / rlgdp, 10)
+
+
+def f_hef(alggha, ulgha, algha, tl): return (alggha + ulgha + algha) / tl
+def f_algha(ppgr, hup, ghah): return ppgr * hup / ghah
+
+
+# Creation of equations
+
+# Distribution of outputs between the different sector
+world3.add_equation(f_foa, foa, [POF, f, so, io])
+world3.add_equation(f_foi, foi, [POF, f, so, io])
+world3.add_equation(f_fos, fos, [POF, f, so, io])
+
+# Industrial outputs indexes
+world3.add_equation(nodes_div, resint, [nrur, io])
 world3.add_equation(f_plinid, plinid, [ppgio, ppgf, io])
 
 world3.add_equation(nodes_mltpld, cio, [io, fioac])
 world3.add_equation(nodes_div, ciopc, [cio, pop])
 
-def f_hwi(lei, ei, gdpi): return (lei + ei + gdpi) / 3
+# Human Welfare Index
 world3.add_equation(f_hwi, hwi, [lei, ei, gdpi])
 
 world3.add_equation(f_tab_div, lei, [LEI, le, OY])
+
 world3.add_equation(f_tab_div, ei, [EI, gdppc, GDPU])
 
-def f_gdpi(gdppc, rlgdp, rhgdp): return log(gdppc / rlgdp, 10) / log(rhgdp / rlgdp, 10)
 world3.add_equation(f_gdpi, gdpi, [gdppc, RLGDP, RHGDP])
-
 world3.add_equation(f_tab_div, gdppc, [GDPPC, iopc, GDPU])
 
-def f_hef(alggha, ulgha, algha, tl): return (alggha + ulgha + algha) / tl
+# Human Ecological Footprint
 world3.add_equation(f_hef, hef, [alggha, ulgha, algha, TL])
 
-def f_algha(ppgr, hup, ghah): return ppgr * hup / ghah
 world3.add_equation(f_algha, algha, [ppgr, HUP, GHAH])
-
 world3.add_equation(nodes_div, alggha, [al, GHAH])
 world3.add_equation(nodes_div, ulgha, [uil, GHAH])
