@@ -37,6 +37,8 @@
 
 # It is recommended to read the note named "MyWorld3: Equations and Explanations" before using/modifying this code.
 
+from mpl_toolkits.axes_grid1 import host_subplot
+from mpl_toolkits import axisartist
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter
 from matplotlib.image import imread
