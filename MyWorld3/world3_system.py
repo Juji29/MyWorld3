@@ -72,6 +72,8 @@ except ValueError:
 
 # From line 75 to line 1175, it is created the different nodes defined in World3 model.
 # From line 1175 to the end, it is defined equations which link these nodes.
+# All equations are written in the order given in "MyWorld3: Equations and Explanations".
+
 
 ######################
 # Initial conditions #
@@ -1210,15 +1212,15 @@ def f_tab_div(x, y, z): return f_tab(x, y/z)
 
 def f_tab_dif(x, y, z): return f_tab(x, y - z)
 
+def f_return(x): return x
+
 
 ###########################
 # Equations on population #
 ###########################
 
 # Functions which are not defined in basic ones
-def p1_evo(b, d1, mat1): return b - d1 - mat1
-def p2_evo(mat1, d2, mat2): return mat1 - d2 - mat2
-def p3_evo(mat2, d3, mat3): return mat2 - d3 - mat3
+def f_p(inputs, deaths, transfers): return inputs - deaths - transfers
 def f_mat1(p1, m1): return p1 * (1 - m1) / 15
 def f_mat2(p2, m2): return p2 * (1 - m2) / 30
 def f_mat3(p3, m3): return p3 * (1 - m3) / 20
@@ -1245,17 +1247,17 @@ def f_fce(fce, fcfpc, gdpu, t, fcest): return clip(1, f_tab_div(fce, fcfpc, gdpu
 # Population dynamics
 world3.add_equation(nodes_sum, pop, [p1, p2, p3, p4])
 
-world3.add_equation(p1_evo, p1, [b, d1, mat1])
+world3.add_equation(f_p, p1, [b, d1, mat1])
 world3.add_equation(nodes_mltpld, d1, [p1, m1])
 world3.add_equation(f_tab_div, m1, [M1, le, OY])
 world3.add_equation(f_mat1, mat1, [p1, m1])
 
-world3.add_equation(p2_evo, p2, [mat1, d2, mat2])
+world3.add_equation(f_p, p2, [mat1, d2, mat2])
 world3.add_equation(nodes_mltpld, d2, [p2, m2])
 world3.add_equation(f_tab_div, m2, [M2, le, OY])
 world3.add_equation(f_mat2, mat2, [p2, m2])
 
-world3.add_equation(p3_evo, p3, [mat2, d3, mat3])
+world3.add_equation(f_p, p3, [mat2, d3, mat3])
 world3.add_equation(nodes_mltpld, d3, [p3, m3])
 world3.add_equation(f_tab_div, m3, [M3, le, OY])
 world3.add_equation(f_mat3, mat3, [p3, m3])
@@ -1405,12 +1407,10 @@ def f_mpai(alai, ly, mlymc, lymc): return alai * ly * mlymc / lymc
 def f_llmy(llmy2, llmy1, llmytm, oy, t):
     return clip(0.95 ** ((t - llmytm) / oy) * llmy1 + (1 - 0.95 ** ((t - llmytm) / oy)) * llmy2, llmy1, t, llmytm)
 def f_lrui(uilr, uil, uildt): return max(0, uilr - uil) / uildt
-def f_uil(lrui): return lrui
 
 
 def f_lfr(ilf, lfert, lfrt): return (ilf - lfert) / lfrt
 def f_pfr(fr, pfr, fspd): return (fr - pfr) / fspd
-def f_lytd(lytdr): return lytdr
 def f_lytdr(lytd, lycm, t, pyear): return clip(lytd * lycm, 0, t, pyear)
 
 
@@ -1471,7 +1471,7 @@ world3.add_equation(nodes_div, ler, [al, all])
 world3.add_equation(f_tab_div, uilpc, [UILPC, iopc, GDPU])
 world3.add_equation(nodes_mltpld, uilr, [uilpc, pop])
 world3.add_equation(f_lrui, lrui, [uilr, uil, UILDT])
-world3.add_equation(f_uil, uil, [lrui])
+world3.add_equation(f_return, uil, [lrui])
 
 # Loop 4
 world3.add_equation(nodes_dif, lfert, [lfr, lfd])
@@ -1487,7 +1487,7 @@ world3.add_equation(nodes_div, fr, [fpc, SFPC])
 world3.add_equation(f_pfr, pfr, [fr, pfr, FSPD])
 
 if world3.version == 2003:
-    world3.add_equation(f_lytd, lytd, [lytdr])
+    world3.add_equation(f_return, lytd, [lytdr])
     world3.add_equation(f_lytdr, lytdr, [lytd, lycm, t, PYEAR])
 
     world3.add_equation(f_tab_dif, lycm, [LYCM, DFR, fr])
@@ -1500,7 +1500,6 @@ if world3.version == 2003:
 
 # Functions which are not defined in basic ones
 def f_nr(nrur): return - nrur
-def f_nrtd(nrate): return nrate
 def f_nrate(nrtd, nrcm, t, pyear): return clip(nrtd * nrcm, 0, t, pyear)
 def f_nrcm(nrcm, nrur, dnrur): return f_tab(nrcm, 1 - nrur/dnrur)
 
@@ -1525,7 +1524,7 @@ world3.add_equation(f_tab, fcaor2, [FCAOR2, nrfr])
 
 if world3.version == 2003:
     world3.add_equation(nruf2.f_delayinit, nruf2, [nrtd, TDD])
-    world3.add_equation(f_nrtd, nrtd, [nrate])
+    world3.add_equation(f_return, nrtd, [nrate])
     world3.add_equation(f_nrate, nrate, [nrtd, nrcm, t, PYEAR])
     world3.add_equation(f_nrcm, nrcm, [NRCM, nrur, DNRUR])
 
@@ -1539,7 +1538,6 @@ if world3.version == 2003:
 # Functions which are not defined in basic ones
 def f_ppgr(ppgio, ppgao, ppgf): return (ppgio + ppgao) * ppgf
 def f_ppasr(ppol, ahl): return ppol / (1.4 * ahl)
-def f_ptd(ptdr): return ptdr
 def f_ptdr(ptd, polgfm, t, pyear): return clip(ptd * polgfm, 0, t, pyear)
 def f_polgfm(polgfm, ppolx, dpolx): return f_tab(polgfm, 1 - ppolx/dpolx)
 
@@ -1564,7 +1562,7 @@ world3.add_equation(nodes_mltpld, ahl, [AHL70, ahlm])
 
 if world3.version == 2003:
     world3.add_equation(ppgf2.f_delayinit, ppgf2, [ptd, TDD])
-    world3.add_equation(f_ptd, ptd, [ptdr])
+    world3.add_equation(f_return, ptd, [ptdr])
     world3.add_equation(f_ptdr, ptdr, [ptd, polgfm, t, PYEAR])
 
     world3.add_equation(f_polgfm, polgfm, [POLGFM, ppolx, DPOLX])
