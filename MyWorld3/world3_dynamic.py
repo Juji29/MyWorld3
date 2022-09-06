@@ -1,6 +1,7 @@
 ########################################################################################################################
 # © Copyright French Civil Aviation Authority
-# Authors: Julien LEGAVRE, Alexandre GONDRAN (2022)
+# Authors: Julien LEGAVRE (2022)
+# Contributor: Alexandre GONDRAN
 
 # julienleg29@gmail.com
 
