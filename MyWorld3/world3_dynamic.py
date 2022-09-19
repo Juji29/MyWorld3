@@ -1,15 +1,16 @@
 ########################################################################################################################
 # © Copyright French Civil Aviation Authority
-# Author: Julien LEGAVRE (2022)
-# Contributors: Alexandre GONDRAN (2022)
+# Authors: Julien LEGAVRE (2022)
+# Contributor: Alexandre GONDRAN
 
-# julien.legavre@alumni.enac.fr
+# julienleg29@gmail.com
 
 # This software is a computer program whose purpose is to produce the results
 # of the World3 model described in "The Limits to Growth" and
 # in "The Limits to Growth".
 
-# This software is governed by the CeCILL license under French law and
+# This software is governed by the GNU General Public License version 2.0.
+# This software is also governed by the CeCILL license under French law and
 # abiding by the rules of distribution of free software. You can use,
 # modify and/or redistribute the software under the terms of the CeCILL
 # license as circulated by CEA, CNRS and INRIA at the following URL
@@ -33,7 +34,8 @@
 # same conditions as regards security.
 
 # The fact that you are presently reading this means that you have had
-# knowledge of the CeCILL license and that you accept its terms.
+# knowledge of the GNU General Public License version 2.0 or the CeCILL  
+# license and that you accept its terms.
 ########################################################################################################################
 
 # It is recommended to read the note named "MyWorld3: Equations and Explanations" before using/modifying this code.
