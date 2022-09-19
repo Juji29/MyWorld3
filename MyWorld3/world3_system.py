@@ -1,8 +1,8 @@
 ########################################################################################################################
 # © Copyright French Civil Aviation Authority
-# Authors: Julien LEGAVRE (2022)
+# Author: Julien LEGAVRE (2022)
 
-# julienleg29@gmail.com
+# julien.legavre@alumni.enac.fr
 
 # This software is a computer program whose purpose is to produce the results
 # of the World3 model described in "The Limits to Growth" and
