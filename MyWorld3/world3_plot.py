@@ -70,12 +70,12 @@ def multiple_plot(time, y, labelX, labelY, window_title="World3 Results"):
     plt.show()
 
 def classic_plot(time, var_data, var_names, var_lims,
-                         img_background=None,
-                         title=None,
-                         figsize=None,
-                         dist_spines=0.09,
-                         grid=False,
-                         save=False):
+                 img_background=None,
+                 title=None,
+                 figsize=None,
+                 dist_spines=0.09,
+                 grid=False,
+                 save=False):
 
     prop_cycle = plt.rcParams['axes.prop_cycle']
     colors = prop_cycle.by_key()['color']
@@ -95,11 +95,13 @@ def classic_plot(time, var_data, var_names, var_lims,
         ax.yaxis.set_ticks_position('left')
 
     if img_background is not None:
-        im = imread(img_background)
-        axs[0].imshow(im, aspect="auto",
-                      extent=[time[0], time[-1],
-                              var_lims[0][0], var_lims[0][1]], cmap="gray")
-
+        try:
+            im = imread(img_background)
+            axs[0].imshow(im, aspect="auto",
+                          extent=[time[0], time[-1],
+                                  var_lims[0][0], var_lims[0][1]], cmap="gray")
+        except FileNotFoundError:
+            print('Warrning : Backgound image not found.')
     ps = []
     for ax, label, ydata, color in zip(axs, var_names, var_data, colors):
         ps.append(ax.plot(time, ydata, label=label, color=color)[0])

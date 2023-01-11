@@ -7,7 +7,7 @@
 
 # This software is a computer program whose purpose is to produce the results
 # of the World3 model described in "The Limits to Growth" and
-# in "The Limits to Growth".
+# in "The Limits to Growth: The 30-Year Update".
 
 # This software is governed by the GNU General Public License version 2.0.
 # This software is also governed by the CeCILL license under French law and
@@ -54,15 +54,18 @@ class ErrorNodeAlreadyExists(Exception):
 
 
 class Node:
-    def __init__(self, name, val=None, hg=None):
+    def __init__(self, name, val=None, detail=None, unit=None, cat=None):#, hg=None):
         self.name = name
         self.val = val
+        self.detail = detail
+        self.cat = cat
+        self.unit = unit
         self.cons = None
         self.pred = []
         self.succ = []
         self.rank = None
-        if hg is not None:
-            hg.add_node(self)
+        #if hg is not None:
+        #    hg.add_node(self)
 
     def __repr__(self):
         value = "None"
@@ -88,8 +91,8 @@ class Node:
 ########################################################################################################################
 
 class NodeStock(Node):
-    def __init__(self, name, val=None, hg=None):
-        super().__init__(name, val, hg)
+    def __init__(self, name, val=None, detail=None, unit=None, cat=None):#, hg=None):
+        super().__init__(name, val=val, detail=detail, unit=unit, cat=cat)#, hg=hg)
         self.hist = [val]
 
     def eval(self, ts, save=True):
@@ -110,8 +113,8 @@ class NodeStock(Node):
 
 
 class NodeFlow(Node):
-    def __init__(self, name, val=None, hg=None):
-        super().__init__(name, val, hg)
+    def __init__(self, name, val=None, detail=None, unit=None, cat=None):#, hg=None):
+        super().__init__(name, val=val, detail=detail, unit=unit, cat=cat)#, hg=hg)
         self.hist = []
 
     def eval(self, dt, save=True):
@@ -132,8 +135,8 @@ class NodeFlow(Node):
 
 
 class NodeDelay3(Node):
-    def __init__(self, name, val=None, hg=None):
-        super().__init__(name, val, hg)
+    def __init__(self, name, val=None, detail=None, unit=None, cat=None):#, hg=None):
+        super().__init__(name, val=val, detail=detail, unit=unit, cat=cat)#, hg=hg)
         self.hist = []
         self.cst = None
         self.node = None
@@ -170,8 +173,8 @@ class NodeDelay3(Node):
 
 
 class NodeConstant(Node):
-    def __init__(self, name, t, val=None, hg=None):
-        super().__init__(name, val, hg)
+    def __init__(self, name, t, val=None, detail=None, unit=None, cat=None):#, hg=None):
+        super().__init__(name, val=val, detail=detail, unit=unit, cat=cat)#, hg=hg)
         self.type = t
 
     def __repr__(self):
@@ -200,8 +203,12 @@ class NodeConstant(Node):
 
 
 class World3:
-    def __init__(self, version: int, nodes=[]):
+    def __init__(self, version: int, scenario: int, init_time: int, final_time: int, time_step: int, nodes=[]):
         self.version = version
+        self.scenario = scenario
+        self.init_time = init_time
+        self.final_time = final_time
+        self.time_step = time_step
         self.nodes = {n.name: n for n in nodes}
         self.nbrank = None
         self.nodesrank = None
@@ -223,6 +230,26 @@ class World3:
         for n in nodes:
             self.add_node(n)
 
+    def addStock(self, name, val=None, detail=None, unit=None, cat=None):
+        s = NodeStock(name, val=val, detail=detail, cat=cat)
+        self.add_node(s)
+        return s
+
+    def addFlow(self, name, val=None, detail=None, unit=None, cat=None):
+        f = NodeFlow(name, val=val, detail=detail, cat=cat)
+        self.add_node(f)
+        return f
+
+    def addDelay3(self, name, val=None, detail=None, unit=None, cat=None):
+        d = NodeDelay3(name, val=val, detail=detail, cat=cat)
+        self.add_node(d)
+        return d
+
+    def addConstant(self, name, t, val=None, detail=None, unit=None, cat=None):
+        c = NodeConstant(name, t, val=val, detail=detail, cat=cat)
+        self.add_node(c)
+        return c
+
     def add_equation(self, f, x_target, x_s):
         x_target.set_cons(f, x_s)
 
@@ -230,7 +257,9 @@ class World3:
         for ns in self.nodesrank:
             ns.eval(ts)
 
-    def run(self, it, ft, ts):
+    #def run(self, it, ft, ts):
+    def run(self):
+        it, ft, ts = self.init_time, self.final_time, self.time_step
         self.set_rank()
         nb_step = int((ft - it) / ts)
         for i in range(nb_step):
