@@ -40,8 +40,8 @@
 # It is recommended to read the note named "MyWorld3: Equations and Explanations" before using/modifying this code.
 
 import sys
-import world3_system as w_sys
-import world3_dynamic as sd
+import world3_model as w_sys
+import system_dynamic as sd
 from world3_plot import *
 import matplotlib.pyplot as plt
 
