@@ -122,6 +122,7 @@ AGRICULTURE = 'agriculture'
 POPULATION = 'population'
 CAPITAL = "capital"
 NR_RESSOURCES = "no-renewable ressources"
+POLLUTION = "pollution"
 
 ######################
 # Initial conditions #
@@ -203,29 +204,29 @@ def load(world3):
     pop = world3.addFlow("pop", detail="Total Population",
                    unit="capita", cat=POPULATION)
 
-    p1 = world3.addStock("p1", val=P1I.val)
-    p2 = world3.addStock("p2", val=P2I.val)
-    p3 = world3.addStock("p3", val=P3I.val)
-    p4 = world3.addStock("p4", val=P4I.val)
+    p1 = world3.addStock("p1", val=P1I.val, detail="Population aged from 0 to 14 years", cat=POPULATION)
+    p2 = world3.addStock("p2", val=P2I.val, detail="Population aged from 15 to 44 years", cat=POPULATION)
+    p3 = world3.addStock("p3", val=P3I.val, detail="Population aged from 45 to 64 years", cat=POPULATION)
+    p4 = world3.addStock("p4", val=P4I.val, detail="Population older than age 65", cat=POPULATION)
 
-    m1 = world3.addFlow("m1")
-    m2 = world3.addFlow("m2")
-    m3 = world3.addFlow("m3")
-    m4 = world3.addFlow("m4")
+    m1 = world3.addFlow("m1", detail="Mortality rate in population aged from 0 to 14 years", cat=POPULATION)
+    m2 = world3.addFlow("m2", detail="Mortality rate in population aged from 15 to 44 years", cat=POPULATION)
+    m3 = world3.addFlow("m3", detail="Mortality rate in population aged from 45 to 64 years", cat=POPULATION)
+    m4 = world3.addFlow("m4", detail="Mortality rate in population older than age 65", cat=POPULATION)
 
-    d1 = world3.addFlow("d1")
-    d2 = world3.addFlow("d2")
-    d3 = world3.addFlow("d3")
-    d4 = world3.addFlow("d4")
+    d1 = world3.addFlow("d1", detail="Deaths per year in population aged from 0 to 14 years", cat=POPULATION)
+    d2 = world3.addFlow("d2", detail="Deaths per year in population aged from 15 to 44 years", cat=POPULATION)
+    d3 = world3.addFlow("d3", detail="Deaths per year in population aged from 45 to 64 years", cat=POPULATION)
+    d4 = world3.addFlow("d4", detail="Deaths per year in population older than age 65", cat=POPULATION)
 
-    mat1 = world3.addFlow("mat1")
-    mat2 = world3.addFlow("mat2")
-    mat3 = world3.addFlow("mat3")
+    mat1 = world3.addFlow("mat1", cat=POPULATION)
+    mat2 = world3.addFlow("mat2", cat=POPULATION)
+    mat3 = world3.addFlow("mat3", cat=POPULATION)
 
     # Related to death
-    LEN = world3.addConstant("LEN", C, val=28)
-    HSID = world3.addConstant("HSID", C, val=20)
-    EHSPCI = world3.addConstant("EHSPCI", C, val=0)
+    LEN = world3.addConstant("LEN", C, val=28, cat=POPULATION)
+    HSID = world3.addConstant("HSID", C, val=20, cat=POPULATION)
+    EHSPCI = world3.addConstant("EHSPCI", C, val=0, cat=POPULATION)
 
     # LMF values depend on the version used
     if world3.version == 1972:
@@ -305,20 +306,20 @@ def load(world3):
                                        [90, 0.4],
                                        [100, 0.2]))
 
-    lmf = world3.addFlow("lmf")
-    hsapc = world3.addFlow("hsapc")
-    lmhs1 = world3.addFlow("lmhs1")
-    lmhs2 = world3.addFlow("lmhs2")
-    fpu = world3.addFlow("fpu")
-    cmi = world3.addFlow("cmi")
-    lmp = world3.addFlow("lmp")
+    lmf = world3.addFlow("lmf", cat=POPULATION)
+    hsapc = world3.addFlow("hsapc", cat=POPULATION)
+    lmhs1 = world3.addFlow("lmhs1", cat=POPULATION)
+    lmhs2 = world3.addFlow("lmhs2", cat=POPULATION)
+    fpu = world3.addFlow("fpu", cat=POPULATION)
+    cmi = world3.addFlow("cmi", cat=POPULATION)
+    lmp = world3.addFlow("lmp", cat=POPULATION)
 
-    d = world3.addFlow("d")
-    cdr = world3.addFlow("cdr")
-    lmhs = world3.addFlow("lmhs")
-    ehspc = world3.addStock("ehspc", val=EHSPCI.val)
-    lmc = world3.addFlow("lmc")
-    le = world3.addFlow("le")
+    d = world3.addFlow("d", cat=POPULATION)
+    cdr = world3.addFlow("cdr", cat=POPULATION)
+    lmhs = world3.addFlow("lmhs", cat=POPULATION)
+    ehspc = world3.addStock("ehspc", val=EHSPCI.val, cat=POPULATION)
+    lmc = world3.addFlow("lmc", cat=POPULATION)
+    le = world3.addFlow("le", cat=POPULATION)
 
     # Related to birth
     RLT = world3.addConstant("RLT", C, val=30)
@@ -408,26 +409,26 @@ def load(world3):
                                            [6, 0.025],
                                            [8, 0.03],
                                            [10, 0.035]))
-    fm = world3.addFlow("fm")
-    fce = world3.addFlow("fce")
-    frsn = world3.addFlow("frsn")
-    sfsn = world3.addFlow("sfsn")
-    cmple = world3.addFlow("cmple")
-    fsafc = world3.addFlow("fsafc")
+    fm = world3.addFlow("fm", cat=POPULATION)
+    fce = world3.addFlow("fce", cat=POPULATION)
+    frsn = world3.addFlow("frsn", cat=POPULATION)
+    sfsn = world3.addFlow("sfsn", cat=POPULATION)
+    cmple = world3.addFlow("cmple", cat=POPULATION)
+    fsafc = world3.addFlow("fsafc", cat=POPULATION)
 
-    b = world3.addFlow("b")
-    cbr = world3.addFlow("cbr")
-    tf = world3.addFlow("tf")
-    mtf = world3.addFlow("mtf")
-    dtf = world3.addFlow("dtf")
-    ple = world3.addDelay3("ple")
-    dcfs = world3.addFlow("dcfs")
-    diopc = world3.addDelay3("diopc")
-    fie = world3.addFlow("fie")
-    aiopc = world3.addStock("aiopc", val=AIOPCI.val)
-    nfc = world3.addFlow("nfc")
-    fcfpc = world3.addDelay3("fcfpc")
-    fcapc = world3.addFlow("fcapc")
+    b = world3.addFlow("b", cat=POPULATION)
+    cbr = world3.addFlow("cbr", cat=POPULATION)
+    tf = world3.addFlow("tf", cat=POPULATION)
+    mtf = world3.addFlow("mtf", cat=POPULATION)
+    dtf = world3.addFlow("dtf", cat=POPULATION)
+    ple = world3.addDelay3("ple", cat=POPULATION)
+    dcfs = world3.addFlow("dcfs", cat=POPULATION)
+    diopc = world3.addDelay3("diopc", cat=POPULATION)
+    fie = world3.addFlow("fie", cat=POPULATION)
+    aiopc = world3.addStock("aiopc", val=AIOPCI.val, cat=POPULATION)
+    nfc = world3.addFlow("nfc", cat=POPULATION)
+    fcfpc = world3.addDelay3("fcfpc", cat=POPULATION)
+    fcapc = world3.addFlow("fcapc", cat=POPULATION)
 
 
     ################################
@@ -476,23 +477,23 @@ def load(world3):
                                              [1.6, 0.81],
                                              [1.8, 0.82],
                                              [2, 0.83]))
-    fioacv = world3.addFlow("fioacv")
+    fioacv = world3.addFlow("fioacv", cat=CAPITAL)
 
-    iopc = world3.addFlow("iopc")
-    io = world3.addFlow("io")
-    icor = world3.addFlow("icor")
+    iopc = world3.addFlow("iopc", cat=CAPITAL)
+    io = world3.addFlow("io", cat=CAPITAL)
+    icor = world3.addFlow("icor", cat=CAPITAL)
 
     # ICOR2 values depend on the version used (is a NodeConstant if version is 1972)
     if world3.version == 2003:
-        icor2 = world3.addFlow("icor2")
+        icor2 = world3.addFlow("icor2", cat=CAPITAL)
 
-    ic = world3.addStock("ic", val=ICI.val)
-    icdr = world3.addFlow("icdr")
-    alic = world3.addFlow("alic")
-    icir = world3.addFlow("icir")
-    fioai = world3.addFlow("fioai")
-    fioac = world3.addFlow("fioac")
-    fioacc = world3.addFlow("fioacc")
+    ic = world3.addStock("ic", val=ICI.val, cat=CAPITAL)
+    icdr = world3.addFlow("icdr", cat=CAPITAL)
+    alic = world3.addFlow("alic", cat=CAPITAL)
+    icir = world3.addFlow("icir", cat=CAPITAL)
+    fioai = world3.addFlow("fioai", cat=CAPITAL)
+    fioac = world3.addFlow("fioac", cat=CAPITAL)
+    fioacc = world3.addFlow("fioacc", cat=CAPITAL)
 
     # Related to services
     SCI = world3.addConstant("SCI", C, val=1.44e11)
@@ -535,20 +536,20 @@ def load(world3):
                                              [1, 0.1],
                                              [1.5, 0.05],
                                              [2, 0]))
-    isopc1 = world3.addFlow("isopc1")
-    isopc2 = world3.addFlow("isopc2")
-    fioas1 = world3.addFlow("fioas1")
-    fioas2 = world3.addFlow("fioas2")
+    isopc1 = world3.addFlow("isopc1", cat=CAPITAL)
+    isopc2 = world3.addFlow("isopc2", cat=CAPITAL)
+    fioas1 = world3.addFlow("fioas1", cat=CAPITAL)
+    fioas2 = world3.addFlow("fioas2", cat=CAPITAL)
 
-    isopc = world3.addFlow("isopc")
-    fioas = world3.addFlow("fioas")
-    scir = world3.addFlow("scir")
-    sc = world3.addStock("sc", val=SCI.val)
-    scdr = world3.addFlow("scdr")
-    alsc = world3.addFlow("alsc")
-    so = world3.addFlow("so")
-    sopc = world3.addFlow("sopc")
-    scor = world3.addFlow("scor")
+    isopc = world3.addFlow("isopc", cat=CAPITAL)
+    fioas = world3.addFlow("fioas", cat=CAPITAL)
+    scir = world3.addFlow("scir", cat=CAPITAL)
+    sc = world3.addStock("sc", val=SCI.val, cat=CAPITAL)
+    scdr = world3.addFlow("scdr", cat=CAPITAL)
+    alsc = world3.addFlow("alsc", cat=CAPITAL)
+    so = world3.addFlow("so", cat=CAPITAL)
+    sopc = world3.addFlow("sopc", cat=CAPITAL)
+    scor = world3.addFlow("scor", cat=CAPITAL)
 
     # Related to jobs
     LFPF = world3.addConstant("LFPF", C, val=0.75)
@@ -581,18 +582,18 @@ def load(world3):
                                        [7, 0.3],
                                        [9, 0.1],
                                        [11, 0.1]))
-    jpicu = world3.addFlow("jpicu")
-    jpscu = world3.addFlow("jpscu")
-    jph = world3.addFlow("jph")
-    cuf = world3.addFlow("cuf")
+    jpicu = world3.addFlow("jpicu", cat=CAPITAL)
+    jpscu = world3.addFlow("jpscu", cat=CAPITAL)
+    jph = world3.addFlow("jph", cat=CAPITAL)
+    cuf = world3.addFlow("cuf", cat=CAPITAL)
 
-    j = world3.addFlow("j")
-    pjis = world3.addFlow("pjis")
-    pjss = world3.addFlow("pjss")
-    pjas = world3.addFlow("pjas")
-    lf = world3.addFlow("lf")
-    luf = world3.addFlow("luf")
-    lufd = world3.addStock("lufd", val=LUFDI.val)
+    j = world3.addFlow("j", cat=CAPITAL)
+    pjis = world3.addFlow("pjis", cat=CAPITAL)
+    pjss = world3.addFlow("pjss", cat=CAPITAL)
+    pjas = world3.addFlow("pjas", cat=CAPITAL)
+    lf = world3.addFlow("lf", cat=CAPITAL)
+    luf = world3.addFlow("luf", cat=CAPITAL)
+    lufd = world3.addStock("lufd", val=LUFDI.val, cat=CAPITAL)
 
 
     ##################################
@@ -646,21 +647,21 @@ def load(world3):
                                          [0.8, 150],
                                          [0.9, 75],
                                          [1, 50]))
-    ifpc1 = world3.addFlow("ifpc1")
-    ifpc2 = world3.addFlow("ifpc2")
-    fioaa1 = world3.addFlow("fioaa1")
-    fioaa2 = world3.addFlow("fioaa2")
-    dcph = world3.addFlow("dcph")
+    ifpc1 = world3.addFlow("ifpc1", cat=AGRICULTURE)
+    ifpc2 = world3.addFlow("ifpc2", cat=AGRICULTURE)
+    fioaa1 = world3.addFlow("fioaa1", cat=AGRICULTURE)
+    fioaa2 = world3.addFlow("fioaa2", cat=AGRICULTURE)
+    dcph = world3.addFlow("dcph", cat=AGRICULTURE)
 
-    lfc = world3.addFlow("lfc")
-    al = world3.addStock("al", val=ALI.val)
-    pal = world3.addStock("pal", val=PALI.val)
-    f = world3.addFlow("f")
-    fpc = world3.addFlow("fpc")
-    ifpc = world3.addFlow("ifpc")
-    tai = world3.addFlow("tai")
-    fioaa = world3.addFlow("fioaa")
-    ldr = world3.addFlow("ldr")
+    lfc = world3.addFlow("lfc", cat=AGRICULTURE)
+    al = world3.addStock("al", val=ALI.val, cat=AGRICULTURE)
+    pal = world3.addStock("pal", val=PALI.val, cat=AGRICULTURE)
+    f = world3.addFlow("f", cat=AGRICULTURE)
+    fpc = world3.addFlow("fpc", cat=AGRICULTURE)
+    ifpc = world3.addFlow("ifpc", cat=AGRICULTURE)
+    tai = world3.addFlow("tai", cat=AGRICULTURE)
+    fioaa = world3.addFlow("fioaa", cat=AGRICULTURE)
+    ldr = world3.addFlow("ldr", cat=AGRICULTURE)
 
     # Loop 2
     ALAI1 = world3.addConstant("ALAI1", C, val=2)
@@ -676,7 +677,7 @@ def load(world3):
 
     # LYF2 values depend on the version used (is a NodeDelay3 if version is 2003)
     if world3.version == 1972:
-        LYF2 = world3.addConstant("LYF2", C, val=1)
+        LYF2 = world3.addConstant("LYF2", C, val=1, cat=AGRICULTURE)
 
     IO70 = world3.addConstant("IO70", C, val=7.9e11)
     SD = world3.addConstant("SD", C, val=0.07)
@@ -783,26 +784,26 @@ def load(world3):
                                            [520, 0.005],
                                            [560, 0.005],
                                            [600, 0.005]))
-    lymc = world3.addFlow("lymc")
-    lymap = world3.addFlow("lymap")
-    lymap1 = world3.addFlow("lymap1")
-    lymap2 = world3.addFlow("lymap2")
-    fiald = world3.addFlow("fiald")
-    mlymc = world3.addFlow("mlymc")
+    lymc = world3.addFlow("lymc", cat=AGRICULTURE)
+    lymap = world3.addFlow("lymap", cat=AGRICULTURE)
+    lymap1 = world3.addFlow("lymap1", cat=AGRICULTURE)
+    lymap2 = world3.addFlow("lymap2", cat=AGRICULTURE)
+    fiald = world3.addFlow("fiald", cat=AGRICULTURE)
+    mlymc = world3.addFlow("mlymc", cat=AGRICULTURE)
 
-    cai = world3.addFlow("cai")
-    ai = world3.addStock("ai", val=AII.val)
-    alai = world3.addFlow("alai")
-    aiph = world3.addFlow("aiph")
-    ly = world3.addFlow("ly")
-    lyf = world3.addFlow("lyf")
+    cai = world3.addFlow("cai", cat=AGRICULTURE)
+    ai = world3.addStock("ai", val=AII.val, cat=AGRICULTURE)
+    alai = world3.addFlow("alai", cat=AGRICULTURE)
+    aiph = world3.addFlow("aiph", cat=AGRICULTURE)
+    ly = world3.addFlow("ly", cat=AGRICULTURE)
+    lyf = world3.addFlow("lyf", cat=AGRICULTURE)
 
     # lyf2 values depend on the version used (is a NodeConstant if version is 1972)
     if world3.version == 2003:
         lyf2 = world3.addDelay3("lyf2")
 
-    mpld = world3.addFlow("mpld")
-    mpai = world3.addFlow("mpai")
+    mpld = world3.addFlow("mpld", cat=AGRICULTURE)
+    mpai = world3.addFlow("mpai", cat=AGRICULTURE)
 
     # Loop 3
     # ALLN values depend on the version used
@@ -861,16 +862,16 @@ def load(world3):
                                            [1200, 0.07],
                                            [1400, 0.08],
                                            [1600, 0.09]))
-    llmy = world3.addFlow("llmy")
-    llmy1 = world3.addFlow("llmy1")
-    llmy2 = world3.addFlow("llmy2")
-    uilpc = world3.addFlow("uilpc")
+    llmy = world3.addFlow("llmy", cat=AGRICULTURE)
+    llmy1 = world3.addFlow("llmy1", cat=AGRICULTURE)
+    llmy2 = world3.addFlow("llmy2", cat=AGRICULTURE)
+    uilpc = world3.addFlow("uilpc", cat=AGRICULTURE)
 
-    all = world3.addFlow("all")
-    ler = world3.addFlow("ler")
-    uilr = world3.addFlow("uilr")
-    lrui = world3.addFlow("lrui")
-    uil = world3.addStock("uil", val=UILI.val)
+    all = world3.addFlow("all", cat=AGRICULTURE)
+    ler = world3.addFlow("ler", cat=AGRICULTURE)
+    uilr = world3.addFlow("uilr", cat=AGRICULTURE)
+    lrui = world3.addFlow("lrui", cat=AGRICULTURE)
+    uil = world3.addStock("uil", val=UILI.val, cat=AGRICULTURE)
 
     # Loop 4
     LFERTI = world3.addConstant("LFERTI", C, val=600)
@@ -879,10 +880,10 @@ def load(world3):
                                          [10, 0.1],
                                          [20, 0.3],
                                          [30, 0.5]))
-    lfdr = world3.addFlow("lfdr")
+    lfdr = world3.addFlow("lfdr", cat=AGRICULTURE)
 
-    lfert = world3.addStock("lfert", val=LFERTI.val)
-    lfd = world3.addFlow("lfd")
+    lfert = world3.addStock("lfert", val=LFERTI.val, cat=AGRICULTURE)
+    lfd = world3.addFlow("lfd", cat=AGRICULTURE)
 
     # Loop 5
     ILF = world3.addConstant("ILF", C, val=600)
@@ -922,20 +923,20 @@ def load(world3):
                                              [1.8, 1.35],
                                              [2, 1.5]))
 
-        lycm = world3.addFlow("lycm")
-        coym = world3.addFlow("coym")
+        lycm = world3.addFlow("lycm", cat=AGRICULTURE)
+        coym = world3.addFlow("coym", cat=AGRICULTURE)
 
-    lfrt = world3.addFlow("lfrt")
-    falm = world3.addFlow("falm")
+    lfrt = world3.addFlow("lfrt", cat=AGRICULTURE)
+    falm = world3.addFlow("falm", cat=AGRICULTURE)
 
-    lfr = world3.addFlow("lfr")
-    fr = world3.addFlow("fr")
-    pfr = world3.addStock("pfr", val=PFRI.val)
+    lfr = world3.addFlow("lfr", cat=AGRICULTURE)
+    fr = world3.addFlow("fr", cat=AGRICULTURE)
+    pfr = world3.addStock("pfr", val=PFRI.val, cat=AGRICULTURE)
 
     # lytd and lytdr values depend on the version used (not used in 1972)
     if world3.version == 2003:
-        lytd = world3.addStock("lytd", val=LYF1.val)
-        lytdr = world3.addFlow("lytdr")
+        lytd = world3.addStock("lytd", val=LYF1.val, cat=AGRICULTURE)
+        lytdr = world3.addFlow("lytdr", cat=AGRICULTURE)
 
     ################################
     # Variables close to resources #
@@ -1052,28 +1053,28 @@ def load(world3):
                                                  [0.9, 3.01],
                                                  [1, 3]))
 
-        nrcm = world3.addFlow("nrcm")
-        icor2t = world3.addFlow("icor2t")
+        nrcm = world3.addFlow("nrcm", cat=NR_RESSOURCES)
+        icor2t = world3.addFlow("icor2t", cat=NR_RESSOURCES)
 
-    pcrum = world3.addFlow("pcrum")
-    fcaor = world3.addFlow("fcaor") #"fraction of capital allocated to obtaining resources"
-    fcaor1 = world3.addFlow("fcaor1")
-    fcaor2 = world3.addFlow("fcaor2")
+    pcrum = world3.addFlow("pcrum", cat=NR_RESSOURCES)
+    fcaor = world3.addFlow("fcaor", cat=NR_RESSOURCES) #"fraction of capital allocated to obtaining resources"
+    fcaor1 = world3.addFlow("fcaor1", cat=NR_RESSOURCES)
+    fcaor2 = world3.addFlow("fcaor2", cat=NR_RESSOURCES)
 
-    nr = world3.addStock("nr", val=NRI.val)
-    nrur = world3.addFlow("nrur")
-    nruf = world3.addFlow("nruf")
+    nr = world3.addStock("nr", val=NRI.val, cat=NR_RESSOURCES)
+    nrur = world3.addFlow("nrur", cat=NR_RESSOURCES)
+    nruf = world3.addFlow("nruf", cat=NR_RESSOURCES)
 
     # nruf2 values depend on the version used (is a NodeConstant if version is 1972)
     if world3.version == 2003:
-        nruf2 = world3.addDelay3("nruf2")
+        nruf2 = world3.addDelay3("nruf2", cat=NR_RESSOURCES)
 
-    nrfr = world3.addFlow("nrfr")
+    nrfr = world3.addFlow("nrfr", cat=NR_RESSOURCES)
 
     # nrtd and nrate values depend on the version used (not used in 1972)
     if world3.version == 2003:
-        nrtd = world3.addStock("nrtd", val=NRUF1.val)
-        nrate = world3.addFlow("nrate")
+        nrtd = world3.addStock("nrtd", val=NRUF1.val, cat=NR_RESSOURCES)
+        nrate = world3.addFlow("nrate", cat=NR_RESSOURCES)
 
 
     ################################
@@ -1126,29 +1127,29 @@ def load(world3):
                                              [0.9, 1],
                                              [1, 1]))
 
-        polgfm = world3.addFlow("polgfm")
-        copm = world3.addFlow("copm")
+        polgfm = world3.addFlow("polgfm", cat=POLLUTION)
+        copm = world3.addFlow("copm", cat=POLLUTION)
 
-    ahlm = world3.addFlow("ahlm")
-    ppgr = world3.addFlow("ppgr")
-    ppgf = world3.addFlow("ppgf")
+    ahlm = world3.addFlow("ahlm", cat=POLLUTION)
+    ppgr = world3.addFlow("ppgr", cat=POLLUTION)
+    ppgf = world3.addFlow("ppgf", cat=POLLUTION)
 
     # ppgf2 values depend on the version used (is a NodeConstant if version is 1972)
     if world3.version == 2003:
-        ppgf2 = world3.addDelay3("ppgf2")
+        ppgf2 = world3.addDelay3("ppgf2", cat=POLLUTION)
 
-    ppgio = world3.addFlow("ppgio")
-    ppgao = world3.addFlow("ppgao")
-    ppapr = world3.addDelay3("ppapr")
-    ppol = world3.addStock("ppol", val=PPOLI.val)
-    ppolx = world3.addFlow("ppolx")
-    ppasr = world3.addFlow("ppasr")
-    ahl = world3.addFlow("ahl")
+    ppgio = world3.addFlow("ppgio", cat=POLLUTION)
+    ppgao = world3.addFlow("ppgao", cat=POLLUTION)
+    ppapr = world3.addDelay3("ppapr", cat=POLLUTION)
+    ppol = world3.addStock("ppol", val=PPOLI.val, cat=POLLUTION)
+    ppolx = world3.addFlow("ppolx", cat=POLLUTION)
+    ppasr = world3.addFlow("ppasr", cat=POLLUTION)
+    ahl = world3.addFlow("ahl", cat=POLLUTION)
 
     # ptd and ptdr values depend on the version used (not used in 1972)
     if world3.version == 2003:
-        ptd = world3.addStock("ptd", val=PPGF1.val)
-        ptdr = world3.addFlow("ptdr")
+        ptd = world3.addStock("ptd", val=PPGF1.val, cat=POLLUTION)
+        ptdr = world3.addFlow("ptdr", cat=POLLUTION)
 
 
     ###########
@@ -1182,25 +1183,25 @@ def load(world3):
                                            [600, 1800],
                                            [800, 2500],
                                            [1000, 3200]))
-    foa = world3.addFlow("foa")
-    foi = world3.addFlow("foi")
-    fos = world3.addFlow("fos")
+    foa = world3.addFlow("foa", cat=POLLUTION)
+    foi = world3.addFlow("foi", cat=POLLUTION)
+    fos = world3.addFlow("fos", cat=POLLUTION)
 
-    resint = world3.addFlow("resint")
-    plinid = world3.addFlow("plinid")
-    cio = world3.addFlow("cio")
-    ciopc = world3.addFlow("ciopc")
+    resint = world3.addFlow("resint", cat=POLLUTION)
+    plinid = world3.addFlow("plinid", cat=POLLUTION)
+    cio = world3.addFlow("cio", cat=POLLUTION)
+    ciopc = world3.addFlow("ciopc", cat=POLLUTION)
 
-    lei = world3.addFlow("lei")
-    ei = world3.addFlow("ei")
-    gdppc = world3.addFlow("gdppc")
+    lei = world3.addFlow("lei", cat=POLLUTION)
+    ei = world3.addFlow("ei", cat=POLLUTION)
+    gdppc = world3.addFlow("gdppc", cat=POLLUTION)
 
-    hwi = world3.addFlow("hwi")
-    gdpi = world3.addFlow("gdpi")
-    hef = world3.addFlow("hef")
-    algha = world3.addFlow("algha")
-    alggha = world3.addFlow("alggha")
-    ulgha = world3.addFlow("ulgha")
+    hwi = world3.addFlow("hwi", cat=POLLUTION)
+    gdpi = world3.addFlow("gdpi", cat=POLLUTION)
+    hef = world3.addFlow("hef", cat=POLLUTION)
+    algha = world3.addFlow("algha", cat=POLLUTION)
+    alggha = world3.addFlow("alggha", cat=POLLUTION)
+    ulgha = world3.addFlow("ulgha", cat=POLLUTION)
 
 
 
